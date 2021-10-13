@@ -4,7 +4,6 @@ from html_parser import MyHTMLParser
 
 master_path = "./data/master/demos/"
 dev_path = "./data/dev/demos/"
-dev_path = "/home/antal/xanadu/notebooks/qml/ci_check/dev/home/runner/work/qml/qml/_build/html/demos/"
 files = os.listdir(master_path)
 
 master_url = 'https://pennylane.ai/qml/demos/'
