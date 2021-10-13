@@ -1,6 +1,27 @@
 import os
 import difflib
-from html_parser import MyHTMLParser
+from html_parser import DemoOutputParser
+
+def parse_demo_outputs(filename):
+    f = open(filename, "r")
+    html_file = f.read()
+
+    parser = DemoOutputParser()
+    parser.feed(html_file)
+
+    outputs = []
+    for d in parser.data:
+        if d != 'Out:':
+            continue
+
+        if '\n' in d:
+            # If there are newlines in the string, then extract each line
+            # by splitting and only keep the non-empty ones
+            lines = [line for line in d.split("\n") if line != '']
+            outputs.extend(lines)
+        else:
+            outputs.append(d)
+    return outputs
 
 master_path = "./data/master/demos/"
 dev_path = "./data/dev/demos/"
@@ -16,39 +37,10 @@ output_file.write(f'### Tutorials that differ: \n')
 
 for filename in automatically_run:
     master_file = os.path.join(master_path, filename)
-
-    f = open(master_file, "r")
-    html_file_master = f.read()
+    master_outputs = parse_demo_outputs(master_file)
 
     dev_file = os.path.join(dev_path, filename)
-
-    g = open(dev_file, "r")
-    html_file_dev = g.read()
-    
-    parser = MyHTMLParser()
-    parser.feed(html_file_master)
-    master_outputs = []
-    for d in parser.data:
-        if d != 'Out:':
-            if '\n' in d:
-                lines = [line for line in d.split("\n") if line != '']
-                master_outputs.extend(lines)
-            else:
-                master_outputs.append(d)
-                      
-    parser = MyHTMLParser()
-    parser.feed(html_file_dev)
-    dev_outputs = []
-    
-    for d in parser.data:
-        if d != 'Out:':
-            if '\n' in d:
-                lines = [line for line in d.split("\n") if line != '']
-                dev_outputs.extend(lines)
-            else:
-                dev_outputs.append(d)
-
-    first = False
+    dev_outputs = parse_demo_outputs(dev_file)
 
     outputs_with_diffs = set()
     for out_idx, (a,b) in enumerate(zip(master_outputs, dev_outputs)):

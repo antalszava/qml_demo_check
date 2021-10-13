@@ -1,9 +1,13 @@
 from html.parser import HTMLParser
 from html.entities import name2codepoint
 
-class MyHTMLParser(HTMLParser):
+class DemoOutputParser(HTMLParser):
+    """An HTML parser class that helps parse the output of demonstrations from
+    the QML repository."""
     
-    were_in = False
+    is_demo_output = False
+    '''Specifies whether the tag that is being parsed is the output of a cell
+    in the demo.'''
     
     def __init__(self):
         self.data = []
@@ -11,17 +15,21 @@ class MyHTMLParser(HTMLParser):
     
     def handle_starttag(self, tag, attrs):
         for attr in attrs:
-            out = any("sphx-glr-script-out" in a for a in attr if a is not None)
+            sphinx_script_output_tag = "sphx-glr-script-out"
+            out = any(sphinx_script_output_tag in a for a in attr if a is not None)
+
+            # The HTML produced by Sphinx has class HTML tags and the
+            # sphx-glr-script-out attribute
             if "class" in attr and out:
-                self.were_in = True
+                self.is_demo_output = True
 
     def handle_endtag(self, tag):
         pass
 
     def handle_data(self, data):
-        if self.were_in:
+        if self.is_demo_output:
             self.data.append(data)
-            self.were_in = False
+            self.is_demo_output = False
 
     def handle_comment(self, data):
         pass
