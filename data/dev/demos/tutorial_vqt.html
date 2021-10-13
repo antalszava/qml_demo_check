@@ -1,0 +1,1062 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Using the Variational Quantum Thermalizer to prepare the thermal state of a Heisenberg model Hamiltonian." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/thumbnail.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="The Variational Quantum Thermalizer &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_vqt.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Using the Variational Quantum Thermalizer to prepare the thermal state of a Heisenberg model Hamiltonian." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>The Variational Quantum Thermalizer &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_vqt.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Accelerating VQEs with quantum natural gradient" href="tutorial_vqe_qng.html" />
+    <link rel="prev" title="Variationally optimizing measurement protocols" href="tutorial_quantum_metrology.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_qng.html" title="Accelerating VQEs with quantum natural gradient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quantum_metrology.html" title="Variationally optimizing measurement protocols"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" accesskey="U">Research</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-vqt-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="the-variational-quantum-thermalizer">
+<span id="sphx-glr-demos-tutorial-vqt-py"></span><h1>The Variational Quantum Thermalizer<a class="headerlink" href="#the-variational-quantum-thermalizer" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_vqe.html"];
+    var related_tutorials_titles = ['Variational quantum eigensolver'];
+</script></p>
+<p><em>Author: Jack Ceroni. Posted: 7 July 2020. Last updated: 28 Jan 2021.</em></p>
+<p>This demonstration discusses theory and experiments relating to a recently proposed quantum algorithm called the
+<a class="reference external" href="https://arxiv.org/abs/1910.02071">Variational Quantum Thermalizer</a> (VQT): a generalization of the well-know
+<a class="reference internal" href="tutorial_vqe.html"><span class="doc">Variational Quantum Eigensolver</span></a> (VQE) to systems with non-zero temperatures.</p>
+<div class="section" id="the-idea">
+<h2>The Idea<a class="headerlink" href="#the-idea" title="Permalink to this headline">¶</a></h2>
+<p>The goal of the VQT is to prepare
+the <a class="reference external" href="https://en.wikipedia.org/wiki/KMS_state">thermal state</a>
+of a given Hamiltonian <span class="math notranslate nohighlight">\(\hat{H}\)</span> at temperature <span class="math notranslate nohighlight">\(T\)</span>,
+which is defined as</p>
+<div class="math notranslate nohighlight">
+\[\rho_\text{thermal} \ = \ \frac{e^{- \hat{H} \beta}}{\text{Tr}(e^{- \hat{H} \beta})} \ = \ \frac{e^{- \hat{H} \beta}}{Z_{\beta}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta \ = \ 1/T\)</span>. The thermal state is a <a class="reference external" href="https://en.wikipedia.org/wiki/Quantum_state#Mixed_states">mixed state</a>,
+which means that can be described by an ensemble of pure states.
+Since we are attempting to learn a mixed state, we must
+deviate from the standard variational method of passing a pure state
+through an ansatz circuit, and minimizing the energy expectation.</p>
+<p>The VQT begins with an initial <a class="reference external" href="https://en.wikipedia.org/wiki/Density_matrix">density matrix</a>, <span class="math notranslate nohighlight">\(\rho_{\theta}\)</span>,
+described by a probability distribution parametrized by some collection
+of parameters <span class="math notranslate nohighlight">\(\theta\)</span>, and an ensemble of pure states,
+<span class="math notranslate nohighlight">\(\{|\psi_i\rangle\}\)</span>. Let <span class="math notranslate nohighlight">\(p_i(\theta_i)\)</span> be the
+probability corresponding to the <span class="math notranslate nohighlight">\(i\)</span>-th pure state. We sample from
+this probability distribution to get some pure state
+<span class="math notranslate nohighlight">\(|\psi_k\rangle\)</span>, which we pass through a parametrized circuit,
+<span class="math notranslate nohighlight">\(U(\phi)\)</span>. From the results of this circuit, we then calculate
+<span class="math notranslate nohighlight">\(\langle \psi_k | U^{\dagger}(\phi) \hat{H}\, U(\phi) |\psi_k\rangle\)</span>.
+Repeating this process multiple times and taking the average of these
+expectation values gives us the the expectation value of <span class="math notranslate nohighlight">\(\hat{H}\)</span>
+with respect to <span class="math notranslate nohighlight">\(U \rho_{\theta} U^{\dagger}\)</span>.</p>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/ev.png"><img alt="../_images/ev.png" src="../_images/ev.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">Inputted parameters create an initial density matrix and a parametrized
+ansatz, which are used to calculate the expectation value of the Hamiltonian
+with respect to a new mixed state.</span></p>
+</div>
+<p>Arguably, the most important part of a variational circuit is its cost
+function, which we attempt to minimize with a classical optimizer.
+In VQE, we generally try to
+minimize <span class="math notranslate nohighlight">\(\langle \psi(\theta) | \hat{H} | \psi(\theta) \rangle\)</span>
+which, upon minimization, gives us a parametrized circuit that prepares
+a good approximation to the ground state of <span class="math notranslate nohighlight">\(\hat{H}\)</span>. In the VQT,
+the goal is to arrive at a parametrized probability distribution, and a
+parametrized ansatz, that generate a good approximation to the thermal
+state. This generally involves more than calculating the energy
+expectation value. Luckily, we know that the thermal state of
+<span class="math notranslate nohighlight">\(\hat{H}\)</span> minimizes the following free-energy cost function</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(\theta, \ \phi) \ = \ \beta \ \text{Tr}( \hat{H} \ \hat{U}(\phi) \rho_{\theta} \hat{U}(\phi)^{\dagger} ) \ - \ S_\theta,\]</div>
+<p>where <span class="math notranslate nohighlight">\(S_{\theta}\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Von_Neumann_entropy">von Neumann entropy</a> of
+<span class="math notranslate nohighlight">\(U \rho_{\theta} U^{\dagger}\)</span>, which is the same as the von
+Neumann entropy of <span class="math notranslate nohighlight">\(\rho_{\theta}\)</span> due to invariance of entropy
+under unitary transformations. This cost function is minimized when
+<span class="math notranslate nohighlight">\(\hat{U}(\phi) \rho_{\theta} \hat{U}(\phi)^{\dagger} \ = \ \rho_{\text{thermal}}\)</span>,
+so similarly to VQE, we minimize it with a classical optimizer to obtain
+the target parameters, and thus the target state.</p>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/vqt.png"><img alt="../_images/vqt.png" src="../_images/vqt.png" style="width: 80%;" /></a>
+<p class="caption"><span class="caption-text">A high-level representation of how the VQT works.</span></p>
+</div>
+<p>All together, the outlined processes give us a general protocol to
+generate thermal states.</p>
+</div>
+<div class="section" id="simulating-the-vqt-for-a-4-qubit-heisenberg-model">
+<h2>Simulating the VQT for a 4-Qubit Heisenberg Model<a class="headerlink" href="#simulating-the-vqt-for-a-4-qubit-heisenberg-model" title="Permalink to this headline">¶</a></h2>
+<p>In this demonstration, we simulate the 4-qubit Heisenberg model. We can
+begin by importing the necessary dependencies.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">seaborn</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The Heisenberg Hamiltonian is defined as</p>
+<div class="math notranslate nohighlight">
+\[\hat{H} \ = \ \displaystyle\sum_{(i, j) \in E} X_i X_j \ + \ Z_i Z_j \ + \ Y_i Y_j,\]</div>
+<p>where <span class="math notranslate nohighlight">\(X_i\)</span>, <span class="math notranslate nohighlight">\(Y_i\)</span> and <span class="math notranslate nohighlight">\(Z_i\)</span> are the Pauli gates
+acting on the <span class="math notranslate nohighlight">\(i\)</span>-th qubit. In addition, <span class="math notranslate nohighlight">\(E\)</span> is the set of
+edges in the graph <span class="math notranslate nohighlight">\(G \ = \ (V, \ E)\)</span> describing the interactions
+between the qubits. In this demonstration, we define the interaction graph to
+be the cycle graph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">interaction_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">cycle_graph</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">interaction_graph</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="tutorial vqt" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqt_001.png" />
+<p>With this, we can calculate the matrix representation of the Heisenberg
+Hamiltonian in the computational basis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_hamiltonian_matrix</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
+
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX.matrix" title="pennylane.PauliX.matrix" class="sphx-glr-backref-module-pennylane-PauliX sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY.matrix" title="pennylane.PauliY.matrix" class="sphx-glr-backref-module-pennylane-PauliY sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ.matrix" title="pennylane.PauliZ.matrix" class="sphx-glr-backref-module-pennylane-PauliZ sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">matrix</span>
+
+
+<span class="n">ham_matrix</span> <span class="o">=</span> <span class="n">create_hamiltonian_matrix</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">interaction_graph</span><span class="p">)</span>
+
+<span class="c1"># Prints a visual representation of the Hamiltonian matrix</span>
+<span class="n">seaborn</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">ham_matrix</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial vqt" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqt_002.png" />
+<p>With this done, we construct the VQT. We begin by defining some
+fixed variables that are used throughout the simulation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">beta</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># beta = 1/T</span>
+<span class="n">nr_qubits</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>The first step of the VQT is to create the initial density matrix,
+<span class="math notranslate nohighlight">\(\rho_\theta\)</span>. In this demonstration, we let <span class="math notranslate nohighlight">\(\rho_\theta\)</span> be
+<em>factorized</em>, meaning that it can be written as an uncorrelated tensor
+product of <span class="math notranslate nohighlight">\(4\)</span> one-qubit density matrices that are diagonal in
+the computational basis. The motivation is that in this factorized model,
+the number of <span class="math notranslate nohighlight">\(\theta_i\)</span> parameters needed to describe
+<span class="math notranslate nohighlight">\(\rho_\theta\)</span> scales linearly rather than exponentially with
+the number of qubits. For each one-qubit system described by
+<span class="math notranslate nohighlight">\(\rho_\theta^i\)</span>, we have</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\theta}^{i} \ = \ p_i(\theta_i) |0\rangle \langle 0| \ + \ (1 \ - \ p_i(\theta_i))|1\rangle \langle1|.\]</div>
+<p>From here, all we have to do is define <span class="math notranslate nohighlight">\(p_i(\theta_i)\)</span>, which we
+choose to be the sigmoid</p>
+<div class="math notranslate nohighlight">
+\[p_{i}(\theta_{i}) \ = \ \frac{e^{\theta_i}}{e^{\theta_i} \ + \ 1}.\]</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a natural choice for probability function, as it has a range of
+<span class="math notranslate nohighlight">\([0, \ 1]\)</span>, meaning that we don’t need to restrict the domain of
+<span class="math notranslate nohighlight">\(\theta_i\)</span> to some subset of the real numbers. With the probability
+function defined, we can write a method that gives us the diagonal
+elements of each one-qubit density matrix, for some parameters
+<span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">prob_dist</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">params</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">params</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<div class="section" id="creating-the-ansatz-circuit">
+<h3>Creating the Ansatz Circuit<a class="headerlink" href="#creating-the-ansatz-circuit" title="Permalink to this headline">¶</a></h3>
+<p>With this done, we can move on to defining the ansatz circuit,
+<span class="math notranslate nohighlight">\(U(\phi)\)</span>, composed of rotational and coupling layers. The
+rotation layer is simply <code class="docutils literal notranslate"><span class="pre">RX</span></code>, <code class="docutils literal notranslate"><span class="pre">RY</span></code>, and <code class="docutils literal notranslate"><span class="pre">RZ</span></code>
+gates applied to each qubit. We make use of the
+<code class="docutils literal notranslate"><span class="pre">AngleEmbedding</span></code>
+function, which allows us to easily pass parameters into rotational
+layers.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">single_rotation</span><span class="p">(</span><span class="n">phi_params</span><span class="p">,</span> <span class="n">qubits</span><span class="p">):</span>
+
+    <span class="n">rotations</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotations</span><span class="p">)):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Operation.html#pennylane.operation.Operation" title="pennylane.operation.Operation" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">AngleEmbedding</span></a><span class="p">(</span><span class="n">phi_params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubits</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotations</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To construct the general ansatz, we combine the method we have just
+defined with a collection of parametrized coupling gates placed between
+qubits that share an edge in the interaction graph. In addition, we
+define the depth of the ansatz, and the device on which the simulations
+are run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">nr_qubits</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">quantum_circuit</span><span class="p">(</span><span class="n">rotation_params</span><span class="p">,</span> <span class="n">coupling_params</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># Prepares the initial basis state corresponding to the sample</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Operation.html#pennylane.operation.Operation" title="pennylane.operation.Operation" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">BasisStatePreparation</span></a><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_qubits</span><span class="p">))</span>
+
+    <span class="c1"># Prepares the variational ansatz for the circuit</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+        <span class="n">single_rotation</span><span class="p">(</span><span class="n">rotation_params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="n">nr_qubits</span><span class="p">))</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.broadcast.html#pennylane.broadcast" title="pennylane.broadcast" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">broadcast</span></a><span class="p">(</span>
+            <span class="n">unitary</span><span class="o">=</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CRX.html#pennylane.CRX" title="pennylane.CRX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CRX</span></a><span class="p">,</span>
+            <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;ring&quot;</span><span class="p">,</span>
+            <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_qubits</span><span class="p">),</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">coupling_params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Calculates the expectation value of the Hamiltonian with respect to the prepared states</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hermitian.html#pennylane.Hermitian" title="pennylane.Hermitian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hermitian</span></a><span class="p">(</span><span class="n">ham_matrix</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">nr_qubits</span><span class="p">)))</span>
+
+
+<span class="c1"># Constructs the QNode</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">quantum_circuit</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can get an idea of what this circuit looks like by printing out a
+test circuit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rotation_params</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">depth</span><span class="p">)]</span>
+<span class="n">coupling_params</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">depth</span><span class="p">)]</span>
+<span class="n">results</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode</span></a><span class="p">(</span><span class="n">rotation_params</span><span class="p">,</span> <span class="n">coupling_params</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode.draw" title="pennylane.QNode.draw" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">qnode</span><span class="o">.</span><span class="n">draw</span></a><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span> 0: ──X──────RZ(1)──RY(1)──RX(1)──╭C─────────────────────────────╭RX(1)──RZ(1)──RY(1)──RX(1)──╭C─────────────────────────────╭RX(1)──RZ(1)──RY(1)──RX(1)──╭C─────────────────────────────╭RX(1)──RZ(1)──RY(1)──RX(1)──╭C──────────────────────╭RX(1)──╭┤ ⟨H0⟩
+ 1: ──RZ(1)──RY(1)──RX(1)─────────╰RX(1)──╭C───────RZ(1)──RY(1)──│───────RX(1)────────────────╰RX(1)──╭C───────RZ(1)──RY(1)──│───────RX(1)────────────────╰RX(1)──╭C───────RZ(1)──RY(1)──│───────RX(1)────────────────╰RX(1)──╭C──────────────│───────├┤ ⟨H0⟩
+ 2: ──X──────RZ(1)──RY(1)──RX(1)──────────╰RX(1)──╭C──────RZ(1)──│───────RY(1)──RX(1)─────────────────╰RX(1)──╭C──────RZ(1)──│───────RY(1)──RX(1)─────────────────╰RX(1)──╭C──────RZ(1)──│───────RY(1)──RX(1)─────────────────╰RX(1)──╭C──────│───────├┤ ⟨H0⟩
+ 3: ──RZ(1)──RY(1)──RX(1)─────────────────────────╰RX(1)─────────╰C──────RZ(1)──RY(1)──RX(1)──────────────────╰RX(1)─────────╰C──────RZ(1)──RY(1)──RX(1)──────────────────╰RX(1)─────────╰C──────RZ(1)──RY(1)──RX(1)──────────────────╰RX(1)──╰C──────╰┤ ⟨H0⟩
+H0 =
+[[ 4.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j -4.+0.j  2.+0.j  0.+0.j  0.+0.j
+   2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j]
+ [ 0.+0.j  2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j
+   2.+0.j -4.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  2.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  2.+0.j  0.+0.j  0.+0.j]
+ [ 0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j
+   0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  0.+0.j  4.+0.j]]
+</pre></div>
+</div>
+<p>Recall that the final cost function depends not only on the expectation
+value of the Hamiltonian, but also the von Neumann entropy of the state,
+which is determined by the collection of <span class="math notranslate nohighlight">\(p_i(\theta_i)\)</span>s. Since
+the entropy of a collection of multiple uncorrelated subsystems is the
+same as the sum of the individual values of entropy for each subsystem,
+we can sum the entropy values of each one-qubit system in the factorized
+space to get the total:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_entropy</span><span class="p">(</span><span class="n">distribution</span><span class="p">):</span>
+
+    <span class="n">total_entropy</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">distribution</span><span class="p">:</span>
+        <span class="n">total_entropy</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Returns an array of the entropy values of the different initial density matrices</span>
+
+    <span class="k">return</span> <span class="n">total_entropy</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-cost-function">
+<h3>The Cost Function<a class="headerlink" href="#the-cost-function" title="Permalink to this headline">¶</a></h3>
+<p>Finally, we combine the ansatz and the entropy function to get the cost
+function. In this demonstration, we deviate slightly from how VQT would be
+performed in practice. Instead of sampling from the probability
+distribution describing the initial mixed state, we use the ansatz to
+calculate
+<span class="math notranslate nohighlight">\(\langle x_i | U^{\dagger}(\phi) \hat{H} \,U(\phi) |x_i\rangle\)</span> for
+each basis state <span class="math notranslate nohighlight">\(|x_i\rangle\)</span>. We then multiply each of these
+expectation values by their corresponding <span class="math notranslate nohighlight">\((\rho_\theta)_{ii}\)</span>,
+which is exactly the probability of sampling <span class="math notranslate nohighlight">\(|x_i\rangle\)</span> from
+the distribution. Summing each of these terms together gives us the
+expected value of the Hamiltonian with respect to the transformed
+density matrix.</p>
+<p>In the case of this small, simple model, exact
+calculations such as this reduce the number of circuit executions, and thus the total
+execution time.</p>
+<p>You may have noticed previously that the “structure” of the
+parameters list passed into the ansatz is quite complicated. We write a
+general function that takes a one-dimensional list, and converts it into
+the nested list structure that can be inputed into the ansatz:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">convert_list</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+
+    <span class="c1"># Separates the list of parameters</span>
+    <span class="n">dist_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nr_qubits</span><span class="p">]</span>
+    <span class="n">ansatz_params_1</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">nr_qubits</span> <span class="p">:</span> <span class="p">((</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nr_qubits</span><span class="p">)]</span>
+    <span class="n">ansatz_params_2</span> <span class="o">=</span> <span class="n">params</span><span class="p">[((</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nr_qubits</span><span class="p">)</span> <span class="p">:]</span>
+
+    <span class="n">coupling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ansatz_params_1</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span>
+
+    <span class="c1"># Partitions the parameters into multiple lists</span>
+    <span class="n">split</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ansatz_params_2</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span>
+    <span class="n">rotation</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">split</span><span class="p">:</span>
+        <span class="n">rotation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="n">ansatz_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">rotation</span><span class="p">,</span> <span class="n">coupling</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">dist_params</span><span class="p">,</span> <span class="n">ansatz_params</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We then pass this function, along with the ansatz and the entropy
+function into the final cost function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">exact_cost</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+
+    <span class="k">global</span> <span class="n">iterations</span>
+
+    <span class="c1"># Transforms the parameter list</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">convert_list</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">dist_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ansatz_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Creates the probability distribution</span>
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">prob_dist</span><span class="p">(</span><span class="n">dist_params</span><span class="p">)</span>
+
+    <span class="c1"># Generates a list of all computational basis states of our qubit system</span>
+    <span class="n">combos</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="n">nr_qubits</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">combos</span><span class="p">]</span>
+
+    <span class="c1"># Passes each basis state through the variational circuit and multiplies</span>
+    <span class="c1"># the calculated energy EV with the associated probability from the distribution</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode</span></a><span class="p">(</span><span class="n">ansatz_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ansatz_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sample</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">*</span> <span class="n">distribution</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span>
+        <span class="n">cost</span> <span class="o">+=</span> <span class="n">result</span>
+
+    <span class="c1"># Calculates the entropy and the final cost function</span>
+    <span class="n">entropy</span> <span class="o">=</span> <span class="n">calculate_entropy</span><span class="p">(</span><span class="n">distribution</span><span class="p">)</span>
+    <span class="n">final_cost</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">cost</span> <span class="o">-</span> <span class="n">entropy</span>
+
+    <span class="k">return</span> <span class="n">final_cost</span>
+</pre></div>
+</div>
+<p>We then create the function that is passed into the optimizer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost_execution</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+
+    <span class="k">global</span> <span class="n">iterations</span>
+
+    <span class="n">cost</span> <span class="o">=</span> <span class="n">exact_cost</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">iterations</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cost at Step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iterations</span><span class="p">,</span> <span class="n">cost</span><span class="p">))</span>
+
+    <span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">cost</span>
+</pre></div>
+</div>
+<p>The last step is to define the optimizer, and execute the optimization
+method. We use the “Constrained Optimization by Linear Approximation”
+(<a class="reference external" href="https://en.wikipedia.org/wiki/COBYLA">COBYLA</a>) optimization method,
+which is a gradient-free optimizer. We observe that for this algorithm, COBYLA
+has a lower runtime than its gradient-based counterparts, so we utilize it
+in this demonstration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">number</span> <span class="o">=</span> <span class="n">nr_qubits</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">depth</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">number</span><span class="p">)]</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">cost_execution</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;COBYLA&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">1600</span><span class="p">})</span>
+<span class="n">out_params</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Cost at Step 0: -0.6605354666522021
+Cost at Step 50: -2.869994162243926
+Cost at Step 100: -4.613909153498124
+Cost at Step 150: -5.395218651684679
+Cost at Step 200: -6.189391586583876
+Cost at Step 250: -6.552872462856987
+Cost at Step 300: -7.096509881592208
+Cost at Step 350: -8.216701398205721
+Cost at Step 400: -8.085081102568381
+Cost at Step 450: -9.388387326738926
+Cost at Step 500: -10.019110914765124
+Cost at Step 550: -10.630883389198166
+Cost at Step 600: -11.181775960997124
+Cost at Step 650: -11.48130837267363
+Cost at Step 700: -11.723339262895886
+Cost at Step 750: -11.82039175189276
+Cost at Step 800: -12.314068517894112
+Cost at Step 850: -12.594046429266381
+Cost at Step 900: -12.824898763081425
+Cost at Step 950: -13.032167226825782
+Cost at Step 1000: -13.314631473739249
+Cost at Step 1050: -13.784075355898747
+Cost at Step 1100: -13.975393483108094
+Cost at Step 1150: -14.099053330169621
+Cost at Step 1200: -14.173584140943465
+Cost at Step 1250: -14.244342190620488
+Cost at Step 1300: -14.359119617194306
+Cost at Step 1350: -14.428516933647717
+Cost at Step 1400: -14.513708424970076
+Cost at Step 1450: -14.56272566025497
+Cost at Step 1500: -14.664132869774456
+Cost at Step 1550: -14.706997859130754
+</pre></div>
+</div>
+<p>We can now check to see how well our optimization method performed by
+writing a function that reconstructs the transformed density
+matrix of some initial state, with respect to lists of
+<span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span> parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">prepare_state</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+
+    <span class="c1"># Initializes the density matrix</span>
+
+    <span class="n">final_density_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">nr_qubits</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">nr_qubits</span><span class="p">))</span>
+
+    <span class="c1"># Prepares the optimal parameters, creates the distribution and the bitstrings</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">convert_list</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">dist_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">unitary_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">distribution</span> <span class="o">=</span> <span class="n">prob_dist</span><span class="p">(</span><span class="n">dist_params</span><span class="p">)</span>
+
+    <span class="n">combos</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="n">nr_qubits</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">combos</span><span class="p">]</span>
+
+    <span class="c1"># Runs the circuit in the case of the optimal parameters, for each bitstring,</span>
+    <span class="c1"># and adds the result to the final density matrix</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode</span></a><span class="p">(</span><span class="n">unitary_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unitary_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sample</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">state</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">distribution</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span> <span class="o">*</span> <span class="n">state</span>
+        <span class="n">final_density_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">final_density_matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">state</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">final_density_matrix</span>
+
+<span class="c1"># Prepares the density matrix</span>
+<span class="n">prep_density_matrix</span> <span class="o">=</span> <span class="n">prepare_state</span><span class="p">(</span><span class="n">out_params</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then display the prepared state by plotting a heatmap of the
+entry-wise absolute value of the density matrix:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">prep_density_matrix</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial vqt" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqt_003.png" />
+</div>
+<div class="section" id="numerical-calculations">
+<h3>Numerical Calculations<a class="headerlink" href="#numerical-calculations" title="Permalink to this headline">¶</a></h3>
+<p>To verify that we have in fact prepared a good approximation of the
+thermal state, let’s calculate it numerically by taking the matrix
+exponential of the Heisenberg Hamiltonian, as was outlined earlier.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_target</span><span class="p">(</span><span class="n">qubit</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">ham</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
+
+    <span class="c1"># Calculates the matrix form of the density matrix, by taking</span>
+    <span class="c1"># the exponential of the Hamiltonian</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">ham</span><span class="p">(</span><span class="n">qubit</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span>
+    <span class="n">new_matrix</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">new_matrix</span><span class="p">)</span>
+    <span class="n">final_target</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">norm</span><span class="p">)</span> <span class="o">*</span> <span class="n">new_matrix</span>
+
+    <span class="k">return</span> <span class="n">final_target</span>
+
+
+<span class="n">target_density_matrix</span> <span class="o">=</span> <span class="n">create_target</span><span class="p">(</span>
+    <span class="n">nr_qubits</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+    <span class="n">create_hamiltonian_matrix</span><span class="p">,</span>
+    <span class="n">interaction_graph</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we can plot a heatmap of the target density matrix:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">seaborn</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">target_density_matrix</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial vqt" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqt_004.png" />
+<p>The two images look very similar, which suggests that we have
+constructed a good approximation of the thermal state! Alternatively, if
+you prefer a more quantitative measure of similarity, we can calculate
+the trace distance between the two density matrices, which is defined
+as</p>
+<div class="math notranslate nohighlight">
+\[T(\rho, \ \sigma) \ = \ \frac{1}{2} \text{Tr} \sqrt{(\rho \ - \ \sigma)^{\dagger} (\rho \ - \ \sigma)},\]</div>
+<p>and is a metric on the space of density matrices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">trace_distance</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="n">two</span><span class="p">):</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">one</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">two</span><span class="p">)))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace Distance: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace_distance</span><span class="p">(</span><span class="n">target_density_matrix</span><span class="p">,</span> <span class="n">prep_density_matrix</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Trace Distance: 0.07469762659403273
+</pre></div>
+</div>
+<p>The closer to zero, the more similar the two states are. Thus, we
+have found a close approximation of the thermal state
+of <span class="math notranslate nohighlight">\(H\)</span> with the VQT!</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Verdon, G., Marks, J., Nanda, S., Leichenauer, S., &amp; Hidary, J.
+(2019). Quantum Hamiltonian-Based Models and the Variational Quantum
+Thermalizer Algorithm. arXiv preprint
+<a class="reference external" href="https://arxiv.org/abs/1910.02071">arXiv:1910.02071</a>.</li>
+</ol>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 10 minutes  59.229 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-vqt-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/fc30155b3fc457b8a3321327ab96a460/tutorial_vqt.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_vqt.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/8da368a18ed8672d07e8c39ec3d19be7/tutorial_vqt.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_vqt.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_vqt</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">The Variational Quantum Thermalizer</a><ul>
+<li><a class="reference internal" href="#the-idea">The Idea</a></li>
+<li><a class="reference internal" href="#simulating-the-vqt-for-a-4-qubit-heisenberg-model">Simulating the VQT for a 4-Qubit Heisenberg Model</a><ul>
+<li><a class="reference internal" href="#creating-the-ansatz-circuit">Creating the Ansatz Circuit</a></li>
+<li><a class="reference internal" href="#the-cost-function">The Cost Function</a></li>
+<li><a class="reference internal" href="#numerical-calculations">Numerical Calculations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_vqt</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_research.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_qng.html" title="Accelerating VQEs with quantum natural gradient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quantum_metrology.html" title="Variationally optimizing measurement protocols"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" >Research</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

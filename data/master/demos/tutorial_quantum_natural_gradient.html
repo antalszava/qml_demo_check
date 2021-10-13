@@ -1,0 +1,993 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="The quantum natural gradient method can achieve faster convergence for quantum machine learning problems by taking into account the intrinsic geometry of qubits." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/qng_optimization.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Quantum natural gradient &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_quantum_natural_gradient.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="The quantum natural gradient method can achieve faster convergence for quantum machine learning problems by taking into account the intrinsic geometry of qubits." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Quantum natural gradient &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_quantum_natural_gradient.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Accelerating VQEs with quantum natural gradient" href="tutorial_vqe_qng.html" />
+    <link rel="prev" title="Intro to QAOA" href="tutorial_qaoa_intro.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_qng.html" title="Accelerating VQEs with quantum natural gradient"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_qaoa_intro.html" title="Intro to QAOA"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_optimization.html" accesskey="U">Optimization</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-quantum-natural-gradient-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="quantum-natural-gradient">
+<span id="sphx-glr-demos-tutorial-quantum-natural-gradient-py"></span><span id="id1"></span><h1>Quantum natural gradient<a class="headerlink" href="#quantum-natural-gradient" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_backprop.html", "tutorial_vqe_qng.html"];
+    var related_tutorials_titles = ['Quantum gradients with backprop', 'Accelerating VQE with QNG'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 25 Jan 2021.</em></p>
+<p>This example demonstrates the quantum natural gradient optimization technique
+for variational quantum circuits, originally proposed in
+<a class="reference external" href="https://arxiv.org/abs/1909.02108">Stokes et al. (2019)</a>.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>The most successful class of quantum algorithms for use on near-term noisy quantum hardware
+is the so-called variational quantum algorithm. As laid out in the
+<a class="reference internal" href="../glossary/variational_circuit.html#glossary-variational-circuit"><span class="std std-ref">Concepts section</span></a>, in variational quantum algorithms
+a low-depth parametrized quantum circuit ansatz is chosen, and a problem-specific
+observable measured. A classical optimization loop is then used to find
+the set of quantum parameters that <em>minimize</em> a particular measurement expectation value
+of the quantum device. Examples of such algorithms include the <a class="reference internal" href="tutorial_vqe.html"><span class="doc">variational quantum
+eigensolver (VQE)</span></a>, the
+<a class="reference external" href="https://arxiv.org/abs/1411.4028">quantum approximate optimization algorithm (QAOA)</a>,
+and <a class="reference internal" href="quantum_neural_net.html#quantum-neural-net"><span class="std std-ref">quantum neural networks (QNN)</span></a>.</p>
+<p>Most recent demonstrations
+of variational quantum algorithms have used gradient-free classical optimization
+methods, such as the Nelder-Mead algorithm. However, the parameter-shift rule
+(as implemented in PennyLane) allows the user to automatically compute
+analytic gradients of quantum circuits. This opens up the possibility to train
+quantum computing hardware using gradient descent—the same method used to train
+deep learning models.
+Though one caveat has surfaced with gradient descent — how do we choose the optimal
+step size for our variational quantum algorithms, to ensure successful and
+efficient optimization?</p>
+<div class="section" id="the-natural-gradient">
+<h3>The natural gradient<a class="headerlink" href="#the-natural-gradient" title="Permalink to this headline">¶</a></h3>
+<p>In standard gradient descent, each optimization step is given by</p>
+<div class="math notranslate nohighlight">
+\[\theta_{t+1} = \theta_t -\eta \nabla \mathcal{L}(\theta),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{L}(\theta)\)</span> is the cost as a function of
+the parameters <span class="math notranslate nohighlight">\(\theta\)</span>, and <span class="math notranslate nohighlight">\(\eta\)</span> is the learning rate
+or step size. In essence, each optimization step calculates the
+steepest descent direction around the local value of <span class="math notranslate nohighlight">\(\theta_t\)</span>
+in the parameter space, and updates <span class="math notranslate nohighlight">\(\theta_t\rightarrow \theta_{t+1}\)</span>
+by this vector.</p>
+<p>The problem with the above approach is that each optimization step
+is strongly connected to a <em>Euclidean geometry</em> on the parameter space.
+The parametrization is not unique, and different parametrizations can distort
+distances within the optimization landscape.</p>
+<p>For example, consider the following cost function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>, parametrized
+using two different coordinate systems, <span class="math notranslate nohighlight">\((\theta_0, \theta_1)\)</span>, and
+<span class="math notranslate nohighlight">\((\phi_0, \phi_1)\)</span>:</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng7.png" src="../_images/qng7.png" style="width: 90%;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Performing gradient descent in the <span class="math notranslate nohighlight">\((\theta_0, \theta_1)\)</span> parameter
+space, we are updating each parameter by the same Euclidean distance,
+and not taking into account the fact that the cost function might vary at a different
+rate with respect to each parameter.</p>
+<p>Instead, if we perform a change of coordinate system (re-parametrization)
+of the cost function, we might find a parameter space where variations in <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>
+are similar across different parameters. This is the case with the new parametrization
+<span class="math notranslate nohighlight">\((\phi_0, \phi_1)\)</span>; the cost function is unchanged,
+but we now have a nicer geometry in which to perform gradient descent, and a more
+informative stepsize. This leads to faster convergence, and can help avoid optimization
+becoming stuck in local minima. For a more in-depth explanation,
+including why the parameter space might not be best represented by a Euclidean space,
+see <a class="reference external" href="https://arxiv.org/abs/1909.05074">Yamamoto (2019)</a>.</p>
+<p>However, what if we avoid gradient descent in the parameter space altogether?
+If we instead consider the optimization problem as a
+probability distribution of possible output values given an input
+(i.e., <a class="reference external" href="https://en.wikipedia.org/wiki/Likelihood_function">maximum likelihood estimation</a>),
+a better approach is to perform the gradient descent in the <em>distribution space</em>, which is
+dimensionless and invariant with respect to the parametrization. As a result,
+each optimization step will always choose the optimum step-size for every
+parameter, regardless of the parametrization.</p>
+<p>In classical neural networks, the above process is known as
+<em>natural gradient descent</em>, and was first introduced by
+<a class="reference external" href="https://www.mitpressjournals.org/doi/abs/10.1162/089976698300017746">Amari (1998)</a>.
+The standard gradient descent is modified as follows:</p>
+<div class="math notranslate nohighlight">
+\[\theta_{t+1} = \theta_t - \eta F^{-1}\nabla \mathcal{L}(\theta),\]</div>
+<p>where <span class="math notranslate nohighlight">\(F\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Fisher_information#Matrix_form">Fisher information matrix</a>.
+The Fisher information matrix acts as a metric tensor, transforming the
+steepest descent in the Euclidean parameter space to the steepest descent in the
+distribution space.</p>
+</div>
+<div class="section" id="the-quantum-analog">
+<h3>The quantum analog<a class="headerlink" href="#the-quantum-analog" title="Permalink to this headline">¶</a></h3>
+<p>In a similar vein, it has been shown that the standard Euclidean geometry
+is sub-optimal for optimization of quantum variational algorithms
+<a class="reference external" href="https://arxiv.org/abs/1901.05374">(Harrow and Napp, 2019)</a>.
+The space of quantum states instead possesses a unique invariant metric
+tensor known as the Fubini-Study metric tensor <span class="math notranslate nohighlight">\(g_{ij}\)</span>, which can be used to
+construct a quantum analog to natural gradient descent:</p>
+<div class="math notranslate nohighlight">
+\[\theta_{t+1} = \theta_t - \eta g^{+}(\theta_t)\nabla \mathcal{L}(\theta),\]</div>
+<p>where <span class="math notranslate nohighlight">\(g^{+}\)</span> refers to the pseudo-inverse.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>It can be shown that the Fubini-Study metric tensor reduces
+to the Fisher information matrix in the classical limit.</p>
+<p class="last">Furthermore, in the limit where <span class="math notranslate nohighlight">\(\eta\rightarrow 0\)</span>,
+the dynamics of the system are equivalent to imaginary-time
+evolution within the variational subspace, as proposed in
+<a class="reference external" href="https://arxiv.org/abs/1804.03023">McArdle et al. (2018)</a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="block-diagonal-metric-tensor">
+<h2>Block-diagonal metric tensor<a class="headerlink" href="#block-diagonal-metric-tensor" title="Permalink to this headline">¶</a></h2>
+<p>A block-diagonal approximation to the Fubini-Study metric tensor
+of a variational quantum circuit can be evaluated on quantum hardware.</p>
+<p>Consider a variational quantum circuit</p>
+<div class="math notranslate nohighlight">
+\[U(\mathbf{\theta})|\psi_0\rangle = V_L(\theta_L) W_L V_{L-1}(\theta_{L-1}) W_{L-1}
+  \cdots V_{\ell}(\theta_{\ell}) W_{\ell} \cdots V_{0}(\theta_{0}) W_{0} |\psi_0\rangle\]</div>
+<p>where</p>
+<ul class="simple">
+<li><span class="math notranslate nohighlight">\(|\psi_0\rangle\)</span> is the initial state,</li>
+<li><span class="math notranslate nohighlight">\(W_\ell\)</span> are layers of non-parametrized quantum gates,</li>
+<li><span class="math notranslate nohighlight">\(V_\ell(\theta_\ell)\)</span> are layers of parametrized quantum gates
+with <span class="math notranslate nohighlight">\(n_\ell\)</span> parameters <span class="math notranslate nohighlight">\(\theta_\ell = \{\theta^{(\ell)}_0, \dots, \theta^{(\ell)}_n\}\)</span>.</li>
+</ul>
+<p>Further, assume all parametrized gates can be written in the form
+<span class="math notranslate nohighlight">\(X(\theta^{(\ell)}_{i}) = e^{i\theta^{(\ell)}_{i} K^{(\ell)}_i}\)</span>,
+where <span class="math notranslate nohighlight">\(K^{(\ell)}_i\)</span> is the <em>generator</em> of the parametrized operation.</p>
+<p>For each parametric layer <span class="math notranslate nohighlight">\(\ell\)</span> in the variational quantum circuit
+the <span class="math notranslate nohighlight">\(n_\ell\times n_\ell\)</span> block-diagonal submatrix
+of the Fubini-Study tensor <span class="math notranslate nohighlight">\(g_{ij}^{(\ell)}\)</span> is calculated by:</p>
+<div class="math notranslate nohighlight">
+\[g_{ij}^{(\ell)} = \langle \psi_{\ell-1} | K_i K_j | \psi_{\ell-1} \rangle
+- \langle \psi_{\ell-1} | K_i | \psi_{\ell-1}\rangle
+\langle \psi_{\ell-1} |K_j | \psi_{\ell-1}\rangle\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[| \psi_{\ell-1}\rangle = V_{\ell-1}(\theta_{\ell-1}) W_{\ell-1} \cdots V_{0}(\theta_{0}) W_{0} |\psi_0\rangle.\]</div>
+<p>(that is, <span class="math notranslate nohighlight">\(|\psi_{\ell-1}\rangle\)</span> is the quantum state prior to the application
+of parameterized layer <span class="math notranslate nohighlight">\(\ell\)</span>), and we have <span class="math notranslate nohighlight">\(K_i \equiv K_i^{(\ell)}\)</span> for brevity.</p>
+<p>Let’s consider a small variational quantum circuit example coded in PennyLane:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+
+<span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="c1"># |psi_0&gt;: state preparation</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">7</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># V0(theta0, theta1): Parametrized layer 0</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># W1: non-parametrized gates</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+    <span class="c1"># V_1(theta2, theta3): Parametrized layer 1</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># W2: non-parametrized gates</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.432</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.123</span><span class="p">,</span> <span class="mf">0.543</span><span class="p">,</span> <span class="mf">0.233</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The above circuit consists of 4 parameters, with two distinct parametrized
+layers of 2 parameters each.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng1.png" src="../_images/qng1.png" style="width: 90%;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>(Note that in this example, the first non-parametrized layer <span class="math notranslate nohighlight">\(W_0\)</span>
+is simply the identity.) Since there are two layers, each with two parameters,
+the block-diagonal approximation consists of two
+<span class="math notranslate nohighlight">\(2\times 2\)</span> matrices, <span class="math notranslate nohighlight">\(g^{(0)}\)</span> and <span class="math notranslate nohighlight">\(g^{(1)}\)</span>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng2.png" src="../_images/qng2.png" style="width: 30%;" /></a>
+</div>
+<p>To compute the first block-diagonal <span class="math notranslate nohighlight">\(g^{(0)}\)</span>, we create subcircuits consisting
+of all gates prior to the layer, and observables corresponding to
+the <em>generators</em> of the gates in the layer:</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng3.png" src="../_images/qng3.png" style="width: 30%;" /></a>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">g0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">layer0_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function contains all gates that</span>
+<span class="sd">    precede parametrized layer 0&quot;&quot;&quot;</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">7</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then post-process the measurement results in order to determine <span class="math notranslate nohighlight">\(g^{(0)}\)</span>,
+as follows.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng4.png" src="../_images/qng4.png" style="width: 50%;" /></a>
+</div>
+<p>We can see that the diagonal terms are simply given by the variance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer0_diag</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer0_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.var.html#pennylane.var" title="pennylane.var" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">var</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.var.html#pennylane.var" title="pennylane.var" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">var</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="c1"># calculate the diagonal terms</span>
+<span class="n">varK0</span><span class="p">,</span> <span class="n">varK1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer0_diag</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">g0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">varK0</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">g0</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">varK1</span> <span class="o">/</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>The following two subcircuits are then used to calculate the
+off-diagonal covariance terms of <span class="math notranslate nohighlight">\(g^{(0)}\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer0_off_diag_single</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer0_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer0_off_diag_double</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer0_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">ZZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hermitian.html#pennylane.Hermitian" title="pennylane.Hermitian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hermitian</span></a><span class="p">(</span><span class="n">ZZ</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
+
+
+<span class="c1"># calculate the off-diagonal terms</span>
+<span class="n">exK0</span><span class="p">,</span> <span class="n">exK1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer0_off_diag_single</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">exK0K1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer0_off_diag_double</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">g0</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">exK0K1</span> <span class="o">-</span> <span class="n">exK0</span> <span class="o">*</span> <span class="n">exK1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">g0</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">exK0K1</span> <span class="o">-</span> <span class="n">exK0</span> <span class="o">*</span> <span class="n">exK1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>Note that, by definition, the block-diagonal matrices must be real and
+symmetric.</p>
+<p>We can repeat the above process to compute <span class="math notranslate nohighlight">\(g^{(1)}\)</span>. The subcircuit
+required is given by</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng8.png" src="../_images/qng8.png" style="width: 50%;" /></a>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">g1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">layer1_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function contains all gates that</span>
+<span class="sd">    precede parametrized layer 1&quot;&quot;&quot;</span>
+    <span class="c1"># |psi_0&gt;: state preparation</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">7</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># V0(theta0, theta1): Parametrized layer 0</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># W1: non-parametrized gates</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Using this subcircuit, we can now generate the submatrix <span class="math notranslate nohighlight">\(g^{(1)}\)</span>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/qng5.png" src="../_images/qng5.png" style="width: 50%;" /></a>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer1_diag</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer1_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.var.html#pennylane.var" title="pennylane.var" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">var</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.var.html#pennylane.var" title="pennylane.var" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">var</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>As previously, the diagonal terms are simply given by the variance,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">varK0</span><span class="p">,</span> <span class="n">varK1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer1_diag</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">g1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">varK0</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">g1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">varK1</span> <span class="o">/</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>while the off-diagonal terms require covariance between the two
+observables to be computed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer1_off_diag_single</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer1_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">layer1_off_diag_double</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">layer1_subcircuit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+    <span class="n">YX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hermitian.html#pennylane.Hermitian" title="pennylane.Hermitian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hermitian</span></a><span class="p">(</span><span class="n">YX</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+
+
+<span class="c1"># calculate the off-diagonal terms</span>
+<span class="n">exK0</span><span class="p">,</span> <span class="n">exK1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer1_off_diag_single</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">exK0K1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">layer1_off_diag_double</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">g1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">exK0K1</span> <span class="o">-</span> <span class="n">exK0</span> <span class="o">*</span> <span class="n">exK1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+<span class="n">g1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">g1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Putting this altogether, the block-diagonal approximation to the Fubini-Study
+metric tensor for this variational quantum circuit is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">block_diag</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">block_diag</span><span class="p">(</span><span class="n">g0</span><span class="p">,</span> <span class="n">g1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[ 0.125       0.          0.          0.        ]
+ [ 0.          0.1875      0.          0.        ]
+ [ 0.          0.          0.24973433 -0.01524701]
+ [ 0.          0.         -0.01524701  0.20293623]]
+</pre></div>
+</div>
+<p>PennyLane contains a built-in function for computing the Fubini-Study metric
+tensor, <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.metric_tensor.html#pennylane.metric_tensor" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">metric_tensor()</span></code></a>, which
+we can use to verify this result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.batch_transform.html#pennylane.batch_transform" title="pennylane.batch_transform" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">metric_tensor</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">)(</span><span class="n">params</span><span class="p">),</span> <span class="mi">8</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[ 0.125       0.          0.          0.        ]
+ [ 0.          0.1875      0.          0.        ]
+ [ 0.          0.          0.24973433 -0.01524701]
+ [ 0.          0.         -0.01524701  0.20293623]]
+</pre></div>
+</div>
+<p>As opposed to our manual computation, which required 6 different quantum
+evaluations, the PennyLane Fubini-Study metric tensor implementation
+requires only 2 quantum evaluations, one per layer. This is done by
+automatically detecting the layer structure, and noting that every
+observable that must be measured commutes, allowing for simultaneous measurement.</p>
+<p>Therefore, by combining the quantum natural gradient optimizer with the analytic
+parameter-shift rule to optimize a variational circuit with <span class="math notranslate nohighlight">\(d\)</span> parameters
+and <span class="math notranslate nohighlight">\(L\)</span> parametrized layers, a total of <span class="math notranslate nohighlight">\(2d+L\)</span> quantum evaluations
+are required per optimization step.</p>
+<p>Note that the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.metric_tensor.html#pennylane.metric_tensor" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">metric_tensor()</span></code></a> function also supports computing the diagonal
+approximation to the metric tensor:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.batch_transform.html#pennylane.batch_transform" title="pennylane.batch_transform" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">metric_tensor</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">,</span> <span class="n">diag_approx</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[0.125      0.         0.         0.        ]
+ [0.         0.1875     0.         0.        ]
+ [0.         0.         0.24973433 0.        ]
+ [0.         0.         0.         0.20293623]]
+</pre></div>
+</div>
+<p>Furthermore, the returned metric tensor is <strong>full differentiable</strong>; include it
+in your cost function, and train or optimize its value!</p>
+</div>
+<div class="section" id="quantum-natural-gradient-optimization">
+<h2>Quantum natural gradient optimization<a class="headerlink" href="#quantum-natural-gradient-optimization" title="Permalink to this headline">¶</a></h2>
+<p>PennyLane provides an implementation of the quantum natural gradient
+optimizer, <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNGOptimizer</span></code></a>. Let’s compare the optimization convergence
+of the QNG Optimizer and the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">GradientDescentOptimizer</span></code></a> for the simple variational
+circuit above.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">init_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.432</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.123</span><span class="p">,</span> <span class="mf">0.543</span><span class="p">,</span> <span class="mf">0.233</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Performing vanilla gradient descent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gd_cost</span> <span class="o">=</span> <span class="p">[]</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer" title="pennylane.QNGOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">init_params</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer.step" title="pennylane.QNGOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">gd_cost</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Performing quantum natural gradient descent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qng_cost</span> <span class="o">=</span> <span class="p">[]</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer" title="pennylane.QNGOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer" title="pennylane.QNGOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNGOptimizer</span></a><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">init_params</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNGOptimizer.html#pennylane.QNGOptimizer.step" title="pennylane.QNGOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+    <span class="n">qng_cost</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Plotting the cost vs optimization step for both optimization strategies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gd_cost</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Vanilla gradient descent&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">qng_cost</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quantum natural gradient descent&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cost function value&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial quantum natural gradient" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_quantum_natural_gradient_001.png" />
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Shun-Ichi Amari. “Natural gradient works efficiently in learning.”
+<a class="reference external" href="https://www.mitpressjournals.org/doi/abs/10.1162/089976698300017746">Neural computation 10.2,  251-276</a>, 1998.</li>
+<li>James Stokes, Josh Izaac, Nathan Killoran, Giuseppe Carleo.
+“Quantum Natural Gradient.” <a class="reference external" href="https://arxiv.org/abs/1909.02108">arXiv:1909.02108</a>, 2019.</li>
+<li>Aram Harrow and John Napp. “Low-depth gradient measurements can improve
+convergence in variational hybrid quantum-classical algorithms.”
+<a class="reference external" href="https://arxiv.org/abs/1901.05374">arXiv:1901.05374</a>, 2019.</li>
+<li>Naoki Yamamoto. “On the natural gradient for variational quantum eigensolver.”
+<a class="reference external" href="https://arxiv.org/abs/1909.05074">arXiv:1909.05074</a>, 2019.</li>
+</ol>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  4.944 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-quantum-natural-gradient-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/dbffdbe35ce57891df5c9104423dd5d6/tutorial_quantum_natural_gradient.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_quantum_natural_gradient.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/f042c8aec13e6a0cfde61a059c4d825d/tutorial_quantum_natural_gradient.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_quantum_natural_gradient.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_quantum_natural_gradient</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Quantum natural gradient</a><ul>
+<li><a class="reference internal" href="#background">Background</a><ul>
+<li><a class="reference internal" href="#the-natural-gradient">The natural gradient</a></li>
+<li><a class="reference internal" href="#the-quantum-analog">The quantum analog</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#block-diagonal-metric-tensor">Block-diagonal metric tensor</a></li>
+<li><a class="reference internal" href="#quantum-natural-gradient-optimization">Quantum natural gradient optimization</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_quantum_natural_gradient</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_optimization.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_qng.html" title="Accelerating VQEs with quantum natural gradient"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_qaoa_intro.html" title="Intro to QAOA"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_optimization.html" >Optimization</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

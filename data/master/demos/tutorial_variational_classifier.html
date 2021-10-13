@@ -1,0 +1,1204 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Using PennyLane to implement quantum circuits that can be trained from labelled data to classify new data samples." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/classifier_output_59_0.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Variational classifier &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_variational_classifier.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Using PennyLane to implement quantum circuits that can be trained from labelled data to classify new data samples." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Variational classifier &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_variational_classifier.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data-reuploading classifier" href="tutorial_data_reuploading_classifier.html" />
+    <link rel="prev" title="Kernel-based training of quantum models with scikit-learn" href="tutorial_kernel_based_training.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_data_reuploading_classifier.html" title="Data-reuploading classifier"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_kernel_based_training.html" title="Kernel-based training of quantum models with scikit-learn"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" accesskey="U">Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-variational-classifier-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="variational-classifier">
+<span id="sphx-glr-demos-tutorial-variational-classifier-py"></span><span id="id1"></span><h1>Variational classifier<a class="headerlink" href="#variational-classifier" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_data_reuploading_classifier.html", "tutorial_multiclass_classification.html", "tutorial_ensemble_multi_qpu.html"];
+    var related_tutorials_titles = ['Data-reuploading classifier', 'Multiclass margin classifier', 'Ensemble classification'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 19 Jan 2021.</em></p>
+<p>In this tutorial, we show how to use PennyLane to implement variational
+quantum classifiers - quantum circuits that can be trained from labelled
+data to classify new data samples. The architecture is inspired by
+<a class="reference external" href="https://arxiv.org/abs/1802.06002">Farhi and Neven (2018)</a> as well as
+<a class="reference external" href="https://arxiv.org/abs/1804.00633">Schuld et al. (2018)</a>.</p>
+<p>We will first show that the variational quantum classifier can reproduce
+the parity function</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f: x \in \{0,1\}^{\otimes n} \rightarrow y =
+\begin{cases} 1 \text{  if uneven number of ones in } x \\ 0
+\text{ otherwise} \end{cases}.\end{split}\]</div>
+<p>This optimization example demonstrates how to encode binary inputs into
+the initial state of the variational circuit, which is simply a
+computational basis state.</p>
+<p>We then show how to encode real vectors as amplitude vectors (<em>amplitude
+encoding</em>) and train the model to recognize the first two classes of
+flowers in the Iris dataset.</p>
+<div class="section" id="fitting-the-parity-function">
+<h2>1. Fitting the parity function<a class="headerlink" href="#fitting-the-parity-function" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>As before, we import PennyLane, the PennyLane-provided version of NumPy,
+and an optimizer.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">pennylane.optimize</span> <span class="kn">import</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer" title="pennylane.NesterovMomentumOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">NesterovMomentumOptimizer</span></a>
+</pre></div>
+</div>
+</div>
+<div class="section" id="quantum-and-classical-nodes">
+<h3>Quantum and classical nodes<a class="headerlink" href="#quantum-and-classical-nodes" title="Permalink to this headline">¶</a></h3>
+<p>We create a quantum device with four “wires” (or qubits).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Variational classifiers usually define a “layer” or “block”, which is an
+elementary circuit architecture that gets repeated to build the
+variational circuit.</p>
+<p>Our circuit layer consists of an arbitrary rotation on every qubit, as
+well as CNOTs that entangle each qubit with its neighbour.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We also need a way to encode data inputs <span class="math notranslate nohighlight">\(x\)</span> into the circuit, so
+that the measured output depends on the inputs. In this first example,
+the inputs are bitstrings, which we encode into the state of the qubits.
+The quantum state <span class="math notranslate nohighlight">\(\psi\)</span> after
+state preparation is a computational basis state that has 1s where
+<span class="math notranslate nohighlight">\(x\)</span> has 1s, for example</p>
+<div class="math notranslate nohighlight">
+\[x = 0101 \rightarrow |\psi \rangle = |0101 \rangle .\]</div>
+<p>We use the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasisState</span></code></a> function provided by PennyLane, which expects
+<code class="docutils literal notranslate"><span class="pre">x</span></code> to be a list of zeros and ones, i.e. <code class="docutils literal notranslate"><span class="pre">[0,1,0,1]</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">statepreparation</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Now we define the quantum node as a state preparation routine, followed
+by a repetition of the layer structure. Borrowing from machine learning,
+we call the parameters <code class="docutils literal notranslate"><span class="pre">weights</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+    <span class="n">statepreparation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">W</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+        <span class="n">layer</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Different from previous examples, the quantum node takes the data as a
+keyword argument <code class="docutils literal notranslate"><span class="pre">x</span></code> (with the default value <code class="docutils literal notranslate"><span class="pre">None</span></code>). Keyword
+arguments of a quantum node are considered as fixed when calculating a
+gradient; they are never trained.</p>
+<p>If we want to add a “classical” bias parameter, the variational quantum
+classifier also needs some post-processing. We define the final model by
+a classical node that uses the first variable, and feeds the remainder
+into the quantum node. Before this, we reshape the list of remaining
+variables for easy use in the quantum node.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">bias</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cost">
+<h3>Cost<a class="headerlink" href="#cost" title="Permalink to this headline">¶</a></h3>
+<p>In supervised learning, the cost function is usually the sum of a loss
+function and a regularizer. We use the standard square loss that
+measures the distance between target labels and model predictions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">square_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+<p>To monitor how many inputs the current classifier predicted correctly,
+we also define the accuracy given target labels and model predictions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">l</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+<p>For learning tasks, the cost depends on the data - here the features and
+labels considered in the iteration of the optimization routine.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">square_loss</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optimization">
+<h3>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h3>
+<p>Let’s now load and preprocess some data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The parity dataset can be downloaded
+<span class="html"><a href="https://raw.githubusercontent.com/XanaduAI/qml/master/demonstrations/variational_classifier/data/parity.txt"
+download=parity.txt target="_blank">here</a></span> and
+should be placed in the subfolder <code class="docutils literal notranslate"><span class="pre">variational_classifer/data</span></code>.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;variational_classifier/data/parity.txt&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>  <span class="c1"># shift label from {0, 1} to {-1, 1}</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;X = </span><span class="si">{}</span><span class="s2">, Y = </span><span class="si">{: d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>X = [0. 0. 0. 0.], Y = -1
+X = [0. 0. 0. 1.], Y =  1
+X = [0. 0. 1. 0.], Y =  1
+X = [0. 0. 1. 1.], Y = -1
+X = [0. 1. 0. 0.], Y =  1
+...
+</pre></div>
+</div>
+<p>We initialize the variables randomly (but fix a seed for
+reproducibility). The first variable in the list is used as a bias,
+while the rest is fed into the gates of the variational circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">num_qubits</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">num_layers</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">var_init</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">var_init</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(tensor([[[ 0.01764052,  0.00400157,  0.00978738],
+         [ 0.02240893,  0.01867558, -0.00977278],
+         [ 0.00950088, -0.00151357, -0.00103219],
+         [ 0.00410599,  0.00144044,  0.01454274]],
+
+        [[ 0.00761038,  0.00121675,  0.00443863],
+         [ 0.00333674,  0.01494079, -0.00205158],
+         [ 0.00313068, -0.00854096, -0.0255299 ],
+         [ 0.00653619,  0.00864436, -0.00742165]]], requires_grad=True), 0.0)
+</pre></div>
+</div>
+<p>Next we create an optimizer and choose a batch size…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer" title="pennylane.NesterovMomentumOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer" title="pennylane.NesterovMomentumOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">NesterovMomentumOptimizer</span></a><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>…and train the optimizer. We track the accuracy - the share of correctly
+classified data samples. For this we compute the outputs of the
+variational classifier and turn them into predictions in
+<span class="math notranslate nohighlight">\(\{-1,1\}\)</span> by taking the sign of the output.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="o">=</span> <span class="n">var_init</span>
+<span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">25</span><span class="p">):</span>
+
+    <span class="c1"># Update the weights by one optimizer step</span>
+    <span class="n">batch_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,))</span>
+    <span class="n">X_batch</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">batch_index</span><span class="p">]</span>
+    <span class="n">Y_batch</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">batch_index</span><span class="p">]</span>
+    <span class="n">var</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer.step" title="pennylane.NesterovMomentumOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">cost</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">X_batch</span><span class="p">,</span> <span class="n">Y_batch</span><span class="p">),</span> <span class="n">var</span><span class="p">)</span>
+
+    <span class="c1"># Compute accuracy</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;Iter: </span><span class="si">{:5d}</span><span class="s2"> | Cost: </span><span class="si">{:0.7f}</span><span class="s2"> | Accuracy: </span><span class="si">{:0.7f}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">it</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cost</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">acc</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iter:     1 | Cost: 3.4355534 | Accuracy: 0.5000000
+Iter:     2 | Cost: 1.9287800 | Accuracy: 0.5000000
+Iter:     3 | Cost: 2.0341238 | Accuracy: 0.5000000
+Iter:     4 | Cost: 1.6372574 | Accuracy: 0.5000000
+Iter:     5 | Cost: 1.3025395 | Accuracy: 0.6250000
+Iter:     6 | Cost: 1.4555019 | Accuracy: 0.3750000
+Iter:     7 | Cost: 1.4492786 | Accuracy: 0.5000000
+Iter:     8 | Cost: 0.6510286 | Accuracy: 0.8750000
+Iter:     9 | Cost: 0.0566074 | Accuracy: 1.0000000
+Iter:    10 | Cost: 0.0053045 | Accuracy: 1.0000000
+Iter:    11 | Cost: 0.0809483 | Accuracy: 1.0000000
+Iter:    12 | Cost: 0.1115426 | Accuracy: 1.0000000
+Iter:    13 | Cost: 0.1460257 | Accuracy: 1.0000000
+Iter:    14 | Cost: 0.0877037 | Accuracy: 1.0000000
+Iter:    15 | Cost: 0.0361311 | Accuracy: 1.0000000
+Iter:    16 | Cost: 0.0040937 | Accuracy: 1.0000000
+Iter:    17 | Cost: 0.0004899 | Accuracy: 1.0000000
+Iter:    18 | Cost: 0.0005290 | Accuracy: 1.0000000
+Iter:    19 | Cost: 0.0024304 | Accuracy: 1.0000000
+Iter:    20 | Cost: 0.0062137 | Accuracy: 1.0000000
+Iter:    21 | Cost: 0.0088864 | Accuracy: 1.0000000
+Iter:    22 | Cost: 0.0201912 | Accuracy: 1.0000000
+Iter:    23 | Cost: 0.0060335 | Accuracy: 1.0000000
+Iter:    24 | Cost: 0.0036153 | Accuracy: 1.0000000
+Iter:    25 | Cost: 0.0012741 | Accuracy: 1.0000000
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="iris-classification">
+<h2>2. Iris classification<a class="headerlink" href="#iris-classification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Quantum and classical nodes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>To encode real-valued vectors into the amplitudes of a quantum state, we
+use a 2-qubit simulator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>State preparation is not as simple as when we represent a bitstring with
+a basis state. Every input x has to be translated into a set of angles
+which can get fed into a small routine for state preparation. To
+simplify things a bit, we will work with data from the positive
+subspace, so that we can ignore signs (which would require another
+cascade of rotations around the z axis).</p>
+<p>The circuit is coded according to the scheme in <a class="reference external" href="https://arxiv.org/abs/quant-ph/0407010">Möttönen, et al.
+(2004)</a>, or—as presented
+for positive vectors only—in <a class="reference external" href="https://link.springer.com/book/10.1007/978-3-319-96424-9">Schuld and Petruccione
+(2018)</a>. We
+had to also decompose controlled Y-axis rotations into more basic
+circuits following <a class="reference external" href="http://www.michaelnielsen.org/qcqi/">Nielsen and Chuang
+(2010)</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_angles</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+    <span class="n">beta0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">))</span>
+    <span class="n">beta1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">))</span>
+    <span class="n">beta2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">beta2</span><span class="p">,</span> <span class="o">-</span><span class="n">beta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">beta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">beta0</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">beta0</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">statepreparation</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s test if this routine actually works.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.53896774</span><span class="p">,</span> <span class="mf">0.79503606</span><span class="p">,</span> <span class="mf">0.27826503</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ang</span> <span class="o">=</span> <span class="n">get_angles</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">angles</span><span class="p">):</span>
+
+    <span class="n">statepreparation</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">test</span></a><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x               : &quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;angles          : &quot;</span><span class="p">,</span> <span class="n">ang</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;amplitude vector: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitDevice.html#pennylane.QubitDevice.state" title="pennylane.QubitDevice.state" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">dev</span><span class="o">.</span><span class="n">state</span></a><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>x               :  [0.53896774 0.79503606 0.27826503 0.        ]
+angles          :  [ 0.56397465 -0.          0.         -0.97504604  0.97504604]
+amplitude vector:  [ 5.38967743e-01  7.95036065e-01  2.78265032e-01 -2.77555756e-17]
+</pre></div>
+</div>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code> simulator provides a shortcut to
+<code class="docutils literal notranslate"><span class="pre">statepreparation</span></code> with the command
+<code class="docutils literal notranslate"><span class="pre">qml.QubitStateVector(x,</span> <span class="pre">wires=[0,</span> <span class="pre">1])</span></code>. However, some devices may not
+support an arbitrary state-preparation routine.</p>
+<p>Since we are working with only 2 qubits now, we need to update the layer
+function as well.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The variational classifier model and its cost remain essentially the
+same, but we have to reload them with the new state preparation and
+layer functions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+    <span class="n">statepreparation</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">W</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
+        <span class="n">layer</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">angles</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">bias</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">angles</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>
+
+
+<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">features</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">square_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<p>We then load the Iris data set. There is a bit of preprocessing to do in
+order to encode the inputs into the amplitudes of a quantum state. In
+the last preprocessing step, we translate the inputs x to rotation
+angles using the <code class="docutils literal notranslate"><span class="pre">get_angles</span></code> function we defined above.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Iris dataset can be downloaded
+<span class="html"><a href="https://raw.githubusercontent.com/XanaduAI/qml/master/demonstrations/variational_classifier/data/iris_classes1and2_scaled.txt"
+download=parity.txt target="_blank">here</a></span> and should be placed
+in the subfolder <code class="docutils literal notranslate"><span class="pre">variational_classifer/data</span></code>.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s2">&quot;variational_classifier/data/iris_classes1and2_scaled.txt&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First X sample (original)  :&quot;</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># pad the vectors to size 2^2 with constant values</span>
+<span class="n">padding</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">X_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">padding</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">))]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First X sample (padded)    :&quot;</span><span class="p">,</span> <span class="n">X_pad</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># normalize each input</span>
+<span class="n">normalization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X_pad</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">X_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_pad</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First X sample (normalized):&quot;</span><span class="p">,</span> <span class="n">X_norm</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># angles for state preparation are new features</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_angles</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_norm</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;First features sample      :&quot;</span><span class="p">,</span> <span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>First X sample (original)  : [0.4  0.75]
+First X sample (padded)    : [0.4  0.75 0.3  0.  ]
+First X sample (normalized): [0.44376016 0.83205029 0.33282012 0.        ]
+First features sample      : [ 0.67858523 -0.          0.         -1.080839    1.080839  ]
+</pre></div>
+</div>
+<p>These angles are our new features, which is why we have renamed X to
+“features” above. Let’s plot the stages of preprocessing and play around
+with the dimensions (dim1, dim2). Some of them still separate the
+classes well, while others are less informative.</p>
+<p><em>Note: To run the following code you need the matplotlib library.</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Original data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">dim1</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dim2</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_norm</span><span class="p">[:,</span> <span class="n">dim1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">X_norm</span><span class="p">[:,</span> <span class="n">dim2</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_norm</span><span class="p">[:,</span> <span class="n">dim1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">X_norm</span><span class="p">[:,</span> <span class="n">dim2</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Padded and normalised data (dims </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">dim1</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dim2</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">features</span><span class="p">[:,</span> <span class="n">dim1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">features</span><span class="p">[:,</span> <span class="n">dim2</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">features</span><span class="p">[:,</span> <span class="n">dim1</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">features</span><span class="p">[:,</span> <span class="n">dim2</span><span class="p">][</span><span class="n">Y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Feature vectors (dims </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img alt="Original data" class="sphx-glr-multi-img first" src="../_images/sphx_glr_tutorial_variational_classifier_001.png" />
+</li>
+<li><img alt="Padded and normalised data (dims 0 and 1)" class="sphx-glr-multi-img first" src="../_images/sphx_glr_tutorial_variational_classifier_002.png" />
+</li>
+<li><img alt="Feature vectors (dims 0 and 3)" class="sphx-glr-multi-img first" src="../_images/sphx_glr_tutorial_variational_classifier_003.png" />
+</li>
+</ul>
+<p>This time we want to generalize from the data samples. To monitor the
+generalization performance, the data is split into training and
+validation set.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">num_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">num_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.75</span> <span class="o">*</span> <span class="n">num_data</span><span class="p">)</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_data</span><span class="p">))</span>
+<span class="n">feats_train</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">index</span><span class="p">[:</span><span class="n">num_train</span><span class="p">]]</span>
+<span class="n">Y_train</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">index</span><span class="p">[:</span><span class="n">num_train</span><span class="p">]]</span>
+<span class="n">feats_val</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">num_train</span><span class="p">:]]</span>
+<span class="n">Y_val</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">num_train</span><span class="p">:]]</span>
+
+<span class="c1"># We need these later for plotting</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">[:</span><span class="n">num_train</span><span class="p">]]</span>
+<span class="n">X_val</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">num_train</span><span class="p">:]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Optimization<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>First we initialize the variables.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_qubits</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">num_layers</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">var_init</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again we optimize the cost. This may take a little patience.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer" title="pennylane.NesterovMomentumOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer" title="pennylane.NesterovMomentumOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">NesterovMomentumOptimizer</span></a><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># train the variational classifier</span>
+<span class="n">var</span> <span class="o">=</span> <span class="n">var_init</span>
+<span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+
+    <span class="c1"># Update the weights by one optimizer step</span>
+    <span class="n">batch_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_train</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,))</span>
+    <span class="n">feats_train_batch</span> <span class="o">=</span> <span class="n">feats_train</span><span class="p">[</span><span class="n">batch_index</span><span class="p">]</span>
+    <span class="n">Y_train_batch</span> <span class="o">=</span> <span class="n">Y_train</span><span class="p">[</span><span class="n">batch_index</span><span class="p">]</span>
+    <span class="n">var</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.NesterovMomentumOptimizer.html#pennylane.NesterovMomentumOptimizer.step" title="pennylane.NesterovMomentumOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">cost</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">feats_train_batch</span><span class="p">,</span> <span class="n">Y_train_batch</span><span class="p">),</span> <span class="n">var</span><span class="p">)</span>
+
+    <span class="c1"># Compute predictions on train and validation set</span>
+    <span class="n">predictions_train</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feats_train</span><span class="p">]</span>
+    <span class="n">predictions_val</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feats_val</span><span class="p">]</span>
+
+    <span class="c1"># Compute accuracy on train and validation set</span>
+    <span class="n">acc_train</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">Y_train</span><span class="p">,</span> <span class="n">predictions_train</span><span class="p">)</span>
+    <span class="n">acc_val</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">Y_val</span><span class="p">,</span> <span class="n">predictions_val</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;Iter: </span><span class="si">{:5d}</span><span class="s2"> | Cost: </span><span class="si">{:0.7f}</span><span class="s2"> | Acc train: </span><span class="si">{:0.7f}</span><span class="s2"> | Acc validation: </span><span class="si">{:0.7f}</span><span class="s2"> &quot;</span>
+        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">it</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cost</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">acc_train</span><span class="p">,</span> <span class="n">acc_val</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iter:     1 | Cost: 1.4490948 | Acc train: 0.4933333 | Acc validation: 0.5600000
+Iter:     2 | Cost: 1.3309953 | Acc train: 0.4933333 | Acc validation: 0.5600000
+Iter:     3 | Cost: 1.1582178 | Acc train: 0.4533333 | Acc validation: 0.5600000
+Iter:     4 | Cost: 0.9795035 | Acc train: 0.4800000 | Acc validation: 0.5600000
+Iter:     5 | Cost: 0.8857893 | Acc train: 0.6400000 | Acc validation: 0.7600000
+Iter:     6 | Cost: 0.8587935 | Acc train: 0.7066667 | Acc validation: 0.7600000
+Iter:     7 | Cost: 0.8496204 | Acc train: 0.7200000 | Acc validation: 0.6800000
+Iter:     8 | Cost: 0.8200972 | Acc train: 0.7333333 | Acc validation: 0.6800000
+Iter:     9 | Cost: 0.8027511 | Acc train: 0.7466667 | Acc validation: 0.6800000
+Iter:    10 | Cost: 0.7695152 | Acc train: 0.8000000 | Acc validation: 0.7600000
+Iter:    11 | Cost: 0.7437432 | Acc train: 0.8133333 | Acc validation: 0.9600000
+Iter:    12 | Cost: 0.7569196 | Acc train: 0.6800000 | Acc validation: 0.7600000
+Iter:    13 | Cost: 0.7887487 | Acc train: 0.6533333 | Acc validation: 0.7200000
+Iter:    14 | Cost: 0.8401458 | Acc train: 0.6133333 | Acc validation: 0.6400000
+Iter:    15 | Cost: 0.8651830 | Acc train: 0.5600000 | Acc validation: 0.6000000
+Iter:    16 | Cost: 0.8726113 | Acc train: 0.5600000 | Acc validation: 0.6000000
+Iter:    17 | Cost: 0.8389732 | Acc train: 0.6133333 | Acc validation: 0.6400000
+Iter:    18 | Cost: 0.8004839 | Acc train: 0.6266667 | Acc validation: 0.6400000
+Iter:    19 | Cost: 0.7592044 | Acc train: 0.6800000 | Acc validation: 0.7600000
+Iter:    20 | Cost: 0.7332872 | Acc train: 0.7733333 | Acc validation: 0.8000000
+Iter:    21 | Cost: 0.7184319 | Acc train: 0.8800000 | Acc validation: 0.9600000
+Iter:    22 | Cost: 0.7336631 | Acc train: 0.8133333 | Acc validation: 0.7200000
+Iter:    23 | Cost: 0.7503193 | Acc train: 0.6533333 | Acc validation: 0.6400000
+Iter:    24 | Cost: 0.7608474 | Acc train: 0.5866667 | Acc validation: 0.5200000
+Iter:    25 | Cost: 0.7443533 | Acc train: 0.6533333 | Acc validation: 0.6400000
+Iter:    26 | Cost: 0.7383224 | Acc train: 0.7066667 | Acc validation: 0.6400000
+Iter:    27 | Cost: 0.7322155 | Acc train: 0.7466667 | Acc validation: 0.6800000
+Iter:    28 | Cost: 0.7384175 | Acc train: 0.6533333 | Acc validation: 0.6400000
+Iter:    29 | Cost: 0.7393227 | Acc train: 0.6400000 | Acc validation: 0.6400000
+Iter:    30 | Cost: 0.7251903 | Acc train: 0.7200000 | Acc validation: 0.6800000
+Iter:    31 | Cost: 0.7125040 | Acc train: 0.7866667 | Acc validation: 0.6800000
+Iter:    32 | Cost: 0.6932690 | Acc train: 0.9066667 | Acc validation: 0.9200000
+Iter:    33 | Cost: 0.6800562 | Acc train: 0.9200000 | Acc validation: 1.0000000
+Iter:    34 | Cost: 0.6763140 | Acc train: 0.9200000 | Acc validation: 0.9600000
+Iter:    35 | Cost: 0.6790040 | Acc train: 0.8933333 | Acc validation: 0.8800000
+Iter:    36 | Cost: 0.6936199 | Acc train: 0.7600000 | Acc validation: 0.7200000
+Iter:    37 | Cost: 0.6767184 | Acc train: 0.8266667 | Acc validation: 0.8000000
+Iter:    38 | Cost: 0.6712470 | Acc train: 0.8266667 | Acc validation: 0.8000000
+Iter:    39 | Cost: 0.6747390 | Acc train: 0.7600000 | Acc validation: 0.7600000
+Iter:    40 | Cost: 0.6845696 | Acc train: 0.6666667 | Acc validation: 0.6400000
+Iter:    41 | Cost: 0.6703303 | Acc train: 0.7333333 | Acc validation: 0.7200000
+Iter:    42 | Cost: 0.6238401 | Acc train: 0.8933333 | Acc validation: 0.8400000
+Iter:    43 | Cost: 0.6028185 | Acc train: 0.9066667 | Acc validation: 0.9200000
+Iter:    44 | Cost: 0.5936355 | Acc train: 0.9066667 | Acc validation: 0.9200000
+Iter:    45 | Cost: 0.5722417 | Acc train: 0.9200000 | Acc validation: 0.9600000
+Iter:    46 | Cost: 0.5617923 | Acc train: 0.9200000 | Acc validation: 0.9600000
+Iter:    47 | Cost: 0.5413240 | Acc train: 0.9466667 | Acc validation: 1.0000000
+Iter:    48 | Cost: 0.5239643 | Acc train: 0.9466667 | Acc validation: 1.0000000
+Iter:    49 | Cost: 0.5100842 | Acc train: 0.9466667 | Acc validation: 1.0000000
+Iter:    50 | Cost: 0.5006861 | Acc train: 0.9466667 | Acc validation: 1.0000000
+Iter:    51 | Cost: 0.4821672 | Acc train: 0.9466667 | Acc validation: 1.0000000
+Iter:    52 | Cost: 0.4579575 | Acc train: 0.9600000 | Acc validation: 1.0000000
+Iter:    53 | Cost: 0.4397479 | Acc train: 1.0000000 | Acc validation: 1.0000000
+Iter:    54 | Cost: 0.4326879 | Acc train: 0.9600000 | Acc validation: 0.9200000
+Iter:    55 | Cost: 0.4351511 | Acc train: 0.9466667 | Acc validation: 0.9200000
+Iter:    56 | Cost: 0.4328988 | Acc train: 0.9333333 | Acc validation: 0.9200000
+Iter:    57 | Cost: 0.4149892 | Acc train: 0.9333333 | Acc validation: 0.9200000
+Iter:    58 | Cost: 0.3755246 | Acc train: 0.9600000 | Acc validation: 0.9200000
+Iter:    59 | Cost: 0.3468994 | Acc train: 1.0000000 | Acc validation: 1.0000000
+Iter:    60 | Cost: 0.3297071 | Acc train: 1.0000000 | Acc validation: 1.0000000
+</pre></div>
+</div>
+<p>We can plot the continuous output of the variational classifier for the
+first two dimensions of the Iris data set.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">RdBu</span>
+
+<span class="c1"># make data for decision regions</span>
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+<span class="n">X_grid</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">flatten</span><span class="p">())]</span>
+
+<span class="c1"># preprocess grid points like data inputs above</span>
+<span class="n">padding</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">X_grid</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">X_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X_grid</span><span class="p">,</span> <span class="n">padding</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">X_grid</span><span class="p">),</span> <span class="mi">1</span><span class="p">))]</span>  <span class="c1"># pad each input</span>
+<span class="n">normalization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X_grid</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">X_grid</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_grid</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">normalization</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># normalize each input</span>
+<span class="n">features_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">get_angles</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_grid</span><span class="p">]</span>
+<span class="p">)</span>  <span class="c1"># angles for state preparation are new features</span>
+<span class="n">predictions_grid</span> <span class="o">=</span> <span class="p">[</span><span class="n">variational_classifier</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">features_grid</span><span class="p">]</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">predictions_grid</span><span class="p">,</span> <span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># plot decision regions</span>
+<span class="n">cnt</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span>
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="s2">&quot;both&quot;</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span>
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">,),</span> <span class="n">linestyles</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,),</span> <span class="n">linewidths</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cnt</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># plot data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y_train</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y_train</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;class 1 train&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_val</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y_val</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">X_val</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y_val</span> <span class="o">==</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">c</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;class 1 validation&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y_train</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">X_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y_train</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;class -1 train&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X_val</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">][</span><span class="n">Y_val</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">X_val</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">][</span><span class="n">Y_val</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;^&quot;</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;class -1 validation&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial variational classifier" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_variational_classifier_004.png" />
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  11.251 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-variational-classifier-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/5f4797a56d4e3989b13e177ab0c88e5e/tutorial_variational_classifier.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_variational_classifier.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/bddc51a275afaf215cb942c6f66eb629/tutorial_variational_classifier.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_variational_classifier.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_variational_classifier</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Variational classifier</a><ul>
+<li><a class="reference internal" href="#fitting-the-parity-function">1. Fitting the parity function</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#quantum-and-classical-nodes">Quantum and classical nodes</a></li>
+<li><a class="reference internal" href="#cost">Cost</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#iris-classification">2. Iris classification</a><ul>
+<li><a class="reference internal" href="#id2">Quantum and classical nodes</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+<li><a class="reference internal" href="#id3">Optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_variational_classifier</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_qml.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_data_reuploading_classifier.html" title="Data-reuploading classifier"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_kernel_based_training.html" title="Kernel-based training of quantum models with scikit-learn"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" >Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

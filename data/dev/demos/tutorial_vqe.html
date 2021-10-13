@@ -1,0 +1,806 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Find the ground state of a Hamiltonian using the variational quantum eigensolver algorithm." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/pes_h2.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="A brief overview of VQE &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_vqe.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Find the ground state of a Hamiltonian using the variational quantum eigensolver algorithm." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>A brief overview of VQE &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_vqe.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VQE in different spin sectors" href="tutorial_vqe_spin_sectors.html" />
+    <link rel="prev" title="Building molecular Hamiltonians" href="tutorial_quantum_chemistry.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_spin_sectors.html" title="VQE in different spin sectors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quantum_chemistry.html" title="Building molecular Hamiltonians"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" accesskey="U">Basics</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-vqe-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="a-brief-overview-of-vqe">
+<span id="sphx-glr-demos-tutorial-vqe-py"></span><h1>A brief overview of VQE<a class="headerlink" href="#a-brief-overview-of-vqe" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_quantum_chemistry.html", "tutorial_vqe_parallel.html", "tutorial_vqe_qng.html", "tutorial_vqe_spin_sectors.html", "tutorial_vqt.html"];
+    var related_tutorials_titles = ['Building molecular Hamiltonians', 'VQE with parallel QPUs', 'Accelerating VQE with the QNG', 'VQE in different spin sectors', 'Variational quantum thermalizer'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 15 July 2021.</em></p>
+<p>The Variational Quantum Eigensolver (VQE) is a flagship algorithm for quantum chemistry
+using near-term quantum computers <a class="footnote-reference" href="#peruzzo2014" id="id1">[1]</a>. It is an application of the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Ritz_method">Ritz variational principle</a>, where a quantum
+computer is trained to prepare the ground state of a given molecule.</p>
+<p>The inputs to the VQE algorithm are a molecular Hamiltonian and a
+parametrized circuit preparing the quantum state of the molecule. Within VQE, the
+cost function is defined as the expectation value of the Hamiltonian computed in the
+trial state. The ground state of the target Hamiltonian is obtained by performing an
+iterative minimization of the cost function. The optimization is carried out
+by a classical optimizer which leverages a quantum computer to evaluate the cost function
+and calculate its gradient at each optimization step.</p>
+<p>In this tutorial you will learn how to implement the VQE algorithm in a few lines of code.
+As an illustrative example, we use it to find the ground state of the hydrogen
+molecule, <span class="math notranslate nohighlight">\(\mathrm{H}_2\)</span>. First, we build the molecular Hamiltonian using a minimal
+basis set approximation. Next, we design the quantum circuit preparing the trial
+state of the molecule, and the cost function to evaluate the expectation value
+of the Hamiltonian. Finally, we select a classical optimizer, initialize the
+circuit parameters, and run the VQE algorithm using a PennyLane simulator.</p>
+<p>Let’s get started!</p>
+<div class="section" id="building-the-electronic-hamiltonian">
+<h2>Building the electronic Hamiltonian<a class="headerlink" href="#building-the-electronic-hamiltonian" title="Permalink to this headline">¶</a></h2>
+<p>The first step is to specify the molecule we want to simulate. This
+is done by providing a list with the symbols of the constituent atoms
+and a one-dimensional array with the corresponding nuclear coordinates
+in <a class="reference external" href="https://en.wikipedia.org/wiki/Hartree_atomic_units">atomic units</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">symbols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">]</span>
+<span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.6614</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.6614</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The molecular structure can also be imported from an external file using
+the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane_qchem.qchem.read_structure.html#pennylane_qchem.qchem.read_structure" title="(in PennyLane v0.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_structure()</span></code></a> function.</p>
+<p>Now, we can build the electronic Hamiltonian of the hydrogen molecule
+using the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane_qchem.qchem.molecular_hamiltonian.html#pennylane_qchem.qchem.molecular_hamiltonian" title="(in PennyLane v0.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">molecular_hamiltonian()</span></code></a> function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">qubits</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">qchem</span><span class="o">.</span><span class="n">molecular_hamiltonian</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of qubits = &quot;</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Hamiltonian is &quot;</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Number of qubits =  4
+The Hamiltonian is    (-0.2427450172749822) [Z2]
++ (-0.2427450172749822) [Z3]
++ (-0.04207254303152995) [I0]
++ (0.17771358191549907) [Z0]
++ (0.17771358191549919) [Z1]
++ (0.12293330460167415) [Z0 Z2]
++ (0.12293330460167415) [Z1 Z3]
++ (0.16768338881432715) [Z0 Z3]
++ (0.16768338881432715) [Z1 Z2]
++ (0.17059759240560826) [Z0 Z1]
++ (0.17627661476093917) [Z2 Z3]
++ (-0.04475008421265302) [Y0 Y1 X2 X3]
++ (-0.04475008421265302) [X0 X1 Y2 Y3]
++ (0.04475008421265302) [Y0 X1 X2 Y3]
++ (0.04475008421265302) [X0 Y1 Y2 X3]
+</pre></div>
+</div>
+<p>The outputs of the function are the Hamiltonian, represented as
+a linear combination of Pauli operators, and the number of qubits
+required for the quantum simulations. For this example, we use a
+<a class="reference external" href="https://en.wikipedia.org/wiki/STO-nG_basis_sets">minimal basis set</a>
+to represent the <a class="reference external" href="https://en.wikipedia.org/wiki/Molecular_orbital">molecular orbitals</a>.
+In this approximation, we have four spin orbitals, which defines the
+number of qubits. Furthermore, we use the Jordan-Wigner
+transformation <a class="footnote-reference" href="#seeley2012" id="id2">[2]</a> to perform the fermionic-to-qubit mapping of
+the Hamiltonian.</p>
+<p>For a more comprehensive discussion on how to build the Hamiltonian of more
+complicated molecules, see the tutorial <a class="reference internal" href="tutorial_quantum_chemistry.html"><span class="doc">Building molecular Hamiltonians</span></a>.</p>
+</div>
+<div class="section" id="implementing-the-vqe-algorithm">
+<h2>Implementing the VQE algorithm<a class="headerlink" href="#implementing-the-vqe-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>From here on, we can use PennyLane as usual, employing its entire stack of
+algorithms and optimizers. We begin by defining the device, in this case PennyLane’s
+standard qubit simulator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we need to define the quantum circuit that prepares the trial state of the
+molecule. We want to prepare states of the form,</p>
+<div class="math notranslate nohighlight">
+\[\vert \Psi(\theta) \rangle = \cos(\theta/2)~|1100\rangle -\sin(\theta/2)~|0011\rangle,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta\)</span> is the variational parameter to be optimized in order to find
+the best approximation to the true ground state. In the Jordan-Wigner <a class="footnote-reference" href="#seeley2012" id="id3">[2]</a> encoding,
+the first term <span class="math notranslate nohighlight">\(|1100\rangle\)</span> represents the <a class="reference external" href="https://en.wikipedia.org/wiki/Hartree%E2%80%93Fock_method">Hartree-Fock (HF) state</a> where the two electrons in
+the molecule occupy the lowest-energy orbitals. The second term <span class="math notranslate nohighlight">\(|0011\rangle\)</span>
+encodes a double excitation of the HF state where the two particles are excited from
+qubits 0, 1 to 2, 3.</p>
+<p>The quantum circuit to prepare the trial state <span class="math notranslate nohighlight">\(\vert \Psi(\theta) \rangle\)</span> is
+schematically illustrated in the figure below.</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/sketch_circuit.png"><img alt="../_images/sketch_circuit.png" src="../_images/sketch_circuit.png" style="width: 50%;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>In this figure, the gate <span class="math notranslate nohighlight">\(G^{(2)}\)</span> corresponds to the
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoubleExcitation</span></code></a> operation, implemented in PennyLane
+as a <a class="reference external" href="https://en.wikipedia.org/wiki/Givens_rotation">Givens rotation</a>, which couples
+the four-qubit states <span class="math notranslate nohighlight">\(\vert 1100 \rangle\)</span> and <span class="math notranslate nohighlight">\(\vert 0011 \rangle\)</span>.
+For more details on how to use the excitation operations to build
+quantum circuits for quantum chemistry applications see the
+tutorial <a class="reference internal" href="tutorial_givens_rotations.html"><span class="doc">Givens rotations for quantum chemistry</span></a>.</p>
+<p>Implementing the circuit above using PennyLane is straightforward. First, we use the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">hf_state()</span></code> function to generate the vector representing the Hartree-Fock state.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">electrons</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">hf</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">qchem</span><span class="o">.</span><span class="n">hf_state</span><span class="p">(</span><span class="n">electrons</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hf</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[1 1 0 0]
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">hf</span></code> array is used by the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasisState</span></code></a> operation to initialize
+the qubit register. Then, we just act with the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoubleExcitation</span></code></a> operation
+on the four qubits.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">hf</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="pennylane.DoubleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DoubleExcitation</span></a><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The next step is to define the cost function to compute the expectation value
+of the molecular Hamiltonian in the trial state prepared by the circuit.
+We do this using the <code class="xref py py-class docutils literal notranslate"><span class="pre">ExpvalCost</span></code>
+class, which is tailored for VQE optimization. It requires specifying the
+circuit, target Hamiltonian, and the device, and it returns a cost function that can
+be evaluated with the gate parameter <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">dev</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we proceed to minimize the cost function to find the ground state of
+the <span class="math notranslate nohighlight">\(\mathrm{H}_2\)</span> molecule. To start, we need to define the classical optimizer.
+PennyLane offers many different built-in
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/introduction/optimizers.html">optimizers</a>.
+Here we use a basic gradient-descent optimizer.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We initialize the circuit parameter <span class="math notranslate nohighlight">\(\theta\)</span> to zero, meaning that we start
+from the Hartree-Fock state.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+<p>We carry out the optimization over a maximum of 100 steps aiming to reach a
+convergence tolerance of <span class="math notranslate nohighlight">\(10^{-6}\)</span> for the value of the cost function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># store the values of the cost function</span>
+<span class="n">energy</span> <span class="o">=</span> <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">(</span><span class="n">theta</span><span class="p">)]</span>
+
+<span class="c1"># store the values of the circuit parameter</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta</span><span class="p">]</span>
+
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">conv_tol</span> <span class="o">=</span> <span class="mf">1e-06</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+    <span class="n">theta</span><span class="p">,</span> <span class="n">prev_energy</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step_and_cost" title="pennylane.GradientDescentOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+
+    <span class="n">energy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">angle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">prev_energy</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">,  Energy = </span><span class="si">{</span><span class="n">energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">conv</span> <span class="o">&lt;=</span> <span class="n">conv_tol</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;Final value of the ground-state energy = </span><span class="si">{</span><span class="n">energy</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;Optimal value of the circuit parameter = </span><span class="si">{</span><span class="n">angle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Step = 0,  Energy = -1.12799983 Ha
+Step = 2,  Energy = -1.13466246 Ha
+Step = 4,  Energy = -1.13590595 Ha
+Step = 6,  Energy = -1.13613667 Ha
+Step = 8,  Energy = -1.13617944 Ha
+Step = 10,  Energy = -1.13618736 Ha
+Step = 12,  Energy = -1.13618883 Ha
+
+Final value of the ground-state energy = -1.13618883 Ha
+
+Optimal value of the circuit parameter = 0.2089
+</pre></div>
+</div>
+<p>Let’s plot the values of the ground state energy of the molecule
+and the gate parameter <span class="math notranslate nohighlight">\(\theta\)</span> as a function of the optimization step.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Full configuration interaction (FCI) energy computed classically</span>
+<span class="n">E_fci</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.136189454088</span>
+
+<span class="c1"># Add energy plot on column 1</span>
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">energy</span><span class="p">,</span> <span class="s2">&quot;go-&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">E_fci</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization step&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Energy (Hartree)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.1176</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$E_\mathrm</span><span class="si">{HF}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.1357</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$E_\mathrm</span><span class="si">{FCI}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Add angle plot on column 2</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">angle</span><span class="p">,</span> <span class="s2">&quot;go-&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization step&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Gate parameter $</span><span class="se">\\</span><span class="s2">theta$ (rad)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial vqe" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqe_001.png" />
+<p>In this case, the VQE algorithm converges after thirteen iterations. The optimal
+value of the circuit parameter <span class="math notranslate nohighlight">\(\theta^* = 0.208\)</span> defines the state</p>
+<div class="math notranslate nohighlight">
+\[\vert \Psi(\theta^*) \rangle = 0.994~\vert 1100 \rangle - 0.104~\vert 0011 \rangle,\]</div>
+<p>which is precisely the ground state of the <span class="math notranslate nohighlight">\(\mathrm{H}_2\)</span> molecule in a
+minimal basis set approximation.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we have implemented the VQE algorithm to find the ground state
+of the hydrogen molecule. We used a simple circuit to prepare quantum states of
+the molecule beyond the Hartree-Fock approximation. The ground-state energy
+was obtained by minimizing a cost function defined as the expectation value of the
+molecular Hamiltonian in the trial state.</p>
+<p>The VQE algorithm can be used to simulate other chemical phenomena.
+In the tutorial <span class="xref std std-doc">tutorial_vqe_bond_dissociation</span>, we use VQE to explore the
+potential energy surface of molecules to simulate chemical reactions.
+Another interesting application is to probe the lowest-lying states of molecules
+in specific sectors of the Hilbert space. For example, see the tutorial
+<a class="reference internal" href="tutorial_vqe_spin_sectors.html"><span class="doc">VQE in different spin sectors</span></a>. Furthermore, the algorithm presented here can be
+generalized to find the equilibrium geometry of a molecule as it is demonstrated in the
+tutorial <a class="reference internal" href="tutorial_mol_geo_opt.html"><span class="doc">Optimization of molecular geometries</span></a>.</p>
+</div>
+<div class="section" id="references">
+<span id="vqe-references"></span><h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="peruzzo2014" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Alberto Peruzzo, Jarrod McClean <em>et al.</em>, “A variational eigenvalue solver on a photonic
+quantum processor”. <a class="reference external" href="https://www.nature.com/articles/ncomms5213?origin=ppub">Nature Communications 5, 4213 (2014).</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="seeley2012" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Jacob T. Seeley, Martin J. Richard, Peter J. Love. “The Bravyi-Kitaev transformation for
+quantum computation of electronic structure”. <a class="reference external" href="https://aip.scitation.org/doi/abs/10.1063/1.4768229">Journal of Chemical Physics 137, 224109 (2012).</a></td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.959 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-vqe-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/b0cceb0ab9e2d677ebe669ad68564eb3/tutorial_vqe.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_vqe.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/0141483fe11b461befd6986ab50cbbdb/tutorial_vqe.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_vqe.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_vqe</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">A brief overview of VQE</a><ul>
+<li><a class="reference internal" href="#building-the-electronic-hamiltonian">Building the electronic Hamiltonian</a></li>
+<li><a class="reference internal" href="#implementing-the-vqe-algorithm">Implementing the VQE algorithm</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_vqe</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_basics.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_vqe_spin_sectors.html" title="VQE in different spin sectors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quantum_chemistry.html" title="Building molecular Hamiltonians"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" >Basics</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

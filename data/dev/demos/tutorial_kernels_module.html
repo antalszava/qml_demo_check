@@ -1,0 +1,1110 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Kernels and alignment training with Pennylane." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/QEK_thumbnail.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Training and evaluating quantum kernels &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_kernels_module.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Kernels and alignment training with Pennylane." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Training and evaluating quantum kernels &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_kernels_module.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-kernels-module-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="training-and-evaluating-quantum-kernels">
+<span id="sphx-glr-demos-tutorial-kernels-module-py"></span><h1>Training and evaluating quantum kernels<a class="headerlink" href="#training-and-evaluating-quantum-kernels" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_kernel_based_training.html", "tutorial_data_reuploading_classifier.html"];
+    var related_tutorials_titles = ['Kernel-based training with scikit-learn', 'Classification with data reuploading'];
+</script></p>
+<p><em>Authors: Peter-Jan Derks, Paul Fährmann, Elies Gil-Fuster, Tom
+Hubregtsen, Johannes Jakob Meyer and David Wierichs. Posted: 24 June 2021</em></p>
+<p>Kernel methods are one of the cornerstones of classical machine learning.
+Here we are concerned with kernels that can be evaluated on quantum computers,
+<em>quantum kernels</em> for short.
+In this tutorial you will learn how to evaluate kernels, use them for classification
+and train them with gradient-based optimization, and all that using the
+functionality of PennyLane’s
+<a class="reference external" href="https://pennylane.readthedocs.io/en/latest/code/qml_kernels.html">kernels module</a>.
+The demo is based on Ref. <a class="footnote-reference" href="#training-qeks" id="id1">[1]</a>, a project from Xanadu’s own
+<a class="reference external" href="https://qhack.ai/">QHack</a> hackathon.</p>
+<div class="section" id="what-are-kernel-methods">
+<h2>What are kernel methods?<a class="headerlink" href="#what-are-kernel-methods" title="Permalink to this headline">¶</a></h2>
+<p>To understand what a kernel method does, let’s first revisit
+one of the simplest methods to assign binary labels to datapoints:
+linear classification.</p>
+<p>Imagine we want to discern two different classes of points that lie in
+different corners of the plane. A linear classifier corresponds to
+drawing a line and assigning different labels to the regions on opposing
+sides of the line:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/linear_classification.png"><img alt="../_images/linear_classification.png" src="../_images/linear_classification.png" style="width: 30%;" /></a>
+</div>
+<p>We can mathematically formalize this by assigning the label <span class="math notranslate nohighlight">\(y\)</span>
+via</p>
+<div class="math notranslate nohighlight">
+\[y(\boldsymbol{x}) = \operatorname{sgn}(\langle \boldsymbol{w}, \boldsymbol{x}\rangle + b).\]</div>
+<p>The vector <span class="math notranslate nohighlight">\(\boldsymbol{w}\)</span> points perpendicular to the line and
+thus determine its slope. The independent term <span class="math notranslate nohighlight">\(b\)</span> specifies the
+position on the plane. In this form, linear classification can also be
+extended to higher dimensional vectors <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>, where a
+line does not divide the entire space into two regions anymore. Instead
+one needs a <em>hyperplane</em>. It is immediately clear that this method is
+not very powerful, as datasets that are not separable by a hyperplane
+can’t be classified without error.</p>
+<p>We can actually sneak around this limitation by performing a neat trick:
+if we define some map <span class="math notranslate nohighlight">\(\phi(\boldsymbol{x})\)</span> that <em>embeds</em> our
+datapoints into a larger <em>feature space</em> and then perform linear
+classification there, we could actually realise non-linear
+classification in our original space!</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/embedding_nonlinear_classification.png"><img alt="../_images/embedding_nonlinear_classification.png" src="../_images/embedding_nonlinear_classification.png" style="width: 65%;" /></a>
+</div>
+<p>If we go back to the expression for our prediction and include the
+embedding, we get</p>
+<div class="math notranslate nohighlight">
+\[y(\boldsymbol{x}) = \operatorname{sgn}(\langle \boldsymbol{w}, \phi(\boldsymbol{x})\rangle + b).\]</div>
+<p>We will forgo one tiny step, but it can be shown that for the purpose
+of optimal classification, we can choose the vector defining the
+decision boundary as a linear combination of the embedded datapoints
+<span class="math notranslate nohighlight">\(\boldsymbol{w} = \sum_i \alpha_i \phi(\boldsymbol{x}_i)\)</span>. Putting
+this into the formula yields</p>
+<div class="math notranslate nohighlight">
+\[y(\boldsymbol{x}) = \operatorname{sgn}\left(\sum_i \alpha_i \langle \phi(\boldsymbol{x}_i), \phi(\boldsymbol{x})\rangle + b\right).\]</div>
+<p>This rewriting might not seem useful at first, but notice the above
+formula only contains inner products between vectors in the embedding
+space:</p>
+<div class="math notranslate nohighlight">
+\[k(\boldsymbol{x}_i, \boldsymbol{x}_j) = \langle \phi(\boldsymbol{x}_i), \phi(\boldsymbol{x}_j)\rangle.\]</div>
+<p>We call this function the <em>kernel</em>. It provides the advantage that we can often
+find an explicit formula for the kernel <span class="math notranslate nohighlight">\(k\)</span> that makes it
+superfluous to actually perform the (potentially expensive) embedding
+<span class="math notranslate nohighlight">\(\phi\)</span>. Consider for example the following embedding and the
+associated kernel:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\phi((x_1, x_2)) &amp;= (x_1^2, \sqrt{2} x_1 x_2, x_2^2) \\
+k(\boldsymbol{x}, \boldsymbol{y}) &amp;= x_1^2 y_1^2 + 2 x_1 x_2 y_1 y_2 + x_2^2 y_2^2 = \langle \boldsymbol{x}, \boldsymbol{y} \rangle^2.\end{split}\]</div>
+<p>This means by just replacing the regular scalar product in our linear
+classification with the map <span class="math notranslate nohighlight">\(k\)</span>, we can actually express much more
+intricate decision boundaries!</p>
+<p>This is very important, because in many interesting cases the embedding <span class="math notranslate nohighlight">\(\phi\)</span>
+will be much costlier to compute than the kernel <span class="math notranslate nohighlight">\(k\)</span>.</p>
+<p>In this demo, we will explore one particular kind of kernel
+that can be realized on near-term quantum computers, namely <em>Quantum
+Embedding Kernels (QEKs)</em>. These are kernels that arise from embedding
+data into the space of quantum states. We formalize this by considering
+a parameterised quantum circuit <span class="math notranslate nohighlight">\(U(\boldsymbol{x})\)</span> that maps
+a datapoint <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> to the state</p>
+<div class="math notranslate nohighlight">
+\[|\psi(\boldsymbol{x})\rangle = U(\boldsymbol{x}) |0 \rangle.\]</div>
+<p>The kernel value is then given by the <em>overlap</em> of the associated
+embedded quantum states</p>
+<div class="math notranslate nohighlight">
+\[k(\boldsymbol{x}_i, \boldsymbol{x}_j) = | \langle\psi(\boldsymbol{x}_i)|\psi(\boldsymbol{x}_j)\rangle|^2.\]</div>
+</div>
+<div class="section" id="a-toy-problem">
+<h2>A toy problem<a class="headerlink" href="#a-toy-problem" title="Permalink to this headline">¶</a></h2>
+<p>In this demo, we will treat a toy problem that showcases the
+inner workings of classification with quantum embedding kernels,
+training variational embedding kernels and the available functionalities
+to do both in PennyLane. We of course need to start with some imports:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1359</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And we proceed right away to create a dataset to work with, the
+<code class="docutils literal notranslate"><span class="pre">DoubleCake</span></code> dataset. Firstly, we define two functions to enable us to
+generate the data.
+The details of these functions are not essential for understanding the demo,
+so don’t mind them if they are confusing.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_make_circular_data</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate datapoints arranged in an even circle.&quot;&quot;&quot;</span>
+    <span class="n">center_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_sectors</span><span class="p">))</span>
+    <span class="n">sector_angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">num_sectors</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="n">center_indices</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">sector_angle</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">remainder</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor_divide</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">sector_angle</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">labels</span>
+
+
+<span class="k">def</span> <span class="nf">make_double_cake_data</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">):</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">labels1</span> <span class="o">=</span> <span class="n">_make_circular_data</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">)</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">labels2</span> <span class="o">=</span> <span class="n">_make_circular_data</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">)</span>
+
+    <span class="c1"># x and y coordinates of the datapoints</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x2</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">y1</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">y2</span><span class="p">])</span>
+
+    <span class="c1"># Canonical form of dataset</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">labels1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">labels2</span><span class="p">])</span>
+
+    <span class="c1"># Canonical form of labels</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span>
+</pre></div>
+</div>
+<p>Next, we define a function to help plot the <code class="docutils literal notranslate"><span class="pre">DoubleCake</span></code> data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_double_cake_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">num_sectors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot double cake data and corresponding sectors.&quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">([</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">,</span> <span class="s2">&quot;#0000FF&quot;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">num_sectors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sector_angle</span> <span class="o">=</span> <span class="mi">360</span> <span class="o">/</span> <span class="n">num_sectors</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">):</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">,</span> <span class="s2">&quot;#0000FF&quot;</span><span class="p">][(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">other_color</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">,</span> <span class="s2">&quot;#0000FF&quot;</span><span class="p">][((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span>
+                <span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Wedge</span><span class="p">(</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">i</span> <span class="o">*</span> <span class="n">sector_angle</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sector_angle</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                    <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span>
+                <span class="n">mpl</span><span class="o">.</span><span class="n">patches</span><span class="o">.</span><span class="n">Wedge</span><span class="p">(</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">i</span> <span class="o">*</span> <span class="n">sector_angle</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sector_angle</span><span class="p">,</span>
+                    <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">other_color</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ax</span>
+</pre></div>
+</div>
+<p>Let’s now have a look at our dataset. In our example, we will work with
+3 sectors:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">num_sectors</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">make_double_cake_data</span><span class="p">(</span><span class="n">num_sectors</span><span class="p">)</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plot_double_cake_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">num_sectors</span><span class="o">=</span><span class="n">num_sectors</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="tutorial kernels module" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_kernels_module_001.png" />
+</div>
+<div class="section" id="defining-a-quantum-embedding-kernel">
+<h2>Defining a Quantum Embedding Kernel<a class="headerlink" href="#defining-a-quantum-embedding-kernel" title="Permalink to this headline">¶</a></h2>
+<p>PennyLane’s <a class="reference external" href="https://pennylane.readthedocs.io/en/latest/code/qml_kernels.html">kernels module</a>
+allows for a particularly simple
+implementation of Quantum Embedding Kernels. The first ingredient we
+need for this is an <em>ansatz</em>, which we will construct by repeating a
+layer as building block. Let’s start by defining this layer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+
+
+<span class="k">def</span> <span class="nf">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="p">,</span> <span class="n">i0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inc</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Building block of the embedding ansatz&quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i0</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">wire</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wires</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">wire</span><span class="p">])</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">wire</span><span class="p">])</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="n">inc</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">wire</span><span class="p">])</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.broadcast.html#pennylane.broadcast" title="pennylane.broadcast" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">broadcast</span></a><span class="p">(</span><span class="n">unitary</span><span class="o">=</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CRZ.html#pennylane.CRZ" title="pennylane.CRZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CRZ</span></a><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;ring&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>To construct the ansatz, this layer is repeated multiple times, reusing
+the datapoint <code class="docutils literal notranslate"><span class="pre">x</span></code> but feeding different variational
+parameters <code class="docutils literal notranslate"><span class="pre">params</span></code> into each of them.
+Together, the datapoint and the variational parameters fully determine
+the embedding ansatz <span class="math notranslate nohighlight">\(U(\boldsymbol{x})\)</span>.
+In order to construct the full kernel circuit, we also require its adjoint
+<span class="math notranslate nohighlight">\(U(\boldsymbol{x})^\dagger\)</span>, which we can obtain via <code class="docutils literal notranslate"><span class="pre">qml.adjoint</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ansatz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The embedding ansatz&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">layer_params</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+        <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">layer_params</span><span class="p">,</span> <span class="n">wires</span><span class="p">,</span> <span class="n">i0</span><span class="o">=</span><span class="n">j</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">wires</span><span class="p">))</span>
+
+
+<span class="n">adjoint_ansatz</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.adjoint.html#pennylane.adjoint" title="pennylane.adjoint" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">adjoint</span></a><span class="p">(</span><span class="n">ansatz</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">random_params</span><span class="p">(</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate random variational parameters in the shape for the ansatz.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">num_wires</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Together with the ansatz we only need a device to run the quantum circuit on.
+For the purpose of this tutorial we will use PennyLane’s <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code>
+device with 5 wires in analytic mode.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">wires</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitDevice.html#pennylane.QubitDevice.wires" title="pennylane.QubitDevice.wires" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">dev</span><span class="o">.</span><span class="n">wires</span><span class="o">.</span><span class="n">tolist</span></a><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let us now define the quantum circuit that realizes the kernel. We will compute
+the overlap of the quantum states by first applying the embedding of the first
+datapoint and then the adjoint of the embedding of the second datapoint. We
+finally extract the probabilities of observing each basis state.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">kernel_circuit</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="n">ansatz</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <span class="n">adjoint_ansatz</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.probs.html#pennylane.probs" title="pennylane.probs" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">probs</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The kernel function itself is now obtained by looking at the probability
+of observing the all-zero state at the end of the kernel circuit – because
+of the ordering in <code class="docutils literal notranslate"><span class="pre">qml.probs</span></code>, this is the first entry:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">kernel_circuit</span></a><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">An alternative way to set up the kernel circuit in PennyLane would be
+to use the observable type
+<a class="reference external" href="https://pennylane.readthedocs.io/en/latest/code/api/pennylane.Projector.html">Projector</a>.
+This is shown in the
+<a class="reference external" href="https://pennylane.ai/qml/demos/tutorial_kernel_based_training.html">demo on kernel-based training of quantum models</a>, where you will also find more
+background information on the kernel circuit structure itself.</p>
+</div>
+<p>Before focusing on the kernel values we have to provide values for the
+variational parameters. At this point we fix the number of layers in the
+ansatz circuit to <span class="math notranslate nohighlight">\(6\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">init_params</span> <span class="o">=</span> <span class="n">random_params</span><span class="p">(</span><span class="n">num_wires</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can have a look at the kernel value between the first and the
+second datapoint:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kernel_value</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">init_params</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The kernel value between the first and second datapoint is </span><span class="si">{</span><span class="n">kernel_value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The kernel value between the first and second datapoint is 0.093
+</pre></div>
+</div>
+<p>The mutual kernel values between all elements of the dataset form the
+<em>kernel matrix</em>. We can inspect it via the <code class="docutils literal notranslate"><span class="pre">qml.kernels.square_kernel_matrix</span></code>
+method, which makes use of symmetry of the kernel,
+<span class="math notranslate nohighlight">\(k(\boldsymbol{x}_i,\boldsymbol{x}_j) = k(\boldsymbol{x}_j, \boldsymbol{x}_i)\)</span>.
+In addition, the option <code class="docutils literal notranslate"><span class="pre">assume_normalized_kernel=True</span></code> ensures that we do not
+calculate the entries between the same datapoints, as we know them to be 1
+for our noiseless simulation. Overall this means that we compute
+<span class="math notranslate nohighlight">\(\frac{1}{2}(N^2-N)\)</span> kernel values for <span class="math notranslate nohighlight">\(N\)</span> datapoints.
+To include the variational parameters, we construct a <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function that
+fixes them to the values we sampled above.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">init_kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
+<span class="n">K_init</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.kernels.square_kernel_matrix.html#pennylane.kernels.square_kernel_matrix" title="pennylane.kernels.square_kernel_matrix" class="sphx-glr-backref-module-pennylane-kernels sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">square_kernel_matrix</span></a><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">init_kernel</span><span class="p">,</span> <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">K_init</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[1.    0.093 0.012 0.721 0.149 0.055]
+ [0.093 1.    0.056 0.218 0.73  0.213]
+ [0.012 0.056 1.    0.032 0.191 0.648]
+ [0.721 0.218 0.032 1.    0.391 0.226]
+ [0.149 0.73  0.191 0.391 1.    0.509]
+ [0.055 0.213 0.648 0.226 0.509 1.   ]]
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-the-quantum-embedding-kernel-for-predictions">
+<h2>Using the Quantum Embedding Kernel for predictions<a class="headerlink" href="#using-the-quantum-embedding-kernel-for-predictions" title="Permalink to this headline">¶</a></h2>
+<p>The quantum kernel alone can not be used to make predictions on a
+dataset, becaues it is essentially just a tool to measure the similarity
+between two datapoints. To perform an actual prediction we will make use
+of scikit-learn’s Support Vector Classifier (SVC).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+</pre></div>
+</div>
+<p>To construct the SVM, we need to supply <code class="docutils literal notranslate"><span class="pre">sklearn.svm.SVC</span></code> with a function
+that takes two sets of datapoints and returns the associated kernel matrix.
+We can make use of the function <code class="docutils literal notranslate"><span class="pre">qml.kernels.kernel_matrix</span></code> that provides
+this functionality. It expects the kernel to not have additional parameters
+besides the datapoints, which is why we again supply the variational
+parameters via the <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function from above.
+Once we have this, we can let scikit-learn adjust the SVM from our Quantum
+Embedding Kernel.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This step does <em>not</em> modify the variational parameters in our circuit
+ansatz. What it does is solving a different optimization task for the
+<span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(b\)</span> vectors we introduced in the beginning.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">svm</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="k">lambda</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">:</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.kernels.kernel_matrix.html#pennylane.kernels.kernel_matrix" title="pennylane.kernels.kernel_matrix" class="sphx-glr-backref-module-pennylane-kernels sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">kernel_matrix</span></a><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">init_kernel</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To see how well our classifier performs we will measure which percentage
+of the dataset it classifies correctly.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y_target</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="n">Y_target</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y_target</span><span class="p">)</span>
+
+
+<span class="n">accuracy_init</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">svm</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The accuracy of the kernel with random parameters is </span><span class="si">{</span><span class="n">accuracy_init</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The accuracy of the kernel with random parameters is 0.833
+</pre></div>
+</div>
+<p>We are also interested in seeing what the decision boundaries in this
+classification look like. This could help us spotting overfitting issues
+visually in more complex data sets. To this end we will introduce a
+second helper method.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_decision_boundaries</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">N_gridpoints</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+    <span class="n">_xx</span><span class="p">,</span> <span class="n">_yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">N_gridpoints</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">N_gridpoints</span><span class="p">))</span>
+
+    <span class="n">_zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">_xx</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndindex</span><span class="p">(</span><span class="o">*</span><span class="n">_xx</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="n">_zz</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_xx</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">_yy</span><span class="p">[</span><span class="n">idx</span><span class="p">]])[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="n">plot_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_xx&quot;</span><span class="p">:</span> <span class="n">_xx</span><span class="p">,</span> <span class="s2">&quot;_yy&quot;</span><span class="p">:</span> <span class="n">_yy</span><span class="p">,</span> <span class="s2">&quot;_zz&quot;</span><span class="p">:</span> <span class="n">_zz</span><span class="p">}</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span>
+        <span class="n">_xx</span><span class="p">,</span>
+        <span class="n">_yy</span><span class="p">,</span>
+        <span class="n">_zz</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">([</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">,</span> <span class="s2">&quot;#0000FF&quot;</span><span class="p">]),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">plot_double_cake_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">plot_data</span>
+</pre></div>
+</div>
+<p>With that done, let’s have a look at the decision boundaries for our
+initial classifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">init_plot_data</span> <span class="o">=</span> <span class="n">plot_decision_boundaries</span><span class="p">(</span><span class="n">svm</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+</pre></div>
+</div>
+<img alt="tutorial kernels module" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_kernels_module_002.png" />
+<p>We see the outer points in the dataset can be correctly classified, but
+we still struggle with the inner circle. But remember we have a circuit
+with many free parameters! It is reasonable to believe we can give
+values to those variational parameters which improve the overall accuracy
+of our SVC.</p>
+</div>
+<div class="section" id="training-the-quantum-embedding-kernel">
+<h2>Training the Quantum Embedding Kernel<a class="headerlink" href="#training-the-quantum-embedding-kernel" title="Permalink to this headline">¶</a></h2>
+<p>To be able to train the Quantum Embedding Kernel we need some measure of
+how well it fits the dataset in question. Performing an exhaustive
+search in parameter space is not a good solution because it is very
+resource intensive, and since the accuracy is a discrete quantity we
+would not be able to detect small improvements.</p>
+<p>We can, however, resort to a more specialized measure, the
+<em>kernel-target alignment</em> <a class="footnote-reference" href="#alignment" id="id2">[2]</a>. The kernel-target alignment compares the
+similarity predicted by the quantum kernel to the actual labels of the
+training data. It is based on <em>kernel alignment</em>, a similiarity measure
+between two kernels with given kernel matrices <span class="math notranslate nohighlight">\(K_1\)</span> and
+<span class="math notranslate nohighlight">\(K_2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{KA}(K_1, K_2) = \frac{\operatorname{Tr}(K_1 K_2)}{\sqrt{\operatorname{Tr}(K_1^2)\operatorname{Tr}(K_2^2)}}.\]</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Seen from a more theoretical side, <span class="math notranslate nohighlight">\(\operatorname{KA}\)</span>
+is nothing else than the cosine of the angle between the kernel
+matrices <span class="math notranslate nohighlight">\(K_1\)</span> and <span class="math notranslate nohighlight">\(K_2\)</span> if we see them as vectors
+in the space of matrices with the Hilbert-Schmidt (or
+Frobenius) scalar product
+<span class="math notranslate nohighlight">\(\langle A, B \rangle = \operatorname{Tr}(A^T B)\)</span>. This
+reinforces the geometric picture of how this measure relates
+to objects, namely two kernels, being aligned in a vector space.</p>
+</div>
+<p>The training data enters the picture by defining an <em>ideal</em> kernel
+function that expresses the original labelling in the vector
+<span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span> by assigning to two datapoints the product
+of the corresponding labels:</p>
+<div class="math notranslate nohighlight">
+\[k_{\boldsymbol{y}}(\boldsymbol{x}_i, \boldsymbol{x}_j) = y_i y_j.\]</div>
+<p>The assigned kernel is thus <span class="math notranslate nohighlight">\(+1\)</span> if both datapoints lie in the
+same class and <span class="math notranslate nohighlight">\(-1\)</span> otherwise and its kernel matrix is simply
+given by the outer product <span class="math notranslate nohighlight">\(\boldsymbol{y}\boldsymbol{y}^T\)</span>.
+The kernel-target alignment is then defined as the kernel alignment
+of the kernel matrix <span class="math notranslate nohighlight">\(K\)</span> generated by the
+quantum kernel and <span class="math notranslate nohighlight">\(\boldsymbol{y}\boldsymbol{y}^T\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\operatorname{KTA}_{\boldsymbol{y}}(K)
+= \frac{\operatorname{Tr}(K \boldsymbol{y}\boldsymbol{y}^T)}{\sqrt{\operatorname{Tr}(K^2)\operatorname{Tr}((\boldsymbol{y}\boldsymbol{y}^T)^2)}}
+= \frac{\boldsymbol{y}^T K \boldsymbol{y}}{\sqrt{\operatorname{Tr}(K^2)} N}\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of elements in <span class="math notranslate nohighlight">\(\boldsymbol{y}\)</span>,
+that is the number of datapoints in the dataset.</p>
+<p>In summary, the kernel-target alignment effectively captures how well
+the kernel you chose reproduces the actual similarities of the data. It
+does have one drawback, however: having a high kernel-target alignment
+is only a necessary but not a sufficient condition for a good
+performance of the kernel <a class="footnote-reference" href="#alignment" id="id3">[2]</a>. This means having good alignment is
+guaranteed for good performance, but optimal alignment will not always
+bring optimal training accuracy with it.</p>
+<p>Let’s now come back to the actual implementation. PennyLane’s
+<code class="docutils literal notranslate"><span class="pre">kernels</span></code> module allows you to easily evaluate the kernel
+target alignment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kta_init</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.kernels.target_alignment.html#pennylane.kernels.target_alignment" title="pennylane.kernels.target_alignment" class="sphx-glr-backref-module-pennylane-kernels sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">target_alignment</span></a><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">init_kernel</span><span class="p">,</span> <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The kernel-target alignment for our dataset and random parameters is </span><span class="si">{</span><span class="n">kta_init</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The kernel-target alignment for our dataset and random parameters is 0.081
+</pre></div>
+</div>
+<p>Now let’s code up an optimization loop and improve the kernel-target alignment!</p>
+<p>We will make use of regular gradient descent optimization. To speed up
+the optimization we will not use the entire training set to compute
+<span class="math notranslate nohighlight">\(\operatorname{KTA}\)</span> but rather
+sample smaller subsets of the data at each step, we choose <span class="math notranslate nohighlight">\(4\)</span>
+datapoints at random. Remember that PennyLane’s built-in optimizer works
+to <em>minimize</em> the cost function that is given to it, which is why we
+have to multiply the kernel target alignment by <span class="math notranslate nohighlight">\(-1\)</span> to actually
+<em>maximize</em> it in the process.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Currently, the function <code class="docutils literal notranslate"><span class="pre">qml.kernels.target_alignment</span></code> is not
+differentiable yet, making it unfit for gradient descent optimization.
+We therefore first define a differentiable version of this function.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">target_alignment</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">Y</span><span class="p">,</span>
+    <span class="n">kernel</span><span class="p">,</span>
+    <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">rescale_class_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Kernel-target alignment between kernel and labels.&quot;&quot;&quot;</span>
+
+    <span class="n">K</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.kernels.square_kernel_matrix.html#pennylane.kernels.square_kernel_matrix" title="pennylane.kernels.square_kernel_matrix" class="sphx-glr-backref-module-pennylane-kernels sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">square_kernel_matrix</span></a><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span>
+        <span class="n">kernel</span><span class="p">,</span>
+        <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="n">assume_normalized_kernel</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rescale_class_labels</span><span class="p">:</span>
+        <span class="n">nplus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">nminus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="o">-</span> <span class="n">nplus</span>
+        <span class="n">_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span> <span class="o">/</span> <span class="n">nplus</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">y</span> <span class="o">/</span> <span class="n">nminus</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">_Y</span><span class="p">,</span> <span class="n">_Y</span><span class="p">)</span>
+    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">K</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">K</span> <span class="o">*</span> <span class="n">K</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">inner_product</span> <span class="o">/</span> <span class="n">norm</span>
+
+    <span class="k">return</span> <span class="n">inner_product</span>
+
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+    <span class="c1"># Choose subset of datapoints to compute the KTA on.</span>
+    <span class="n">subset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))),</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="c1"># Define the cost function for optimization</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">_params</span><span class="p">:</span> <span class="o">-</span><span class="n">target_alignment</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">[</span><span class="n">subset</span><span class="p">],</span>
+        <span class="n">Y</span><span class="p">[</span><span class="n">subset</span><span class="p">],</span>
+        <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">_params</span><span class="p">),</span>
+        <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Optimization step</span>
+    <span class="n">params</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step" title="pennylane.GradientDescentOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+    <span class="c1"># Report the alignment on the full dataset every 50 steps.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">current_alignment</span> <span class="o">=</span> <span class="n">target_alignment</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="n">Y</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span>
+            <span class="n">assume_normalized_kernel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> - Alignment = </span><span class="si">{</span><span class="n">current_alignment</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Step 50 - Alignment = 0.098
+Step 100 - Alignment = 0.121
+Step 150 - Alignment = 0.141
+Step 200 - Alignment = 0.173
+Step 250 - Alignment = 0.196
+Step 300 - Alignment = 0.224
+Step 350 - Alignment = 0.245
+Step 400 - Alignment = 0.261
+Step 450 - Alignment = 0.276
+Step 500 - Alignment = 0.289
+</pre></div>
+</div>
+<p>We want to assess the impact of training the parameters of the quantum
+kernel. Thus, let’s build a second support vector classifier with the
+trained kernel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># First create a kernel with the trained parameter baked into it.</span>
+<span class="n">trained_kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+<span class="c1"># Second create a kernel matrix function using the trained kernel.</span>
+<span class="n">trained_kernel_matrix</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">:</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.kernels.kernel_matrix.html#pennylane.kernels.kernel_matrix" title="pennylane.kernels.kernel_matrix" class="sphx-glr-backref-module-pennylane-kernels sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">kernel_matrix</span></a><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">trained_kernel</span><span class="p">)</span>
+
+<span class="c1"># Note that SVC expects the kernel argument to be a kernel matrix function.</span>
+<span class="n">svm_trained</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">trained_kernel_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We expect to see an accuracy improvement vs.&nbsp;the SVM with random
+parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">accuracy_trained</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">svm_trained</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The accuracy of a kernel with trained parameters is </span><span class="si">{</span><span class="n">accuracy_trained</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>The accuracy of a kernel with trained parameters is 1.000
+</pre></div>
+</div>
+<p>We have now achieved perfect classification! 🎆</p>
+<p>Following on the results that SVM’s have proven good generalisation
+behavior, it will be interesting to inspect the decision boundaries of
+our classifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trained_plot_data</span> <span class="o">=</span> <span class="n">plot_decision_boundaries</span><span class="p">(</span><span class="n">svm_trained</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+</pre></div>
+</div>
+<img alt="tutorial kernels module" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_kernels_module_003.png" />
+<p>Indeed, we see that now not only every data instance falls within the
+correct class, but also that there are no strong artifacts that would make us
+distrust the model. In this sense, our approach benefits from both: on
+one hand it can adjust itself to the dataset, and on the other hand
+is not expected to suffer from bad generalisation.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="training-qeks" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Thomas Hubregtsen, David Wierichs, Elies Gil-Fuster, Peter-Jan H. S. Derks,
+Paul K. Faehrmann, and Johannes Jakob Meyer.
+“Training Quantum Embedding Kernels on Near-Term Quantum Computers.”
+<a class="reference external" href="https://arxiv.org/abs/2105.02276">arXiv:2105.02276</a>, 2021.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="alignment" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>)</em> Wang, Tinghua, Dongyan Zhao, and Shengfeng Tian.
+“An overview of kernel alignment and its applications.”
+<a class="reference external" href="https://link.springer.com/article/10.1007/s10462-012-9369-4">Artificial Intelligence Review 43.2: 179-192</a>, 2015.</td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 9 minutes  21.059 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-kernels-module-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/7218aca7409256ab87c51c5c09d0b7c0/tutorial_kernels_module.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_kernels_module.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/0f1b1168755814b5d7f37b8885f958a7/tutorial_kernels_module.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_kernels_module.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_kernels_module</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Training and evaluating quantum kernels</a><ul>
+<li><a class="reference internal" href="#what-are-kernel-methods">What are kernel methods?</a></li>
+<li><a class="reference internal" href="#a-toy-problem">A toy problem</a></li>
+<li><a class="reference internal" href="#defining-a-quantum-embedding-kernel">Defining a Quantum Embedding Kernel</a></li>
+<li><a class="reference internal" href="#using-the-quantum-embedding-kernel-for-predictions">Using the Quantum Embedding Kernel for predictions</a></li>
+<li><a class="reference internal" href="#training-the-quantum-embedding-kernel">Training the Quantum Embedding Kernel</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_kernels_module</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+                <a href="../index.html"><i class="fas fa-angle-double-left"></i></a>
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,862 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="This demonstration uses the PyTorch interface of PennyLane to optimize a 3-qubit Ising model." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/isingspins.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="3-qubit Ising model in PyTorch &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_isingmodel_PyTorch.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="This demonstration uses the PyTorch interface of PennyLane to optimize a 3-qubit Ising model." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>3-qubit Ising model in PyTorch &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_isingmodel_PyTorch.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PyTorch and noisy devices" href="pytorch_noise.html" />
+    <link rel="prev" title="Training a quantum circuit with PyTorch" href="tutorial_state_preparation.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pytorch_noise.html" title="PyTorch and noisy devices"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_state_preparation.html" title="Training a quantum circuit with PyTorch"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" accesskey="U">Basics</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-isingmodel-pytorch-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="qubit-ising-model-in-pytorch">
+<span id="isingmodel-pytorch"></span><span id="sphx-glr-demos-tutorial-isingmodel-pytorch-py"></span><h1>3-qubit Ising model in PyTorch<a class="headerlink" href="#qubit-ising-model-in-pytorch" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_state_preparation.html", "pytorch_noise.html"];
+    var related_tutorials_titles = ['Training a quantum circuit with PyTorch', 'PyTorch and noisy devices'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 26 Oct 2020.</em></p>
+<p>The interacting spins with variable coupling strengths of an <a class="reference external" href="https://en.wikipedia.org/wiki/Ising_model">Ising model</a>
+can be used to simulate various machine learning concepts like <a class="reference external" href="https://en.wikipedia.org/wiki/Hopfield_network">Hopfield networks</a>
+and <a class="reference external" href="https://en.wikipedia.org/wiki/Boltzmann_machine">Boltzmann machines</a>
+(<a class="reference external" href="https://www.springer.com/gp/book/9783319964232">Schuld &amp; Petruccione (2018)</a>).
+They also closely imitate the underlying mathematics of a subclass of computational problems called
+<a class="reference external" href="https://en.wikipedia.org/wiki/Quadratic_unconstrained_binary_optimization">Quadratic Unconstrained Binary Optimization (QUBO)</a> problems.</p>
+<p>Ising models are commonly encountered in the subject area of adiabatic quantum computing. Quantum annealing algorithms
+(for example, as performed on a D-wave system) are often used to find low-energy configurations of Ising problems.
+The optimization landscape of the Ising model is non-convex, which can make finding global minima challenging.
+In this tutorial, we get a closer look at this phenomenon by applying gradient descent techniques to a toy Ising model.</p>
+<div class="section" id="pennylane-implementation">
+<h2>PennyLane implementation<a class="headerlink" href="#pennylane-implementation" title="Permalink to this headline">¶</a></h2>
+<p>This basic tutorial optimizes a 3-qubit Ising model using the PennyLane <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code>
+device with PyTorch. In the absence of external fields, the Hamiltonian for this system is given by:</p>
+<div class="math notranslate nohighlight">
+\[H=-\sum_{&lt;i,j&gt;} J_{ij} \sigma_i \sigma_{j},\]</div>
+<p>where each spin can be in the +1 or -1 spin state and <span class="math notranslate nohighlight">\(J_{ij}\)</span> are the nearest-neighbour coupling strengths.</p>
+<p>For simplicity, the first spin can be assumed
+to be in the “up” state (+1 eigenstate of Pauli-Z operator) and the coupling matrix can be set to <span class="math notranslate nohighlight">\(J = [1,-1]\)</span>. The rotation angles for the other two spins are then optimized
+so that the energy of the system is minimized for the given couplings.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">Variable</span>
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+</pre></div>
+</div>
+<p>A three-qubit quantum circuit is initialized to represent the three spins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="c1"># We use the general Rot(phi,theta,omega,wires) single-qubit operation</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The cost function to be minimized is defined as the energy of the spin configuration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">):</span>
+    <span class="c1"># the circuit function returns a numpy array of Pauli-Z expectation values</span>
+    <span class="n">spins</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">var1</span><span class="p">,</span> <span class="n">var2</span><span class="p">)</span>
+
+    <span class="c1"># the expectation value of Pauli-Z is +1 for spin up and -1 for spin down</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">spins</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">energy</span>
+</pre></div>
+</div>
+<div class="section" id="sanity-check">
+<h3>Sanity check<a class="headerlink" href="#sanity-check" title="Permalink to this headline">¶</a></h3>
+<p>Let’s test the functions above using the <span class="math notranslate nohighlight">\([s_1, s_2, s_3] = [1, -1, -1]\)</span> spin
+configuration and the given coupling matrix. The total energy for this Ising model
+should be:</p>
+<div class="math notranslate nohighlight">
+\[H = -1(J_1 s_1 \otimes s_2 + J_2 s_2 \otimes s3) = 2\]</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">test2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="n">cost_check</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">test1</span><span class="p">,</span> <span class="n">test2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Energy for [1, -1, -1] spin configuration:&quot;</span><span class="p">,</span> <span class="n">cost_check</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Energy for [1, -1, -1] spin configuration: tensor(2.0000, dtype=torch.float64)
+</pre></div>
+</div>
+</div>
+<div class="section" id="random-initialization">
+<h3>Random initialization<a class="headerlink" href="#random-initialization" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">56</span><span class="p">)</span>
+<span class="n">p1</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">var_init</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">]</span>
+<span class="n">cost_init</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Randomly initialized angles:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Corresponding cost before optimization:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cost_init</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Randomly initialized angles:
+tensor([1.9632, 2.6022, 2.3277], dtype=torch.float64, requires_grad=True)
+tensor([0.6521, 2.8474, 2.4300], dtype=torch.float64, requires_grad=True)
+Corresponding cost before optimization:
+tensor(1.6792, dtype=torch.float64, grad_fn=&lt;SubBackward0&gt;)
+</pre></div>
+</div>
+</div>
+<div class="section" id="optimization">
+<h3>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h3>
+<p>Now we use the PyTorch gradient descent optimizer to minimize the cost:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">var_init</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">closure</span><span class="p">():</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span>
+
+<span class="n">var_pt</span> <span class="o">=</span> <span class="p">[</span><span class="n">var_init</span><span class="p">]</span>
+<span class="n">cost_pt</span> <span class="o">=</span> <span class="p">[</span><span class="n">cost_init</span><span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">p1n</span><span class="p">,</span> <span class="n">p2n</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
+        <span class="n">costn</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p1n</span><span class="p">,</span> <span class="n">p2n</span><span class="p">)</span>
+        <span class="n">var_pt</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">p1n</span><span class="p">,</span> <span class="n">p2n</span><span class="p">])</span>
+        <span class="n">cost_pt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">costn</span><span class="p">)</span>
+
+        <span class="c1"># for clarity, the angles are printed as numpy arrays</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Energy after step </span><span class="si">{:5d}</span><span class="s2">: </span><span class="si">{: .7f}</span><span class="s2"> | Angles: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">costn</span><span class="p">,</span> <span class="p">[</span><span class="n">p1n</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">p2n</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()]),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Energy after step     5:  0.6846474 | Angles: [array([1.96323939, 1.93604492, 2.32767565]), array([0.65212549, 2.73080219, 2.4299563 ])]
+
+Energy after step    10: -1.0138530 | Angles: [array([1.96323939, 1.0136468 , 2.32767565]), array([0.65212549, 2.73225282, 2.4299563 ])]
+
+Energy after step    15: -1.8171995 | Angles: [array([1.96323939, 0.38483073, 2.32767565]), array([0.65212549, 2.85992571, 2.4299563 ])]
+
+Energy after step    20: -1.9686584 | Angles: [array([1.96323939, 0.13026452, 2.32767565]), array([0.65212549, 2.97097572, 2.4299563 ])]
+
+Energy after step    25: -1.9930403 | Angles: [array([1.96323939, 0.04302756, 2.32767565]), array([0.65212549, 3.04042222, 2.4299563 ])]
+
+Energy after step    30: -1.9980133 | Angles: [array([1.96323939, 0.01413292, 2.32767565]), array([0.65212549, 3.08179844, 2.4299563 ])]
+
+Energy after step    35: -1.9993550 | Angles: [array([1.96323939, 0.00463472, 2.32767565]), array([0.65212549, 3.10627578, 2.4299563 ])]
+
+Energy after step    40: -1.9997802 | Angles: [array([1.96323939e+00, 1.51911413e-03, 2.32767565e+00]), array([0.65212549, 3.12073668, 2.4299563 ])]
+
+Energy after step    45: -1.9999239 | Angles: [array([1.96323939e+00, 4.97829828e-04, 2.32767565e+00]), array([0.65212549, 3.12927707, 2.4299563 ])]
+
+Energy after step    50: -1.9999735 | Angles: [array([1.96323939e+00, 1.63134183e-04, 2.32767565e+00]), array([0.65212549, 3.13432035, 2.4299563 ])]
+
+Energy after step    55: -1.9999908 | Angles: [array([1.96323939e+00, 5.34564150e-05, 2.32767565e+00]), array([0.65212549, 3.13729842, 2.4299563 ])]
+
+Energy after step    60: -1.9999968 | Angles: [array([1.96323939e+00, 1.75166673e-05, 2.32767565e+00]), array([0.65212549, 3.13905695, 2.4299563 ])]
+
+Energy after step    65: -1.9999989 | Angles: [array([1.96323939e+00, 5.73986944e-06, 2.32767565e+00]), array([0.65212549, 3.14009534, 2.4299563 ])]
+
+Energy after step    70: -1.9999996 | Angles: [array([1.96323939e+00, 1.88084132e-06, 2.32767565e+00]), array([0.65212549, 3.14070851, 2.4299563 ])]
+
+Energy after step    75: -1.9999999 | Angles: [array([1.96323939e+00, 6.16314188e-07, 2.32767565e+00]), array([0.65212549, 3.14107057, 2.4299563 ])]
+
+Energy after step    80: -2.0000000 | Angles: [array([1.96323939e+00, 2.01953845e-07, 2.32767565e+00]), array([0.65212549, 3.14128437, 2.4299563 ])]
+
+Energy after step    85: -2.0000000 | Angles: [array([1.96323939e+00, 6.61762372e-08, 2.32767565e+00]), array([0.65212549, 3.14141062, 2.4299563 ])]
+
+Energy after step    90: -2.0000000 | Angles: [array([1.96323939e+00, 2.16846296e-08, 2.32767565e+00]), array([0.65212549, 3.14148516, 2.4299563 ])]
+
+Energy after step    95: -2.0000000 | Angles: [array([1.96323939e+00, 7.10561943e-09, 2.32767565e+00]), array([0.65212549, 3.14152918, 2.4299563 ])]
+
+Energy after step   100: -2.0000000 | Angles: [array([1.96323939e+00, 2.32836938e-09, 2.32767565e+00]), array([0.65212549, 3.14155517, 2.4299563 ])]
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>When using the <em>PyTorch</em> optimizer, keep in mind that:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> computes the gradient of the cost function with respect to all parameters with <code class="docutils literal notranslate"><span class="pre">requires_grad=True</span></code>.</li>
+<li><code class="docutils literal notranslate"><span class="pre">opt.step()</span></code> performs the parameter update based on this <em>current</em> gradient and the learning rate.</li>
+<li><code class="docutils literal notranslate"><span class="pre">opt.zero_grad()</span></code> sets all the gradients back to zero. It’s important to call this before <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> to avoid the accumulation of gradients from multiple passes.</li>
+</ol>
+<p class="last">Hence, its standard practice to define the <code class="docutils literal notranslate"><span class="pre">closure()</span></code> function that clears up the old gradient,
+evaluates the new gradient and passes it onto the optimizer in each step.</p>
+</div>
+<p>The minimum energy is -2 for the spin configuration <span class="math notranslate nohighlight">\([s_1, s_2, s_3] = [1, 1, -1]\)</span>
+which corresponds to
+<span class="math notranslate nohighlight">\((\phi, \theta, \omega) = (0, 0, 0)\)</span> for the second spin and <span class="math notranslate nohighlight">\((\phi, \theta, \omega) = (0, \pi, 0)\)</span> for
+the third spin. Note that gradient descent optimization might not find this global minimum due to the non-convex cost function, as is shown in the next section.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p1_final</span><span class="p">,</span> <span class="n">p2_final</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;params&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimized angles:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p1_final</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p2_final</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final cost after optimization:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cost</span><span class="p">(</span><span class="n">p1_final</span><span class="p">,</span> <span class="n">p2_final</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimized angles:
+tensor([1.9632e+00, 2.3284e-09, 2.3277e+00], dtype=torch.float64,
+       requires_grad=True)
+tensor([0.6521, 3.1416, 2.4300], dtype=torch.float64, requires_grad=True)
+Final cost after optimization:
+tensor(-2.0000, dtype=torch.float64, grad_fn=&lt;SubBackward0&gt;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cost_pt</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;global minimum&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cost / Energy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial isingmodel PyTorch" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_isingmodel_PyTorch_001.png" />
+</div>
+<div class="section" id="local-minimum">
+<h3>Local minimum<a class="headerlink" href="#local-minimum" title="Permalink to this headline">¶</a></h3>
+<p>If the spins are initialized close to the local minimum of zero energy, the optimizer is
+likely to get stuck here and never find the global minimum at -2.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<span class="n">p3</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)),</span> <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">p4</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)),</span> <span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="n">var_init_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">]</span>
+<span class="n">cost_init_loc</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Corresponding cost before optimization:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cost_init_loc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Corresponding cost before optimization:
+tensor(0.0082, dtype=torch.float64, grad_fn=&lt;SubBackward0&gt;)
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">var_init_loc</span><span class="p">,</span> <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">closure</span><span class="p">():</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p3</span><span class="p">,</span> <span class="n">p4</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">loss</span>
+
+<span class="n">var_pt_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">var_init_loc</span><span class="p">]</span>
+<span class="n">cost_pt_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">cost_init_loc</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">opt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">closure</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">p3n</span><span class="p">,</span> <span class="n">p4n</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+        <span class="n">costn</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">p3n</span><span class="p">,</span> <span class="n">p4n</span><span class="p">)</span>
+        <span class="n">var_pt_loc</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">p3n</span><span class="p">,</span> <span class="n">p4n</span><span class="p">])</span>
+        <span class="n">cost_pt_loc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">costn</span><span class="p">)</span>
+
+        <span class="c1"># for clarity, the angles are printed as numpy arrays</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Energy after step </span><span class="si">{:5d}</span><span class="s1">: </span><span class="si">{: .7f}</span><span class="s1"> | Angles: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">costn</span><span class="p">,</span> <span class="p">[</span><span class="n">p3n</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">p4n</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()]),</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Energy after step     5:  0.0032761 | Angles: [array([0.77369911, 2.63471297, 1.07981163]), array([0.26038622, 0.08659858, 1.91060734])]
+
+Energy after step    10:  0.0013137 | Angles: [array([0.77369911, 2.63406019, 1.07981163]), array([0.26038622, 0.05483683, 1.91060734])]
+
+Energy after step    15:  0.0005266 | Angles: [array([0.77369911, 2.63379816, 1.07981163]), array([0.26038622, 0.03471974, 1.91060734])]
+
+Energy after step    20:  0.0002111 | Angles: [array([0.77369911, 2.63369307, 1.07981163]), array([0.26038622, 0.02198151, 1.91060734])]
+
+Energy after step    25:  0.0000846 | Angles: [array([0.77369911, 2.63365094, 1.07981163]), array([0.26038622, 0.01391648, 1.91060734])]
+
+Energy after step    30:  0.0000339 | Angles: [array([0.77369911, 2.63363405, 1.07981163]), array([0.26038622, 0.00881044, 1.91060734])]
+
+Energy after step    35:  0.0000136 | Angles: [array([0.77369911, 2.63362729, 1.07981163]), array([0.26038622, 0.00557782, 1.91060734])]
+
+Energy after step    40:  0.0000054 | Angles: [array([0.77369911, 2.63362457, 1.07981163]), array([0.26038622, 0.00353126, 1.91060734])]
+
+Energy after step    45:  0.0000022 | Angles: [array([0.77369911, 2.63362348, 1.07981163]), array([0.26038622, 0.00223561, 1.91060734])]
+
+Energy after step    50:  0.0000009 | Angles: [array([0.77369911, 2.63362305, 1.07981163]), array([2.60386222e-01, 1.41534339e-03, 1.91060734e+00])]
+
+Energy after step    55:  0.0000004 | Angles: [array([0.77369911, 2.63362287, 1.07981163]), array([2.60386222e-01, 8.96040252e-04, 1.91060734e+00])]
+
+Energy after step    60:  0.0000001 | Angles: [array([0.77369911, 2.6336228 , 1.07981163]), array([2.60386222e-01, 5.67274421e-04, 1.91060734e+00])]
+
+Energy after step    65:  0.0000001 | Angles: [array([0.77369911, 2.63362278, 1.07981163]), array([2.60386222e-01, 3.59135947e-04, 1.91060734e+00])]
+
+Energy after step    70:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 2.27365491e-04, 1.91060734e+00])]
+
+Energy after step    75:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 1.43942891e-04, 1.91060734e+00])]
+
+Energy after step    80:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 9.11288509e-05, 1.91060734e+00])]
+
+Energy after step    85:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 5.76927932e-05, 1.91060734e+00])]
+
+Energy after step    90:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 3.65247488e-05, 1.91060734e+00])]
+
+Energy after step    95:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 2.31234648e-05, 1.91060734e+00])]
+
+Energy after step   100:  0.0000000 | Angles: [array([0.77369911, 2.63362276, 1.07981163]), array([2.60386222e-01, 1.46392417e-05, 1.91060734e+00])]
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cost_pt_loc</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;local minimum&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cost / Energy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial isingmodel PyTorch" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_isingmodel_PyTorch_002.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Try it yourself! Download and run this file with different
+initialization parameters and see how the results change.</p>
+</div>
+<div class="section" id="further-reading">
+<h3>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h3>
+<p>1. Maria Schuld and Francesco Petruccione. “Supervised Learning with Quantum Computers.”
+Springer, 2018.</p>
+<p>2. Andrew Lucas. “Ising formulations of many NP problems.”
+<a class="reference external" href="https://arxiv.org/pdf/1302.5843">arXiv:1302.5843</a>, 2014.</p>
+<p>3. Gary Kochenberger et al. “The Unconstrained Binary Quadratic Programming Problem: A Survey.”
+<a class="reference external" href="https://link.springer.com/article/10.1007/s10878-014-9734-0">Journal of Combinatorial Optimization</a>, 2014.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  1.042 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-isingmodel-pytorch-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/469f3c5aaf4d653a1c5ec44f3469ebe4/tutorial_isingmodel_PyTorch.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_isingmodel_PyTorch.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/5b75759fbdbc14541806f7e6c8d41acc/tutorial_isingmodel_PyTorch.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_isingmodel_PyTorch.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_isingmodel_PyTorch</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">3-qubit Ising model in PyTorch</a><ul>
+<li><a class="reference internal" href="#pennylane-implementation">PennyLane implementation</a><ul>
+<li><a class="reference internal" href="#sanity-check">Sanity check</a></li>
+<li><a class="reference internal" href="#random-initialization">Random initialization</a></li>
+<li><a class="reference internal" href="#optimization">Optimization</a></li>
+<li><a class="reference internal" href="#local-minimum">Local minimum</a></li>
+<li><a class="reference internal" href="#further-reading">Further reading</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_isingmodel_PyTorch</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_basics.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pytorch_noise.html" title="PyTorch and noisy devices"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_state_preparation.html" title="Training a quantum circuit with PyTorch"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" >Basics</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Use the simultaneous perturbation stochastic approximation algorithm to optimize variational circuits in PennyLane." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/spsa_mntn.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Optimization using SPSA &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/spsa.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Use the simultaneous perturbation stochastic approximation algorithm to optimize variational circuits in PennyLane." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Optimization using SPSA &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/spsa.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quantum Generative Adversarial Networks with Cirq + TensorFlow" href="tutorial_QGAN.html" />
+    <link rel="prev" title="Measurement optimization" href="tutorial_measurement_optimize.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_QGAN.html" title="Quantum Generative Adversarial Networks with Cirq + TensorFlow"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_measurement_optimize.html" title="Measurement optimization"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" accesskey="U">Research</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-spsa-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="optimization-using-spsa">
+<span id="spsa"></span><span id="sphx-glr-demos-spsa-py"></span><h1>Optimization using SPSA<a class="headerlink" href="#optimization-using-spsa" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_vqe.html", "tutorial_vqe_qng.html"];
+    var related_tutorials_titles = ['A brief overview of VQE', 'Accelerating VQE with the QNG'];
+</script></p>
+<p><em>Author: PennyLane dev team. Posted: 19 Mar 2021. Last updated: 8 Apr 2021.</em></p>
+<p>In this tutorial, we investigate using a gradient-free optimizer called
+the Simultaneous Perturbation Stochastic Approximation (SPSA) algorithm to optimize quantum
+circuits. SPSA is a technique that involves approximating the gradient of a
+quantum circuit without having to compute it.</p>
+<p>This demonstration shows how the SPSA optimizer performs:</p>
+<ol class="arabic simple">
+<li>A simple task on a sampling device,</li>
+<li>The variational quantum eigensolver on a simulated hardware device.</li>
+</ol>
+<p>Throughout the demo, we show results obtained with SPSA and with gradient
+descent and also compare the number of device executions required to complete
+each optimization.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>In PennyLane, quantum gradients on hardware are commonly computed using
+<a class="reference external" href="https://pennylane.ai/qml/glossary/parameter_shift.html">parameter-shift rules</a>. Computing quantum
+gradients involves evaluating the partial derivative of the quantum function
+with respect to every free parameter. The partial derivatives are used to apply
+the product rule to compute the gradient of the quantum circuit. For qubit
+operations that are generated by one of the Pauli matrices, each partial
+derivative computation will involve two quantum circuit evaluations with a
+positive and a negative shift in the parameter values.</p>
+<p>As there are two circuit evaluations for each free parameter, the number of
+overall quantum circuit executions for computing a quantum gradient is
+<span class="math notranslate nohighlight">\(O(p)\)</span> as it scales linearly with the number of free parameters
+<span class="math notranslate nohighlight">\(p\)</span>. This scaling can be very costly for optimization tasks with many
+free parameters.  For the overall optimization this scaling means we need
+<span class="math notranslate nohighlight">\(O(pn)\)</span> quantum circuit evaluations, where <span class="math notranslate nohighlight">\(n\)</span> is the number of
+optimization steps taken.</p>
+<p>Fortunately, there are certain optimization techniques that offer an
+alternative to computing the gradients of quantum circuits. One such technique
+is called the Simultaneous Perturbation Stochastic Approximation (SPSA)
+algorithm <a class="footnote-reference" href="#spall-overview" id="id1">[1]</a>. SPSA is an optimization method that involves
+<em>approximating</em> the gradient of the cost function at each iteration step. This
+technique requires only two quantum circuit executions per iteration step,
+regardless of the number of free parameters. Therefore the overall number of
+circuit executions would be <span class="math notranslate nohighlight">\(O(n')\)</span> where <span class="math notranslate nohighlight">\(n'\)</span> is the number of
+optimization steps taken when using SPSA. This technique is also considered
+robust against noise, making it a great optimization method in the NISQ era.</p>
+<p>In this demo, you’ll learn how the SPSA algorithm works, and how to apply it in
+PennyLane to compute gradients of quantum circuits. You’ll also see it in action
+using noisy quantum data!</p>
+</div>
+<div class="section" id="simultaneous-perturbation-stochastic-approximation-spsa">
+<h2>Simultaneous perturbation stochastic approximation (SPSA)<a class="headerlink" href="#simultaneous-perturbation-stochastic-approximation-spsa" title="Permalink to this headline">¶</a></h2>
+<p>SPSA is a general method for minimizing differentiable multivariate functions.
+It is particularly useful for functions for which evaluating the gradient is not
+possible, or too resource intensive. SPSA provides a stochastic method for
+approximating the gradient of a multivariate differentiable cost function. To
+accomplish this the cost function is evaluated twice using perturbed parameter
+vectors: every component of the original parameter vector is simultaneously
+shifted with a randomly generated value. This is in contrast to
+finite-differences methods where for each evaluation only one component of the
+parameter vector is shifted at a time.</p>
+<p>Similar to gradient-based approaches such as gradient descent, SPSA is an
+iterative optimization algorithm. Let’s consider a differentiable cost function
+<span class="math notranslate nohighlight">\(L(\theta)\)</span> where <span class="math notranslate nohighlight">\(\theta\)</span> is a <span class="math notranslate nohighlight">\(p\)</span>-dimensional vector and
+where the optimization problem can be translated into finding a <span class="math notranslate nohighlight">\(\theta^*\)</span>
+at which <span class="math notranslate nohighlight">\(\frac{\partial L}{\partial \theta} = 0\)</span>.  It is assumed that
+measurements of <span class="math notranslate nohighlight">\(L(\theta)\)</span> are available at various values of
+<span class="math notranslate nohighlight">\(\theta\)</span>—this is exactly the problem that we’d consider when optimizing
+quantum functions!</p>
+<p>Just like with gradient-based methods, SPSA starts with an initial parameter
+vector <span class="math notranslate nohighlight">\(\hat{\theta}_{0}\)</span>. After <span class="math notranslate nohighlight">\(k\)</span> iterations, the <span class="math notranslate nohighlight">\((k+1)\)</span> th
+parameter iterates can be obtained as</p>
+<div class="math notranslate nohighlight">
+\[\hat{\theta}_{k+1} = \hat{\theta}_{k} - a_{k}\hat{g}_{k}(\hat{\theta}_{k}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{g}_{k}\)</span> is the estimate of the gradient <span class="math notranslate nohighlight">\(g(\theta) =
+\frac{ \partial L}{\partial \theta}\)</span> at the iterate <span class="math notranslate nohighlight">\(\hat{\theta}_{k}\)</span>
+based on prior measurements of the cost function, and <span class="math notranslate nohighlight">\(a_{k}\)</span> is a
+positive number <a class="footnote-reference" href="#spall-overview" id="id2">[1]</a>.</p>
+<p>One of the advantages of SPSA is that it is robust to any noise that may occur
+when measuring the function <span class="math notranslate nohighlight">\(L\)</span>. Therefore, let’s consider the function
+<span class="math notranslate nohighlight">\(y(\theta)=L(\theta) + \varepsilon\)</span>, where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is some
+perturbation of the output. In SPSA, the estimated gradient at each iteration
+step is expressed as</p>
+<div class="math notranslate nohighlight">
+\[\hat{g}_{ki} (\hat{\theta}_{k}) = \frac{y(\hat{\theta}_{k} +c_{k}\Delta_{k})
+- y(\hat{\theta}_{k} -c_{k}\Delta_{k})}{2c_{k}\Delta_{ki}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(c_{k}\)</span> is a positive number and <span class="math notranslate nohighlight">\(\Delta_{k} = (\Delta_{k_1},
+\Delta_{k_2}, ..., \Delta_{k_p})^{T}\)</span> is a perturbation vector. The
+stochasticity of the technique comes from the fact that for each iteration step
+<span class="math notranslate nohighlight">\(k\)</span> the components of the <span class="math notranslate nohighlight">\(\Delta_{k}\)</span> perturbation vector are
+randomly generated using a zero-mean distribution. In most cases, the Bernoulli
+distribution is used, meaning each parameter is simultaneously perturbed by
+either <span class="math notranslate nohighlight">\(\pm c_k\)</span>.</p>
+<p>It is this perturbation that makes SPSA robust to noise — since every
+parameter is already being shifted, additional shifts due to noise are less
+likely to hinder the optimization process. In a sense, noise gets “absorbed”
+into the already-stochastic process. This is highlighted in the figure below,
+which portrays an example of the type of path SPSA takes through the space of
+the function, compared to a standard gradient-based optimizer.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/spsa_mntn.png"><img alt="../_images/spsa_mntn.png" src="../_images/spsa_mntn.png" style="width: 60%;" /></a>
+<div class="legend">
+A schematic of the search paths used by gradient descent with
+parameter-shift and SPSA.</div>
+</div>
+<p>Now that we have explored how SPSA works, let’s see how it performs in practice!</p>
+</div>
+<div class="section" id="optimization-on-a-sampling-device">
+<h2>Optimization on a sampling device<a class="headerlink" href="#optimization-on-a-sampling-device" title="Permalink to this headline">¶</a></h2>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">To run this demo locally, you’ll need to install the <a class="reference external" href="https://github.com/andim/noisyopt">noisyopt</a> library. This library contains a
+straightforward implementation of SPSA that can be used in the same way as the
+optimizers available in <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">SciPy’s minimize method</a>.</p>
+</div>
+<p>First, let’s consider a simple quantum circuit on a sampling device. For this,
+we’ll be using a device from the <a class="reference external" href="https://pennylaneqiskit.readthedocs.io/en/latest/">PennyLane-Qiskit plugin</a> that samples quantum
+circuits to get measurement outcomes and later post-processes these outcomes to
+compute statistics like expectation values.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Just as with other PennyLane devices, the number of samples taken for a device
+execution can be specified using the <code class="docutils literal notranslate"><span class="pre">shots</span></code> keyword argument of the
+device.</p>
+</div>
+<p>Once we have a device selected, we just need a couple of other ingredients for
+the pieces of an example optimization to come together:</p>
+<ul class="simple">
+<li>a circuit ansatz: <code class="xref py py-func docutils literal notranslate"><span class="pre">StronglyEntanglingLayers()</span></code>,</li>
+<li>initial parameters: conveniently generated using <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.init.strong_ent_layers_normal.html#pennylane.init.strong_ent_layers_normal" title="(in PennyLane v0.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">strong_ent_layers_normal()</span></code></a>,</li>
+<li>an observable: <span class="math notranslate nohighlight">\(\bigotimes_{i=0}^{N-1}\sigma_z^i\)</span>, where <span class="math notranslate nohighlight">\(N\)</span> stands
+for the number of qubits.</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">num_wires</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">num_layers</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">dev_sampler_spsa</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We seed so that we can simulate the same circuit every time.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="n">all_pauliz_tensor_prod</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Tensor.html#pennylane.operation.Tensor" title="pennylane.operation.Tensor" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">Tensor</span></a><span class="p">(</span><span class="o">*</span><span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_wires</span><span class="p">)])</span>
+
+
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">StronglyEntanglingLayers</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_wires</span><span class="p">)))</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><span class="n">all_pauliz_tensor_prod</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After this, we’ll initialize the parameters in a way that is compatible with
+the <code class="docutils literal notranslate"><span class="pre">noisyopt</span></code> package. The <code class="docutils literal notranslate"><span class="pre">noisyopt</span></code> package requires the trainable parameters
+be a flattened array. As a result, our cost function must accept a flat array of parameters
+to be optimized.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">flat_shape</span> <span class="o">=</span> <span class="n">num_layers</span> <span class="o">*</span> <span class="n">num_wires</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">init_params</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.init.strong_ent_layers_normal.html#pennylane.init.strong_ent_layers_normal" title="pennylane.init.strong_ent_layers_normal" class="sphx-glr-backref-module-pennylane-init sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">strong_ent_layers_normal</span></a><span class="p">(</span>
+    <span class="n">n_wires</span><span class="o">=</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="n">num_layers</span>
+<span class="p">)</span>
+<span class="n">init_params_spsa</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">flat_shape</span><span class="p">)</span>
+
+<span class="n">qnode_spsa</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev_sampler_spsa</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">cost_spsa</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">qnode_spsa</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">num_wires</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Once we have defined each piece of the optimization, there’s only one
+remaining component required: the <em>SPSA optimizer</em>.
+We’ll use the SPSA optimizer provided by the <code class="docutils literal notranslate"><span class="pre">noisyopt</span></code> package. Once
+imported, we can initialize parts of the optimization such as the number of
+iterations, a collection to store the cost values, and a callback function.
+Once the optimization has concluded, we save the number of device executions
+required for completion using the callback function. This will be an
+interesting quantity!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">noisyopt</span> <span class="kn">import</span> <span class="n">minimizeSPSA</span>
+
+<span class="n">niter_spsa</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="c1"># Evaluate the initial cost</span>
+<span class="n">cost_store_spsa</span> <span class="o">=</span> <span class="p">[</span><span class="n">cost_spsa</span><span class="p">(</span><span class="n">init_params_spsa</span><span class="p">)]</span>
+<span class="n">device_execs_spsa</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">callback_fn</span><span class="p">(</span><span class="n">xk</span><span class="p">):</span>
+    <span class="n">cost_val</span> <span class="o">=</span> <span class="n">cost_spsa</span><span class="p">(</span><span class="n">xk</span><span class="p">)</span>
+    <span class="n">cost_store_spsa</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost_val</span><span class="p">)</span>
+
+    <span class="c1"># We&#39;ve evaluated the cost function, let&#39;s make up for that</span>
+    <span class="n">num_executions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dev_sampler_spsa</span><span class="o">.</span><span class="n">num_executions</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">device_execs_spsa</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_executions</span><span class="p">)</span>
+
+    <span class="n">iteration_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cost_store_spsa</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">iteration_num</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Iteration = </span><span class="si">{</span><span class="n">iteration_num</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of device executions = </span><span class="si">{</span><span class="n">num_executions</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Cost = </span><span class="si">{</span><span class="n">cost_val</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="choosing-the-hyperparameters">
+<h3>Choosing the hyperparameters<a class="headerlink" href="#choosing-the-hyperparameters" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">noisyopt</span></code> package allows us to choose the initial value of two
+hyperparameters for SPSA: the <span class="math notranslate nohighlight">\(c\)</span> and <span class="math notranslate nohighlight">\(a\)</span> coefficients. Recall
+from above that the <span class="math notranslate nohighlight">\(c\)</span> values control the amount of random shift when
+evaluating the cost function, while the <span class="math notranslate nohighlight">\(a\)</span> coefficients are analogous to a learning
+rate and affect the degree to which the parameters change at each update
+step.</p>
+<p>With stochastic approximation, specifying such hyperparameters significantly
+influences the convergence of the optimization for a given problem. Although
+there is no universal recipe for selecting these values (as they depend
+strongly on the specific problem), <a class="footnote-reference" href="#spall-implementation" id="id3">[2]</a> includes
+guidelines for the selection. In our case, the initial values for <span class="math notranslate nohighlight">\(c\)</span>
+and <span class="math notranslate nohighlight">\(a\)</span> were selected as a result of a grid search to ensure a fast
+convergence.  We further note that apart from <span class="math notranslate nohighlight">\(c\)</span> and <span class="math notranslate nohighlight">\(a\)</span>, there
+are further coefficients that are initialized in the <code class="docutils literal notranslate"><span class="pre">noisyopt</span></code> package
+using the
+previously mentioned guidelines.</p>
+<p>Our cost function does not take a seed as a keyword argument (which would be
+the default behaviour for <code class="docutils literal notranslate"><span class="pre">minimizeSPSA</span></code>), so we set <code class="docutils literal notranslate"><span class="pre">paired=False</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">minimizeSPSA</span><span class="p">(</span>
+    <span class="n">cost_spsa</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="n">init_params_spsa</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="n">niter</span><span class="o">=</span><span class="n">niter_spsa</span><span class="p">,</span>
+    <span class="n">paired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+    <span class="n">a</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">callback_fn</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iteration = 10, Number of device executions = 14, Cost = 0.09
+Iteration = 20, Number of device executions = 29, Cost = -0.638
+Iteration = 30, Number of device executions = 44, Cost = -0.842
+Iteration = 40, Number of device executions = 59, Cost = -0.926
+Iteration = 50, Number of device executions = 74, Cost = -0.938
+Iteration = 60, Number of device executions = 89, Cost = -0.94
+Iteration = 70, Number of device executions = 104, Cost = -0.962
+Iteration = 80, Number of device executions = 119, Cost = -0.938
+Iteration = 90, Number of device executions = 134, Cost = -0.946
+Iteration = 100, Number of device executions = 149, Cost = -0.966
+Iteration = 110, Number of device executions = 164, Cost = -0.954
+Iteration = 120, Number of device executions = 179, Cost = -0.964
+Iteration = 130, Number of device executions = 194, Cost = -0.952
+Iteration = 140, Number of device executions = 209, Cost = -0.958
+Iteration = 150, Number of device executions = 224, Cost = -0.968
+Iteration = 160, Number of device executions = 239, Cost = -0.948
+Iteration = 170, Number of device executions = 254, Cost = -0.974
+Iteration = 180, Number of device executions = 269, Cost = -0.962
+Iteration = 190, Number of device executions = 284, Cost = -0.988
+Iteration = 200, Number of device executions = 299, Cost = -0.964
+</pre></div>
+</div>
+<p>Now let’s perform the same optimization using gradient descent. We set the
+step size according to a favourable value found after grid search for fast
+convergence. Note that we also create a new device in order to reset the execution count to 0.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">opt</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Create a device, qnode and cost function specific to gradient descent</span>
+<span class="n">dev_sampler_gd</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">qnode_gd</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev_sampler_gd</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">cost_gd</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">qnode_gd</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">device_execs_grad</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cost_store_grad</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span><span class="p">(</span><span class="n">cost_gd</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">device_execs_grad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dev_sampler_gd</span><span class="o">.</span><span class="n">num_executions</span><span class="p">)</span>
+    <span class="n">cost_store_grad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Iteration = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Number of device executions = </span><span class="si">{</span><span class="n">dev_sampler_gd</span><span class="o">.</span><span class="n">num_executions</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Cost = </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+<span class="c1"># The step_and_cost function gives us the cost at the previous step, so to find</span>
+<span class="c1"># the cost at the final parameter values we have to compute it manually</span>
+<span class="n">cost_store_grad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost_gd</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iteration = 0, Number of device executions = 121, Cost = 0.904
+Iteration = 1, Number of device executions = 242, Cost = 0.758
+Iteration = 2, Number of device executions = 363, Cost = 0.284
+Iteration = 3, Number of device executions = 484, Cost = -0.416
+Iteration = 4, Number of device executions = 605, Cost = -0.836
+Iteration = 5, Number of device executions = 726, Cost = -0.964
+Iteration = 6, Number of device executions = 847, Cost = -0.992
+Iteration = 7, Number of device executions = 968, Cost = -0.994
+Iteration = 8, Number of device executions = 1089, Cost = -0.992
+Iteration = 9, Number of device executions = 1210, Cost = -0.994
+Iteration = 10, Number of device executions = 1331, Cost = -0.998
+Iteration = 11, Number of device executions = 1452, Cost = -0.992
+Iteration = 12, Number of device executions = 1573, Cost = -0.994
+Iteration = 13, Number of device executions = 1694, Cost = -1.0
+Iteration = 14, Number of device executions = 1815, Cost = -0.996
+Iteration = 15, Number of device executions = 1936, Cost = -0.996
+Iteration = 16, Number of device executions = 2057, Cost = -0.998
+Iteration = 17, Number of device executions = 2178, Cost = -0.996
+Iteration = 18, Number of device executions = 2299, Cost = -0.996
+Iteration = 19, Number of device executions = 2420, Cost = -0.996
+</pre></div>
+</div>
+</div>
+<div class="section" id="spsa-and-gradient-descent-comparison">
+<h3>SPSA and gradient descent comparison<a class="headerlink" href="#spsa-and-gradient-descent-comparison" title="Permalink to this headline">¶</a></h3>
+<p>At this point, nothing else remains but to check which of these approaches did
+better!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">device_execs_grad</span><span class="p">,</span> <span class="n">cost_store_grad</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gradient descent&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">device_execs_spsa</span><span class="p">,</span> <span class="n">cost_store_spsa</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SPSA&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Number of device executions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cost function value&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Gradient descent vs. SPSA for simple optimization&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/first_comparison.png"><img alt="../_images/first_comparison.png" src="../_images/first_comparison.png" style="width: 75%;" /></a>
+</div>
+<p>It seems that SPSA performs great and it does so with a significant savings when
+compared to gradient descent!</p>
+<p>Let’s take a deeper dive to see how much better it actually is.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">grad_desc_exec_min</span> <span class="o">=</span> <span class="n">device_execs_grad</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">cost_store_grad</span><span class="p">)]</span>
+<span class="n">spsa_exec_min</span> <span class="o">=</span> <span class="n">device_execs_spsa</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">cost_store_spsa</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device execution ratio: </span><span class="si">{</span><span class="n">grad_desc_exec_min</span><span class="o">/</span><span class="n">spsa_exec_min</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Device execution ratio: 4.161375661375661
+</pre></div>
+</div>
+<p>This means that SPSA can potentially find the minimum of a cost function by
+using over 4 times fewer device executions than gradient descent! That’s a huge
+saving, especially in cases such as running on actual quantum hardware.</p>
+</div>
+</div>
+<div class="section" id="spsa-and-the-variational-quantum-eigensolver">
+<h2>SPSA and the variational quantum eigensolver<a class="headerlink" href="#spsa-and-the-variational-quantum-eigensolver" title="Permalink to this headline">¶</a></h2>
+<p>Now that we’ve explored the theoretical underpinnings of SPSA, let’s use it
+to optimize a real chemical system, that of the hydrogen molecule <span class="math notranslate nohighlight">\(H_2\)</span>.
+This molecule was studied previously in the <a class="reference external" href="/demos/tutorial_vqe">introductory variational quantum
+eigensolver (VQE) demo</a>, and so we will reuse some of
+that machinery below to set up the problem.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">qchem</span>
+
+<span class="n">geometry</span> <span class="o">=</span> <span class="s2">&quot;h2.xyz&quot;</span>
+
+<span class="n">symbols</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">read_structure</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">h2_ham</span><span class="p">,</span> <span class="n">num_qubits</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">molecular_hamiltonian</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">)</span>
+
+<span class="c1"># Variational ansatz for H_2 - see Intro VQE demo for more details</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">wires</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The <span class="math notranslate nohighlight">\(H_2\)</span> Hamiltonian uses 4 qubits, contains 15 terms, and has a ground
+state energy of <span class="math notranslate nohighlight">\(-1.136189454088\)</span> Hartree.</p>
+<p>Since SPSA is robust to noise, let’s see how it fares compared to gradient
+descent when run on noisy hardware. For this, we will set up and use a simulated
+version of IBM Q’s Melbourne hardware.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">IBMQ</span>
+<span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">noise</span>
+
+<span class="c1"># Note: you will need to be authenticated to IBMQ to run the following code.</span>
+<span class="c1"># Do not run the simulation on this device, as it will send it to real hardware</span>
+<span class="n">dev_melbourne</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span>
+    <span class="s2">&quot;qiskit.ibmq&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;ibmq_16_melbourne&quot;</span>
+<span class="p">)</span>
+<span class="n">noise_model</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">NoiseModel</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">dev_melbourne</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">properties</span><span class="p">())</span>
+<span class="n">dev_noisy</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span>
+    <span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">dev_melbourne</span><span class="o">.</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">noise_model</span><span class="o">=</span><span class="n">noise_model</span>
+<span class="p">)</span>
+
+<span class="c1"># Initialize the optimizer - optimal step size was found through a grid search</span>
+<span class="n">opt</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">2.2</span><span class="p">)</span>
+<span class="n">cost</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">h2_ham</span><span class="p">,</span> <span class="n">dev_noisy</span><span class="p">)</span>
+
+<span class="c1"># This random seed was used in the original VQE demo and is known to allow the</span>
+<span class="c1"># algorithm to converge to the global minimum.</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">init_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="p">(</span><span class="n">num_qubits</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">h2_grad_device_executions_melbourne</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">h2_grad_energies_melbourne</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="c1"># Run the gradient descent algorithm</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">h2_grad_device_executions_melbourne</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dev_noisy</span><span class="o">.</span><span class="n">num_executions</span><span class="p">)</span>
+    <span class="n">h2_grad_energies_melbourne</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Iteration = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of device executions = </span><span class="si">{</span><span class="n">dev_noisy</span><span class="o">.</span><span class="n">num_executions</span><span class="si">}</span><span class="s2">,  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Energy = </span><span class="si">{</span><span class="n">energy</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span>
+        <span class="p">)</span>
+
+<span class="n">h2_grad_energies_melbourne</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+
+<span class="n">true_energy</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.136189454088</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final estimated value of the ground-state energy = </span><span class="si">{</span><span class="n">energy</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Accuracy with respect to the true energy: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">true_energy</span><span class="p">)</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iteration = 0, Number of device executions = 333,  Energy = -0.66345346 Ha
+Iteration = 5, Number of device executions = 1998,  Energy = -0.99124272 Ha
+Iteration = 10, Number of device executions = 3663,  Energy = -1.00105536 Ha
+Iteration = 15, Number of device executions = 5328,  Energy = -0.99592924 Ha
+
+Final estimated value of the ground-state energy = -0.98134253 Ha
+Accuracy with respect to the true energy: 0.15484692 Ha
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">h2_grad_device_executions_melbourne</span><span class="p">,</span>
+    <span class="n">h2_grad_energies_melbourne</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gradient descent, Melbourne sim.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Device executions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Energy (Ha)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">true_energy</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;True energy&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;H2 energy from the VQE using gradient descent&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/h2_vqe_noisy_shots_melbourne.png"><img alt="../_images/h2_vqe_noisy_shots_melbourne.png" src="../_images/h2_vqe_noisy_shots_melbourne.png" style="width: 90%;" /></a>
+</div>
+<p>On noisy hardware, the energy never quite reaches its true value, no matter
+how many iterations are used. In order to reach the true value, we would have
+to incorporate error mitigation techniques.</p>
+<div class="section" id="vqe-with-spsa">
+<h3>VQE with SPSA<a class="headerlink" href="#vqe-with-spsa" title="Permalink to this headline">¶</a></h3>
+<p>Now let’s perform the same experiment using SPSA instead of the VQE.
+SPSA should use only 2 device executions per term in the expectation value.
+Since there are 15 terms, and 200 iterations, we expect 6000 total device
+executions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev_noisy_spsa</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span>
+    <span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">dev_melbourne</span><span class="o">.</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">noise_model</span><span class="o">=</span><span class="n">noise_model</span>
+<span class="p">)</span>
+<span class="n">cost_spsa</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">h2_ham</span><span class="p">,</span> <span class="n">dev_noisy_spsa</span><span class="p">)</span>
+
+<span class="c1"># Wrapping the cost function and flattening the parameters to be compatible</span>
+<span class="c1"># with noisyopt which assumes a flat array of input parameters</span>
+<span class="k">def</span> <span class="nf">wrapped_cost</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cost_spsa</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
+
+
+<span class="n">num_qubits</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">num_params</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">num_qubits</span> <span class="o">*</span> <span class="n">num_params</span><span class="p">)</span>
+
+<span class="n">h2_spsa_device_executions_melbourne</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">h2_spsa_energies_melbourne</span> <span class="o">=</span> <span class="p">[</span><span class="n">wrapped_cost</span><span class="p">(</span><span class="n">params</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">callback_fn</span><span class="p">(</span><span class="n">xk</span><span class="p">):</span>
+    <span class="n">cost_val</span> <span class="o">=</span> <span class="n">wrapped_cost</span><span class="p">(</span><span class="n">xk</span><span class="p">)</span>
+    <span class="n">h2_spsa_energies_melbourne</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost_val</span><span class="p">)</span>
+
+    <span class="c1"># We have evaluated every term twice, so we need to make up for this</span>
+    <span class="n">num_executions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dev_noisy_spsa</span><span class="o">.</span><span class="n">num_executions</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">h2_spsa_device_executions_melbourne</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_executions</span><span class="p">)</span>
+
+    <span class="n">iteration_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">h2_spsa_energies_melbourne</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">iteration_num</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Iteration = </span><span class="si">{</span><span class="n">iteration_num</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of device executions = </span><span class="si">{</span><span class="n">num_executions</span><span class="si">}</span><span class="s2">,  &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Energy = </span><span class="si">{</span><span class="n">cost_val</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimizeSPSA</span><span class="p">(</span>
+    <span class="c1"># Hyperparameters chosen based on grid search</span>
+    <span class="n">wrapped_cost</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+    <span class="n">niter</span><span class="o">=</span><span class="n">niter_spsa</span><span class="p">,</span>
+    <span class="n">paired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">a</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">callback</span><span class="o">=</span><span class="n">callback_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final estimated value of the ground-state energy = </span><span class="si">{</span><span class="n">energy</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Accuracy with respect to the true energy: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="n">true_energy</span><span class="p">)</span><span class="si">:</span><span class="s2">.8f</span><span class="si">}</span><span class="s2"> Ha&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iteration = 10, Number of device executions = 210,  Energy = -0.93065488 Ha
+Iteration = 20, Number of device executions = 435,  Energy = -0.97890496 Ha
+Iteration = 30, Number of device executions = 660,  Energy = -0.96639933 Ha
+Iteration = 40, Number of device executions = 885,  Energy = -0.96915750 Ha
+Iteration = 50, Number of device executions = 1110,  Energy = -0.96290227 Ha
+Iteration = 60, Number of device executions = 1335,  Energy = -0.98274165 Ha
+Iteration = 70, Number of device executions = 1560,  Energy = -0.98002812 Ha
+Iteration = 80, Number of device executions = 1785,  Energy = -0.98027459 Ha
+Iteration = 90, Number of device executions = 2010,  Energy = -0.99295116 Ha
+Iteration = 100, Number of device executions = 2235,  Energy = -0.96745352 Ha
+Iteration = 110, Number of device executions = 2460,  Energy = -0.96522842 Ha
+Iteration = 120, Number of device executions = 2685,  Energy = -0.98482781 Ha
+Iteration = 130, Number of device executions = 2910,  Energy = -0.98701641 Ha
+Iteration = 140, Number of device executions = 3135,  Energy = -0.97656477 Ha
+Iteration = 150, Number of device executions = 3360,  Energy = -0.98735587 Ha
+Iteration = 160, Number of device executions = 3585,  Energy = -0.98969587 Ha
+Iteration = 170, Number of device executions = 3810,  Energy = -0.96972110 Ha
+Iteration = 180, Number of device executions = 4035,  Energy = -0.98354804 Ha
+Iteration = 190, Number of device executions = 4260,  Energy = -0.96640637 Ha
+Iteration = 200, Number of device executions = 4485,  Energy = -0.98526135 Ha
+
+Final estimated value of the ground-state energy = -0.98134253 Ha
+Accuracy with respect to the true energy: 0.15484692 Ha
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">h2_grad_device_executions_melbourne</span><span class="p">,</span>
+    <span class="n">h2_grad_energies_melbourne</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gradient descent, Melbourne sim.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">h2_spsa_device_executions_melbourne</span><span class="p">,</span>
+    <span class="n">h2_spsa_energies_melbourne</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SPSA, Melbourne sim.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;H2 energy from the VQE using gradient descent vs. SPSA&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Number of device executions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Energy (Ha)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/h2_vqe_noisy_spsa.png"><img alt="../_images/h2_vqe_noisy_spsa.png" src="../_images/h2_vqe_noisy_spsa.png" style="width: 90%;" /></a>
+</div>
+<p>We observe here that the SPSA optimizer again converges in fewer device
+executions than the gradient descent optimizer. 🎉</p>
+<p>Due to the (simulated) hardware noise, however, the obtained energies are
+higher than the true energy, and the output still bounces around (in SPSA
+this is expected due to the inherently stochastic nature of the algorithm).</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>SPSA is a useful optimization technique that may be particularly beneficial on
+near-term quantum hardware. It uses significantly fewer iterations to achieve
+comparable result quality as gradient-based methods, giving it the potential
+to save time and resources. It can be a good alternative to
+gradient-based methods when the optimization problem involves executing
+quantum circuits with many free parameters.</p>
+<p>There are also extensions to SPSA that could be interesting to explore in
+this context. One, in particular, uses an adaptive technique to approximate
+the <em>Hessian</em> matrix during optimization to effectively increase the
+convergence rate of SPSA <a class="footnote-reference" href="#spall-overview" id="id4">[1]</a>. The proposed technique can also
+be applied in cases where there is direct access to the gradient of the cost
+function.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="spall-overview" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id4">3</a>)</em> James C. Spall, “<a class="reference external" href="https://www.jhuapl.edu/SPSA/PDF-SPSA/Spall_An_Overview.PDF">An Overview of the Simultaneous Perturbation Method
+for Efficient Optimization</a>”, 1998</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="spall-implementation" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>J. C. Spall, “Implementation of the simultaneous perturbation algorithm
+for stochastic optimization,” in IEEE Transactions on Aerospace and
+Electronic Systems, vol. 34, no. 3, pp. 817-823, July 1998, doi:
+10.1109/7.705889.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="spall-hessian" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td>J. C. Spall, “Adaptive stochastic approximation by the simultaneous
+perturbation method,” in IEEE Transactions on Automatic Control,
+vol. 45, no. 10, pp. 1839-1853, Oct 2020, doi:
+10.1109/TAC.2000.880982.</td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-spsa-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/7799c45f2b66cb06c064461e31fd7132/spsa.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">spsa.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/c8ca894ebac1e585368da6a1c3b04e9c/spsa.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">spsa.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/spsa</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Optimization using SPSA</a><ul>
+<li><a class="reference internal" href="#background">Background</a></li>
+<li><a class="reference internal" href="#simultaneous-perturbation-stochastic-approximation-spsa">Simultaneous perturbation stochastic approximation (SPSA)</a></li>
+<li><a class="reference internal" href="#optimization-on-a-sampling-device">Optimization on a sampling device</a><ul>
+<li><a class="reference internal" href="#choosing-the-hyperparameters">Choosing the hyperparameters</a></li>
+<li><a class="reference internal" href="#spsa-and-gradient-descent-comparison">SPSA and gradient descent comparison</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#spsa-and-the-variational-quantum-eigensolver">SPSA and the variational quantum eigensolver</a><ul>
+<li><a class="reference internal" href="#vqe-with-spsa">VQE with SPSA</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/spsa</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_research.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_QGAN.html" title="Quantum Generative Adversarial Networks with Cirq + TensorFlow"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_measurement_optimize.html" title="Measurement optimization"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" >Research</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

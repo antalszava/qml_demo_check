@@ -1,0 +1,1270 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Learn about quantum volume, and how to compute it." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/quantum_volume_thumbnail.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Quantum volume &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/quantum_volume.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Learn about quantum volume, and how to compute it." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Quantum volume &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/quantum_volume.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding the Haar Measure" href="tutorial_haar_measure.html" />
+    <link rel="prev" title="Beyond classical computing with qsim" href="qsim_beyond_classical.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_haar_measure.html" title="Understanding the Haar Measure"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="qsim_beyond_classical.html" title="Beyond classical computing with qsim"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" accesskey="U">Research</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-quantum-volume-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="quantum-volume">
+<span id="sphx-glr-demos-quantum-volume-py"></span><span id="id1"></span><h1>Quantum volume<a class="headerlink" href="#quantum-volume" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["qsim_beyond_classical.html"];
+    var related_tutorials_titles = ['Beyond classical computing with qsim'];
+</script></p>
+<p><em>Author: PennyLane dev team. Posted: 15 Dec 2020. Last updated: 15 Apr 2021.</em></p>
+<p>Twice per year, a project called the TOP500 <a class="footnote-reference" href="#top500" id="id2">[1]</a> releases a list of the
+500 most powerful supercomputing systems in the world. However, there is a large
+amount of variation in how supercomputers are built. They may run different
+operating systems and have varying amounts of memory. <a class="reference external" href="https://en.wikipedia.org/wiki/Fugaku_(supercomputer)">Some</a> use 48-core processors,
+while <a class="reference external" href="https://en.wikipedia.org/wiki/Sunway_TaihuLight">others</a> use processors
+with up to 260 cores. The speed of processors will differ, and they may be
+connected in different ways. We can’t rank them by simply counting the number of
+processors!</p>
+<p>In order to make a fair comparison, we need benchmarking standards that give us
+a holistic view of their performance. To that end, the TOP500 rankings are based
+on something called the LINPACK benchmark <a class="footnote-reference" href="#linpack" id="id3">[2]</a>. The task of the
+supercomputers is to solve a dense system of linear equations, and the metric of
+interest is the rate at which they perform <a class="reference external" href="https://en.wikipedia.org/wiki/FLOPS">floating-point operations (FLOPS)</a>. Today’s top machines reach speeds well
+into the regime of hundreds of petaFLOPS! While a single number certainly
+cannot tell the whole story, it still gives us insight into the quality of the
+machines, and provides a standard so we can compare them.</p>
+<p>A similar problem is emerging with quantum computers: we can’t judge quantum
+computers on the number of qubits alone. Present-day devices have a number of
+limitations, an important one being gate error rates. Typically
+the qubits on a chip are not all connected to each other, so it may not be
+possible to perform operations on arbitrary pairs of them.</p>
+<p>Considering this, can we tell if a machine with 20 noisy qubits is better
+than one with 5 very high-quality qubits? Or if a machine with 8 fully-connected
+qubits is better than one with 16 qubits of comparable error rate, but arranged in
+a square lattice?  How can we make comparisons between different
+types of qubits?</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/qubit_graph_variety.svg"><img alt="../_images/qubit_graph_variety.svg" src="../_images/qubit_graph_variety.svg" width="50%" /></a>
+<div class="legend">
+Which of these qubit hardware graphs is the best?</div>
+</div>
+<p>To compare across all these facets, researchers have proposed a metric called
+“quantum volume” <a class="footnote-reference" href="#cross" id="id4">[3]</a>. Roughly, the quantum volume is a measure of the
+effective number of qubits a processor has. It is calculated by determining the
+largest number of qubits on which it can reliably run circuits of a prescribed
+type. You can think of it loosely as a quantum analogue of the LINPACK
+benchmark. Different quantum computers are tasked with solving the same problem,
+and the success will be a function of many properties: error rates, qubit
+connectivity, even the quality of the software stack. A single
+number won’t tell us everything about a quantum computer, but it does establish
+a framework for comparing them.</p>
+<p>After working through this tutorial, you’ll be able to define quantum volume,
+explain the problem on which it’s based, and run the protocol to compute it!</p>
+<div class="section" id="designing-a-benchmark-for-quantum-computers">
+<h2>Designing a benchmark for quantum computers<a class="headerlink" href="#designing-a-benchmark-for-quantum-computers" title="Permalink to this headline">¶</a></h2>
+<p>There are many different properties of a quantum computer
+that contribute to the successful execution of a computation. Therefore, we
+must be very explicit about what exactly we are benchmarking, and what is our
+measure of success. In general, to set up a benchmark for a quantum computer
+we need to decide on a number of things <a class="footnote-reference" href="#robin" id="id5">[4]</a>:</p>
+<ol class="arabic simple">
+<li>A family of circuits with a well-defined structure and variable size</li>
+<li>A set of rules detailing how the circuits can be compiled</li>
+<li>A measure of success for individual circuits</li>
+<li>A measure of success for the family of circuits</li>
+<li>(Optional) An experimental design specifying how the circuits are to be run</li>
+</ol>
+<p>We’ll work through this list in order to see how the protocol for computing
+quantum volume fits within this framework.</p>
+<div class="section" id="the-circuits">
+<h3>The circuits<a class="headerlink" href="#the-circuits" title="Permalink to this headline">¶</a></h3>
+<p>Quantum volume relates
+to the largest <em>square</em> circuit that a quantum processor can run reliably. This benchmark
+uses <em>random</em> square circuits with a very particular form:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/model_circuit_cross.png"><img alt="../_images/model_circuit_cross.png" src="../_images/model_circuit_cross.png" style="width: 60%;" /></a>
+<div class="legend">
+A schematic of the random circuit structure used in the quantum volume protocol.
+Image source: <a class="footnote-reference" href="#cross" id="id6">[3]</a>.</div>
+</div>
+<p>Specifically, the circuits consist of <span class="math notranslate nohighlight">\(d\)</span> sequential layers acting on
+<span class="math notranslate nohighlight">\(d\)</span> qubits. Each layer consists of two parts: a random permutation of
+the qubits, followed by Haar-random SU(4) operations performed on neighbouring
+pairs of qubits. (When the number of qubits is odd, the bottom-most qubit is
+idle while the SU(4) operations run on the pairs. However, it will still be
+incorporated by way of the permutations.) These circuits satisfy the criteria
+in item 1 — they have well-defined structure, and it is clear how they can be
+scaled to different sizes.</p>
+<p>As for the compilation rules of item 2, to compute quantum volume we’re
+allowed to do essentially anything we’d like to the circuits in order to
+improve them. This includes optimization, hardware-aware considerations such
+as qubit placement and routing, and even resynthesis by finding unitaries that
+are close to the target, but easier to implement on the hardware <a class="footnote-reference" href="#cross" id="id7">[3]</a>.</p>
+<p>Both the circuit structure and the compilation highlight how quantum volume is
+about more than just the number of qubits. The error rates will affect the
+achievable depth, and the qubit connectivity contributes through the layers of
+permutations because a very well-connected processor will be able to implement
+these in fewer steps than a less-connected one. Even the quality of the
+software and the compiler plays a role here: higher-quality compilers will
+produce circuits that fit better on the target devices, and will thus produce
+higher quality results.</p>
+</div>
+<div class="section" id="the-measures-of-success">
+<h3>The measures of success<a class="headerlink" href="#the-measures-of-success" title="Permalink to this headline">¶</a></h3>
+<p>Now that we have our circuits, we have to define the quantities that will
+indicate how well we’re able to run them. For that, we need a problem
+to solve. The problem used for computing quantum volume is called the <em>heavy output
+generation problem</em>. It has roots in the proposals for demonstrating quantum
+advantage <a class="footnote-reference" href="#aaronson" id="id8">[5]</a>. Many such proposals make use of the properties of
+various random quantum circuit families, as the distribution of the
+measurement outcomes may not be easy to sample using classical
+techniques.</p>
+<p>A distribution that is theorized to fulfill this property is the distribution
+of <em>heavy</em> output bit strings. Heavy bit strings are those whose outcome
+probabilities are above the median of the distribution. For example, suppose
+we run a two-qubit circuit and find that the measurement probabilities for
+the output states are as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">measurement_probs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;00&quot;</span><span class="p">:</span> <span class="mf">0.558</span><span class="p">,</span> <span class="s2">&quot;01&quot;</span><span class="p">:</span> <span class="mf">0.182</span><span class="p">,</span> <span class="s2">&quot;10&quot;</span><span class="p">:</span> <span class="mf">0.234</span><span class="p">,</span> <span class="s2">&quot;11&quot;</span><span class="p">:</span> <span class="mf">0.026</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The median of this probability distribution is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">prob_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="n">measurement_probs</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Median = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">prob_array</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Median = 0.208
+</pre></div>
+</div>
+<p>This means that the heavy bit strings are ‘00’ and ‘10’, because these are
+the two probabilities above the median. If we were to run this circuit, the
+probability of obtaining one of the heavy outputs is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">heavy_output_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">prob_array</span><span class="p">[</span><span class="n">prob_array</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">prob_array</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Heavy output probability = </span><span class="si">{</span><span class="n">heavy_output_prob</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Heavy output probability = 0.792
+</pre></div>
+</div>
+<p>Each circuit in a circuit family has its own heavy output probability. If our
+quantum computer is of high quality, then we should expect to see heavy
+outputs quite often across all the circuits. On the other hand, if it’s of
+poor quality and everything is totally decohered, we will end up with output
+probabilities that are roughly all the same, as noise will reduce the
+probabilities to the uniform distribution.</p>
+<p>The heavy output generation problem quantifies this — for our family of
+random circuits, do we obtain heavy outputs at least 2/3 of the time on
+average?  Furthermore, do we obtain this with high confidence? This is the
+basis for quantum volume. Looking back at the criteria for our benchmarks, for
+item 3 the measure of success for each circuit is how often we obtain heavy
+outputs when we run the circuit and take a measurement. For item 4 the
+measure of success for the whole family is whether or not the mean of these
+probabilities is greater than 2/3 with high confidence.</p>
+<p>On a related note, it is important to determine what heavy output probability
+we should <em>expect</em> to see on average. The intuition for how this can be
+calculated is as follows <a class="footnote-reference" href="#aaronson" id="id9">[5]</a>, <a class="footnote-reference" href="#cmu" id="id10">[6]</a>.  Suppose that our random
+square circuits scramble things up enough so that the effective operation
+looks like a Haar-random unitary <span class="math notranslate nohighlight">\(U\)</span>. Since in the circuits we are
+applying <span class="math notranslate nohighlight">\(U\)</span> to the all-zero ket, the measurement outcome probabilities
+will be the moduli squared of the entries in the first column of <span class="math notranslate nohighlight">\(U\)</span>.</p>
+<p>Now if <span class="math notranslate nohighlight">\(U\)</span> is Haar-random, we can say something about the form of these
+entries. In particular, they are complex numbers for which both the real and
+imaginary parts are normally distributed with mean 0 and variance
+<span class="math notranslate nohighlight">\(1/2^m\)</span>, where <span class="math notranslate nohighlight">\(m\)</span> is the number of qubits. Taking the modulus
+squared of such numbers and making a histogram yields a distribution
+of probabilities with the form <span class="math notranslate nohighlight">\(\hbox{Pr}(p) \sim 2^m e^{-2^m p}.\)</span> This
+is also known as the <em>Porter-Thomas distribution</em>.</p>
+<p>By looking at the form of the underlying probability distribution, the
+exponential distribution <span class="math notranslate nohighlight">\(\hbox{Pr}(x) = e^{-x}\)</span>, we can calculate some
+properties of the heavy output probabilities. First, we can integrate the exponential
+distribution to find that the median sits at <span class="math notranslate nohighlight">\(\ln 2\)</span>.  We can further
+compute the expectation value of obtaining something greater than the median
+by integrating <span class="math notranslate nohighlight">\(x e^{-x}\)</span> from <span class="math notranslate nohighlight">\(\ln 2\)</span> to <span class="math notranslate nohighlight">\(\infty\)</span> to obtain
+<span class="math notranslate nohighlight">\((1 + \ln 2)/2\)</span>. This is the expected heavy output probability!
+Numerically it is around 0.85, as we will observe later in our results.</p>
+</div>
+<div class="section" id="the-benchmark">
+<h3>The benchmark<a class="headerlink" href="#the-benchmark" title="Permalink to this headline">¶</a></h3>
+<p>Now that we have our circuits and our measures of success, we’re ready to
+define the quantum volume.</p>
+<div class="defn admonition">
+<p class="first admonition-title">Definition</p>
+<p>The quantum volume <span class="math notranslate nohighlight">\(V_Q\)</span> of an <span class="math notranslate nohighlight">\(n\)</span>-qubit processor is defined as <a class="footnote-reference" href="#cross" id="id11">[3]</a></p>
+<div class="math notranslate nohighlight">
+\[\log_2(V_Q) = \hbox{argmax}_m \min (m, d(m))\]</div>
+<p class="last">where <span class="math notranslate nohighlight">\(m \leq n\)</span> is a number of qubits, and <span class="math notranslate nohighlight">\(d(m)\)</span> is the number of
+qubits in the largest square circuits for which we can reliably sample
+heavy outputs with probability greater than 2/3.</p>
+</div>
+<p>To see this more concretely, suppose we have a 20-qubit device and find that
+we get heavy outputs reliably for up to depth-4 circuits on any set of 4
+qubits, then the quantum volume is <span class="math notranslate nohighlight">\(\log_2 V_Q = 4\)</span>. Quantum volume is
+incremental, as shown below — we gradually work our way up to larger
+circuits, until we find something we can’t do.  Very loosely, quantum volume
+is like an effective number of qubits. Even if we have those 20 qubits, only
+groups of up to 4 of them work well enough together to sample from
+distributions that would be considered hard.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/qv_square_circuits.svg"><img alt="../_images/qv_square_circuits.svg" src="../_images/qv_square_circuits.svg" width="75%" /></a>
+<div class="legend">
+This quantum computer has <span class="math notranslate nohighlight">\(\log_2 V_Q = 4\)</span>, as the 4-qubit square
+circuits are the largest ones it can run successfully.</div>
+</div>
+<p>The maximum achieved quantum volume has been doubling at an increasing rate. In
+late 2020, the most recent announcements have been <span class="math notranslate nohighlight">\(\log_2 V_Q = 6\)</span> on
+IBM’s 27-qubit superconducting device <cite>ibmq_montreal</cite> <a class="footnote-reference" href="#qv64" id="id12">[7]</a>, and
+<span class="math notranslate nohighlight">\(\log_2 V_Q = 7\)</span> on a Honeywell trapped-ion qubit processor
+<a class="footnote-reference" href="#honeywell" id="id13">[8]</a>. A device with an expected quantum volume of <span class="math notranslate nohighlight">\(\log_2 V_Q
+= 22\)</span> has also been announced by IonQ <a class="footnote-reference" href="#ionq" id="id14">[9]</a>, though benchmarking results
+have not yet been published.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In many sources, the quantum volume of processors is reported as
+<span class="math notranslate nohighlight">\(V_Q\)</span> explicitly, rather than <span class="math notranslate nohighlight">\(\log_2 V_Q\)</span> as is the
+convention in this demo. As such, IonQ’s processor has the potential for a
+quantum volume of <span class="math notranslate nohighlight">\(2^{22} &gt; 4000000\)</span>. Here we use the <span class="math notranslate nohighlight">\(\log\)</span>
+because it is more straightforward to understand that they have 22
+high-quality, well-connected qubits than to extract this at first glance from the
+explicit value of the volume.</p>
+</div>
+</div>
+</div>
+<div class="section" id="computing-the-quantum-volume">
+<h2>Computing the quantum volume<a class="headerlink" href="#computing-the-quantum-volume" title="Permalink to this headline">¶</a></h2>
+<p>Equipped with our definition of quantum volume, it’s time to compute it
+ourselves! We’ll use the <a class="reference external" href="https://pennylaneqiskit.readthedocs.io/en/latest/">PennyLane-Qiskit</a> plugin to compute the
+volume of a simulated version of one of the IBM processors, since their properties are easily
+accessible through this plugin.</p>
+<p>Loosely, the protocol for quantum volume consists of three steps:</p>
+<ol class="arabic simple">
+<li>Construct random square circuits of increasing size</li>
+<li>Run those circuits on both a simulator and on a noisy hardware device</li>
+<li>Perform a statistical analysis of the results to determine what size
+circuits the device can run reliably</li>
+</ol>
+<p>The largest reliable size will become the <span class="math notranslate nohighlight">\(m\)</span> in the expression for
+quantum volume.</p>
+<div class="section" id="step-1-construct-random-square-circuits">
+<h3>Step 1: construct random square circuits<a class="headerlink" href="#step-1-construct-random-square-circuits" title="Permalink to this headline">¶</a></h3>
+<p>Recall that the structure of the circuits above is alternating layers of
+permutations and random SU(4) operations on pairs of qubits.  Let’s implement
+the generation of such circuits in PennyLane.</p>
+<p>First we write a function that randomly permutes qubits. We’ll do this by
+using numpy to generate a permutation, and then apply it with the built-in
+<code class="xref py py-func docutils literal notranslate"><span class="pre">Permute()</span></code> subroutine.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+
+<span class="c1"># Object for random number generation from numpy</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">permute_qubits</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">):</span>
+    <span class="c1"># A random permutation</span>
+    <span class="n">perm_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">))</span>
+    <span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">Permute</span><span class="p">(</span><span class="n">perm_order</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Next, we need to apply SU(4) gates to pairs of qubits. PennyLane doesn’t have
+built-in functionality to generate these random matrices, however its cousin
+<a class="reference external" href="https://strawberryfields.ai/">Strawberry Fields</a> does! We will use the
+<code class="docutils literal notranslate"><span class="pre">random_interferometer</span></code> method, which can generate unitary matrices uniformly
+at random. This function actually generates elements of U(4), but they are
+essentially equivalent up to a global phase.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">strawberryfields.utils</span> <span class="kn">import</span> <span class="n">random_interferometer</span>
+
+<span class="k">def</span> <span class="nf">apply_random_su4_layer</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">qubit_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">qubit_idx</span> <span class="o">&lt;</span> <span class="n">num_qubits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">rand_haar_su4</span> <span class="o">=</span> <span class="n">random_interferometer</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitUnitary.html#pennylane.QubitUnitary" title="pennylane.QubitUnitary" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">QubitUnitary</span></a><span class="p">(</span><span class="n">rand_haar_su4</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">,</span> <span class="n">qubit_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Next, let’s write a layering method to put the two together — this is just
+for convenience and to highlight the fact that these two methods together
+make up one layer of the circuit depth.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">qv_circuit_layer</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">):</span>
+    <span class="n">permute_qubits</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">)</span>
+    <span class="n">apply_random_su4_layer</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s take a look! We’ll set up an ideal device with 5 qubits, and generate a
+circuit with 3 qubits. In this demo, we’ll work explicitly with <a class="reference external" href="https://pennylane.readthedocs.io/en/latest/code/qml_tape.html">quantum tapes</a> since they
+are not immediately tied to a device. This will be convenient later when we
+need to run the same random circuit on two devices independently.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_qubits</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">dev_ideal</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">num_qubits</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># number of qubits</span>
+
+<span class="k">with</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.tape.QuantumTape.html#pennylane.tape.QuantumTape" title="pennylane.tape.QuantumTape" class="sphx-glr-backref-module-pennylane-tape sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">tape</span><span class="o">.</span><span class="n">QuantumTape</span></a><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.layer.html#pennylane.layer" title="pennylane.layer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">layer</span></a><span class="p">(</span><span class="n">qv_circuit_layer</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tape</span><span class="o">.</span><span class="n">expand</span><span class="p">()</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">wire_order</span><span class="o">=</span><span class="n">dev_ideal</span><span class="o">.</span><span class="n">wires</span><span class="p">,</span> <span class="n">show_all_wires</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0: ────╭SWAP─────────╭U0──╭SWAP─────────╭U1──╭SWAP──╭U2──┤
+  1: ────│──────╭SWAP──╰U0──│──────╭SWAP──╰U1──╰SWAP──╰U2──┤
+  2: ────╰SWAP──╰SWAP───────╰SWAP──╰SWAP───────────────────┤
+  3: ──────────────────────────────────────────────────────┤
+  4: ──────────────────────────────────────────────────────┤
+
+ U0 =
+ [[-0.17514647+0.00759447j  0.11975927+0.16007614j -0.41793925+0.49643728j
+    0.62304058-0.34640531j]
+  [-0.73367896-0.58079555j -0.11348577+0.00751965j -0.02640159-0.15592112j
+   -0.19507153-0.21998821j]
+  [ 0.02988983+0.09364586j -0.74053162+0.55032455j  0.31350059-0.01305651j
+    0.16283233-0.11885036j]
+  [-0.13103809-0.25850305j  0.18298996+0.2497364j   0.34879438+0.57771772j
+   -0.02385446+0.60346274j]]
+ U1 =
+ [[ 0.14296171+0.28087257j -0.5985737 -0.27489922j -0.43838149+0.10344812j
+    0.04022491+0.51216658j]
+  [-0.21538853+0.02728431j -0.24776721-0.57146257j  0.60975755+0.36241573j
+    0.21787038-0.11953391j]
+  [-0.24405375+0.05780278j -0.11688629-0.17397518j -0.51628349-0.11381455j
+    0.44143429-0.64714776j]
+  [-0.750841  -0.47630904j -0.28666068+0.22820556j -0.09459735+0.07429451j
+   -0.17243398+0.17582253j]]
+U2 =
+[[-0.63733359+1.91519046e-01j -0.49615702+9.79920998e-05j
+   0.06949634+4.54968771e-01j  0.21112196-2.33571716e-01j]
+ [ 0.4774216 +5.19692450e-02j -0.2741782 -3.71778068e-01j
+   0.09817361+6.01972062e-01j -0.39517581+1.66741872e-01j]
+ [ 0.14401687-1.53582182e-01j  0.51636466-1.58216631e-01j
+   0.43804144+3.62586089e-01j  0.4473567 -3.74872915e-01j]
+ [ 0.51670588+1.23210608e-01j -0.48982566-9.40288988e-02j
+  -0.19210465-2.36457367e-01j  0.53202679-3.05278186e-01j]]
+</pre></div>
+</div>
+<p>The first thing to note is that the last two qubits are never used in the
+operations, since the quantum volume circuits are square. Another important
+point is that this circuit with 3 layers actually has depth much greater than
+3, since each layer has both SWAPs and SU(4) operations that are further
+decomposed into elementary gates when run on the actual processor.</p>
+<p>One last thing we’ll need before running our circuits is the machinery to
+determine the heavy outputs. This is quite an interesting aspect of the
+protocol — we’re required to compute the heavy outputs classically in order
+to get the results! As a consequence, it will only be possible to calculate
+quantum volume for processors up to a certain point before they become too
+large.</p>
+<p>That said, classical simulators are always improving, and can simulate
+circuits with numbers of qubits well into the double digits (though they may
+need a supercomputer to do so). Furthermore, the designers of the protocol
+don’t expect this to be an issue until gate error rates decrease below
+<span class="math notranslate nohighlight">\(\approx 10^{-4}\)</span>, after which we may need to make adjustments to remove
+the classical simulation, or even consider new volume metrics <a class="footnote-reference" href="#cross" id="id15">[3]</a>.</p>
+<p>The heavy outputs can be retrieved from a classically-obtained probability
+distribution as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">heavy_output_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">probs</span><span class="p">):</span>
+    <span class="c1"># Compute heavy outputs of an m-qubit circuit with measurement outcome</span>
+    <span class="c1"># probabilities given by probs, which is an array with the probabilities</span>
+    <span class="c1"># ordered as &#39;000&#39;, &#39;001&#39;, ... &#39;111&#39;.</span>
+
+    <span class="c1"># Sort the probabilities so that those above the median are in the second half</span>
+    <span class="n">probs_ascending_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+    <span class="n">sorted_probs</span> <span class="o">=</span> <span class="n">probs</span><span class="p">[</span><span class="n">probs_ascending_order</span><span class="p">]</span>
+
+    <span class="c1"># Heavy outputs are the bit strings above the median</span>
+    <span class="n">heavy_outputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># Convert integer indices to m-bit binary strings</span>
+        <span class="nb">format</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;#0</span><span class="si">{</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="si">}</span><span class="s2">b&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">probs_ascending_order</span><span class="p">[</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Probability of a heavy output</span>
+    <span class="n">prob_heavy_output</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">[</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
+
+    <span class="k">return</span> <span class="n">heavy_outputs</span><span class="p">,</span> <span class="n">prob_heavy_output</span>
+</pre></div>
+</div>
+<p>As an example, let’s compute the heavy outputs and probability for our circuit
+above.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Adds a measurement of the first m qubits to the previous circuit</span>
+<span class="k">with</span> <span class="n">tape</span><span class="p">:</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.probs.html#pennylane.probs" title="pennylane.probs" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">probs</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+
+<span class="c1"># Run the circuit, compute heavy outputs, and print results</span>
+<span class="n">output_probs</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">expand</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">dev_ideal</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">,</span> <span class="p">)</span>
+<span class="n">heavy_outputs</span><span class="p">,</span> <span class="n">prob_heavy_output</span> <span class="o">=</span> <span class="n">heavy_output_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">output_probs</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;State</span><span class="se">\t</span><span class="s2">Probability&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_probs</span><span class="p">):</span>
+    <span class="n">bit_string</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;#05b&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bit_string</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">prob</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Median is </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">output_probs</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability of a heavy output is </span><span class="si">{</span><span class="n">prob_heavy_output</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Heavy outputs are </span><span class="si">{</span><span class="n">heavy_outputs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>State      Probability
+000        0.0157
+001        0.0200
+010        0.0026
+011        0.2765
+100        0.0175
+101        0.4266
+110        0.0045
+111        0.2365
+
+Median is 0.0188
+Probability of a heavy output is 0.9596
+Heavy outputs are [&#39;001&#39;, &#39;111&#39;, &#39;011&#39;, &#39;101&#39;]
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-2-run-the-circuits">
+<h3>Step 2: run the circuits<a class="headerlink" href="#step-2-run-the-circuits" title="Permalink to this headline">¶</a></h3>
+<p>Now it’s time to run the protocol. First, let’s set up our hardware
+device. We’ll use a simulated version of the 5-qubit IBM Ourense as an example
+— the reported quantum volume according to IBM is <span class="math notranslate nohighlight">\(V_Q=8\)</span>, so we
+endeavour to reproduce that here. This means that we should be able to run our
+square circuits reliably on up to <span class="math notranslate nohighlight">\(\log_2 V_Q =3\)</span> qubits.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the time since the original release of this demo, the Ourense device is
+no longer available from IBM Q. However, we leave the original results for
+expository purposes, and note that the methods are applicable in general.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev_ourense</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;qiskit.ibmq&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;ibmq_ourense&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First, we can take a look at the arrangement of the qubits on the processor
+by plotting its hardware graph.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+
+<span class="n">ourense_hardware_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">dev_ourense</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">configuration</span><span class="p">()</span><span class="o">.</span><span class="n">coupling_map</span><span class="p">)</span>
+
+<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx</span><span class="p">(</span>
+    <span class="n">ourense_hardware_graph</span><span class="p">,</span>
+    <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dev_ourense</span><span class="o">.</span><span class="n">num_wires</span><span class="p">)},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/ourense.svg"><img alt="../_images/ourense.svg" src="../_images/ourense.svg" width="75%" /></a>
+</div>
+<p>This hardware graph is not fully connected, so the quantum compiler will have
+to make some adjustments when non-connected qubits need to interact.</p>
+<p>To actually perform the simulations, we’ll need to access a copy of the
+Ourense noise model. Again, we won’t be running on Ourense directly —
+we’ll set up a local device to simulate its behaviour.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit.providers.aer</span> <span class="kn">import</span> <span class="n">noise</span>
+
+<span class="n">noise_model</span> <span class="o">=</span> <span class="n">noise</span><span class="o">.</span><span class="n">NoiseModel</span><span class="o">.</span><span class="n">from_backend</span><span class="p">(</span><span class="n">dev_ourense</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">properties</span><span class="p">())</span>
+
+<span class="n">dev_noisy</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span>
+    <span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">dev_ourense</span><span class="o">.</span><span class="n">num_wires</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">noise_model</span><span class="o">=</span><span class="n">noise_model</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>As a final point, since we are allowed to do as much optimization as we like,
+let’s put the compiler to work. The compiler will perform a number of
+optimizations to simplify our circuit. We’ll also specify some high-quality
+qubit placement and routing techniques <a class="footnote-reference" href="#sabre" id="id16">[10]</a> in order to fit the circuits
+on the hardware graph in the best way possible.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">coupling_map</span> <span class="o">=</span> <span class="n">dev_ourense</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">configuration</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;coupling_map&quot;</span><span class="p">]</span>
+
+<span class="n">dev_noisy</span><span class="o">.</span><span class="n">set_transpile_args</span><span class="p">(</span>
+    <span class="o">**</span><span class="p">{</span>
+        <span class="s2">&quot;optimization_level&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;coupling_map&quot;</span><span class="p">:</span> <span class="n">coupling_map</span><span class="p">,</span>
+        <span class="s2">&quot;layout_method&quot;</span><span class="p">:</span> <span class="s2">&quot;sabre&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;routing_method&quot;</span><span class="p">:</span> <span class="s2">&quot;sabre&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s run the protocol. We’ll start with the smallest circuits on 2
+qubits, and make our way up to 5. At each <span class="math notranslate nohighlight">\(m\)</span>, we’ll look at 200 randomly
+generated circuits.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">min_m</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">max_m</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">num_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_m</span> <span class="o">-</span> <span class="n">min_m</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">num_trials</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="c1"># To store the results</span>
+<span class="n">probs_ideal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_ms</span><span class="p">,</span> <span class="n">num_trials</span><span class="p">))</span>
+<span class="n">probs_noisy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_ms</span><span class="p">,</span> <span class="n">num_trials</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_m</span><span class="p">,</span> <span class="n">max_m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_trials</span><span class="p">):</span>
+
+        <span class="c1"># Simulate the circuit analytically</span>
+        <span class="k">with</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.tape.QuantumTape.html#pennylane.tape.QuantumTape" title="pennylane.tape.QuantumTape" class="sphx-glr-backref-module-pennylane-tape sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qml</span><span class="o">.</span><span class="n">tape</span><span class="o">.</span><span class="n">QuantumTape</span></a><span class="p">()</span> <span class="k">as</span> <span class="n">tape</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.layer.html#pennylane.layer" title="pennylane.layer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">layer</span></a><span class="p">(</span><span class="n">qv_circuit_layer</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">num_qubits</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.probs.html#pennylane.probs" title="pennylane.probs" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">probs</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+
+        <span class="n">output_probs</span> <span class="o">=</span> <span class="n">tape</span><span class="o">.</span><span class="n">expand</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">dev_ideal</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">m</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">heavy_outputs</span><span class="p">,</span> <span class="n">prob_heavy_output</span> <span class="o">=</span> <span class="n">heavy_output_set</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">output_probs</span><span class="p">)</span>
+
+        <span class="c1"># Execute circuit on the noisy device</span>
+        <span class="n">tape</span><span class="o">.</span><span class="n">expand</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">dev_noisy</span><span class="p">)</span>
+
+        <span class="c1"># Get the output bit strings; flip ordering of qubits to match PennyLane</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">dev_noisy</span><span class="o">.</span><span class="n">_current_job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+        <span class="n">reordered_counts</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+        <span class="n">device_heavy_outputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">reordered_counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span><span class="p">[:</span><span class="n">m</span><span class="p">]</span> <span class="ow">in</span> <span class="n">heavy_outputs</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">reordered_counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">fraction_device_heavy_output</span> <span class="o">=</span> <span class="n">device_heavy_outputs</span> <span class="o">/</span> <span class="n">dev_noisy</span><span class="o">.</span><span class="n">shots</span>
+
+        <span class="n">probs_ideal</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="n">min_m</span><span class="p">,</span> <span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_heavy_output</span>
+        <span class="n">probs_noisy</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="n">min_m</span><span class="p">,</span> <span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="n">fraction_device_heavy_output</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-perform-a-statistical-analysis">
+<h3>Step 3: perform a statistical analysis<a class="headerlink" href="#step-3-perform-a-statistical-analysis" title="Permalink to this headline">¶</a></h3>
+<p>Having run our experiments, we can now get to the heart of the quantum volume
+protocol: what <em>is</em> the largest square circuit that our processor can run?
+Let’s first check out the means and see how much higher they are than 2/3.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">probs_mean_ideal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">probs_ideal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">probs_mean_noisy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">probs_noisy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ideal mean probabilities:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probs_mean_ideal</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m = </span><span class="si">{</span><span class="n">idx</span> <span class="o">+</span> <span class="n">min_m</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prob</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;above&#39;</span> <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="k">else</span> <span class="s1">&#39;below&#39;</span><span class="si">}</span><span class="s2"> threshold.&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Device mean probabilities:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probs_mean_noisy</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m = </span><span class="si">{</span><span class="n">idx</span> <span class="o">+</span> <span class="n">min_m</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prob</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;above&#39;</span> <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="k">else</span> <span class="s1">&#39;below&#39;</span><span class="si">}</span><span class="s2"> threshold.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Ideal mean probabilities:
+m = 2: 0.797979 above threshold.
+m = 3: 0.844052 above threshold.
+m = 4: 0.841203 above threshold.
+m = 5: 0.856904 above threshold.
+
+Device mean probabilities:
+m = 2: 0.773760 above threshold.
+m = 3: 0.794875 above threshold.
+m = 4: 0.722860 above threshold.
+m = 5: 0.692935 above threshold.
+</pre></div>
+</div>
+<p>We see that the ideal probabilities are well over 2/3. In fact, they’re quite
+close to the expected value of <span class="math notranslate nohighlight">\((1 + \ln 2)/2\)</span>, which we recall from
+above is <span class="math notranslate nohighlight">\(\approx 0.85\)</span>.  For this experiment, we see that the device
+probabilities are also above the threshold.  But it isn’t enough that just the
+mean of the heavy output probabilities is greater than 2/3. Since we’re
+dealing with randomness, we also want to ensure these results were not just a
+fluke! To be confident, we also want to be above 2/3 within 2 standard
+deviations <span class="math notranslate nohighlight">\((\sigma)\)</span> of the mean. This is referred to as a 97.5%
+confidence interval (since roughly 97.5% of a normal distribution sits within
+<span class="math notranslate nohighlight">\(2\sigma\)</span> of the mean.)</p>
+<p>At this point, we’re going to do some statistical sorcery and make some
+assumptions about our distributions. Whether or not a circuit is successful
+(in the sense that it produces heavy outputs more the 2/3 of the time) is a
+binary outcome. When we sample many circuits, it is almost like we are
+sampling from a <em>binomial distribution</em> where the outcome probability is
+equivalent to the heavy output probability. In the limit of a large number of
+samples (in this case 200 circuits), a binomial distribution starts to look
+like a normal distribution. If we make this approximation, we can compute the standard
+deviation and use it to make our confidence interval. With the normal
+approximation, the standard deviation is</p>
+<div class="math notranslate nohighlight">
+\[\sigma = \sqrt{\frac{p_h(1 - p_h)}{N}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_h\)</span> is the average heavy output probability, and <span class="math notranslate nohighlight">\(N\)</span> is
+the number of circuits.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stds_ideal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">probs_mean_ideal</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">probs_mean_ideal</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_trials</span><span class="p">)</span>
+<span class="n">stds_noisy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">probs_mean_noisy</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">probs_mean_noisy</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_trials</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now that we have our standard deviations, let’s see if our means are at least
+<span class="math notranslate nohighlight">\(2\sigma\)</span> away from the threshold!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_m</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">max_m</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">probs_noisy</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m = </span><span class="si">{</span><span class="n">m</span> <span class="o">+</span> <span class="n">min_m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Heavy output probability&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Occurrences&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2/3&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">probs_mean_noisy</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">probs_mean_noisy</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stds_noisy</span><span class="p">[</span><span class="n">m</span><span class="p">]),</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;2σ&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Heavy output distributions for (simulated) Ourense QPU&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/ourense_heavy_output_distributions.svg"><img alt="../_images/ourense_heavy_output_distributions.svg" src="../_images/ourense_heavy_output_distributions.svg" width="90%" /></a>
+</div>
+<p>Let’s verify this numerically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">two_sigma_below</span> <span class="o">=</span> <span class="n">probs_mean_noisy</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stds_noisy</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">two_sigma_below</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;m = </span><span class="si">{</span><span class="n">idx</span> <span class="o">+</span> <span class="n">min_m</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">prob</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;above&#39;</span> <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="k">else</span> <span class="s1">&#39;below&#39;</span><span class="si">}</span><span class="s2"> threshold.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>m = 2: 0.714590 above threshold.
+m = 3: 0.737770 above threshold.
+m = 4: 0.659562 below threshold.
+m = 5: 0.627701 below threshold.
+</pre></div>
+</div>
+<p>We see that we are <span class="math notranslate nohighlight">\(2\sigma\)</span> above the threshold only for <span class="math notranslate nohighlight">\(m=2\)</span>,
+and <span class="math notranslate nohighlight">\(m=3\)</span>. Thus, we find that the quantum volume of our simulated Ourense is
+<span class="math notranslate nohighlight">\(\log_2 V_Q = 3\)</span>, or <span class="math notranslate nohighlight">\(V_Q = 8\)</span>, as expected.</p>
+<p>This framework and code will allow you to calculate the quantum volume of many
+different processors. Try it yourself! What happens if we don’t specify a
+large amount of compiler optimization? How does the volume compare across
+different hardware devices? You can even build your own device configurations
+and noise models to explore the extent to which different factors affect the
+volume.</p>
+</div>
+</div>
+<div class="section" id="concluding-thoughts">
+<h2>Concluding thoughts<a class="headerlink" href="#concluding-thoughts" title="Permalink to this headline">¶</a></h2>
+<p>Quantum volume is a metric used for comparing the quality of different quantum
+computers. By determining the largest square random circuits a processor can
+run reliably, it provides a measure of the effective number of qubits a
+processor has. Furthermore, it goes beyond just gauging quality by a number of
+qubits — it incorporates many different aspects of a device such as its
+compiler, qubit connectivity, and gate error rates.</p>
+<p>However, as with any benchmark, it is not without limitations. A key one
+already discussed is that the heavy output generation problem requires us to
+simulate circuits classically in addition to running them on a device. While
+this is perhaps not an issue now, it will surely become one in the future. The
+number of qubits continues to increase and error rates are getting lower,
+both of which imply that our square circuits will be growing in both width and
+depth as time goes on. Eventually they will reach a point where they are no
+longer classical simulable and we will have to design new benchmarks.</p>
+<p>Another limitation is that the protocol only looks at one type of circuit,
+i.e., square circuits. It might be the case that a processor has very few
+qubits, but also very low error rates. For example, what if a processor with 5
+qubits can run circuits with up to 20 layers? Quantum volume would limit us to
+<span class="math notranslate nohighlight">\(\log_2 V_Q = 5\)</span> and the high quality of those qubits is not reflected
+in this.  To that end, a more general <em>volumetric benchmark</em> framework was
+proposed that includes not only square circuits, but also rectangular circuits
+<a class="footnote-reference" href="#robin" id="id17">[4]</a>. Investigating very deep circuits on few qubits (and very shallow
+circuits on many qubits) will give us a broader overview of a processor’s
+quality. Furthermore, the flexibility of the framework of <a class="footnote-reference" href="#robin" id="id18">[4]</a> will
+surely inspire us to create new types of benchmarks. Having a variety of
+benchmarks calculated in different ways is beneficial and gives us a broader
+view of the performance of quantum computers.</p>
+</div>
+<div class="section" id="references">
+<span id="quantum-volume-references"></span><h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="top500" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://www.top500.org/">https://www.top500.org/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="linpack" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td><a class="reference external" href="https://www.top500.org/project/linpack/">https://www.top500.org/project/linpack/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="cross" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id6">2</a>, <a class="fn-backref" href="#id7">3</a>, <a class="fn-backref" href="#id11">4</a>, <a class="fn-backref" href="#id15">5</a>)</em> Cross, A. W., Bishop, L. S., Sheldon, S., Nation, P. D., &amp; Gambetta, J. M.,
+Validating quantum computers using randomized model circuits, <a class="reference external" href="http://dx.doi.org/10.1103/physreva.100.032328">Physical
+Review A, 100(3), (2019).</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="robin" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id17">2</a>, <a class="fn-backref" href="#id18">3</a>)</em> Blume-Kohout, R., &amp; Young, K. C., A volumetric framework for quantum
+computer benchmarks, <a class="reference external" href="http://dx.doi.org/10.22331/q-2020-11-15-362">Quantum, 4, 362 (2020).</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="aaronson" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id9">2</a>)</em> Aaronson, S., &amp; Chen, L., Complexity-theoretic foundations of quantum supremacy experiments.
+<a class="reference external" href="https://arxiv.org/abs/1612.05903">arXiv 1612.05903 quant-ph</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="cmu" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id10">[6]</a></td><td>O’Donnell, R. CMU course: Quantum Computation and Quantum Information 2018.
+<a class="reference external" href="https://www.cs.cmu.edu/~odonnell/quantum18/lecture25.pdf">Lecture 25</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="qv64" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id12">[7]</a></td><td>Jurcevic et al. Demonstration of quantum volume 64 on a superconducting quantum computing system.
+<a class="reference external" href="https://arxiv.org/abs/2008.08571">arXiv 2008.08571 quant-ph</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="honeywell" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id13">[8]</a></td><td><a class="reference external" href="https://www.honeywell.com/en-us/newsroom/news/2020/09/achieving-quantum-volume-128-on-the-honeywell-quantum-computer">https://www.honeywell.com/en-us/newsroom/news/2020/09/achieving-quantum-volume-128-on-the-honeywell-quantum-computer</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="ionq" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id14">[9]</a></td><td><a class="reference external" href="https://www.prnewswire.com/news-releases/ionq-unveils-worlds-most-powerful-quantum-computer-301143782.html">https://www.prnewswire.com/news-releases/ionq-unveils-worlds-most-powerful-quantum-computer-301143782.html</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="sabre" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id16">[10]</a></td><td>Li, G., Ding, Y., &amp; Xie, Y., Tackling the qubit mapping problem for
+nisq-era quantum devices, <a class="reference external" href="https://dl.acm.org/doi/10.1145/3297858.3304023">In Proceedings of the Twenty-Fourth
+International Conference on Architectural Support for Programming Languages
+and Operating Systems (pp. 1001–1014)
+(2019).</a> New York, NY,
+USA: Association for Computing Machinery.</td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-quantum-volume-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/2a25829652327e4b698f195117efc84e/quantum_volume.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">quantum_volume.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/e137583c5454a7853cf901d774252f27/quantum_volume.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">quantum_volume.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/quantum_volume</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Quantum volume</a><ul>
+<li><a class="reference internal" href="#designing-a-benchmark-for-quantum-computers">Designing a benchmark for quantum computers</a><ul>
+<li><a class="reference internal" href="#the-circuits">The circuits</a></li>
+<li><a class="reference internal" href="#the-measures-of-success">The measures of success</a></li>
+<li><a class="reference internal" href="#the-benchmark">The benchmark</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#computing-the-quantum-volume">Computing the quantum volume</a><ul>
+<li><a class="reference internal" href="#step-1-construct-random-square-circuits">Step 1: construct random square circuits</a></li>
+<li><a class="reference internal" href="#step-2-run-the-circuits">Step 2: run the circuits</a></li>
+<li><a class="reference internal" href="#step-3-perform-a-statistical-analysis">Step 3: perform a statistical analysis</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#concluding-thoughts">Concluding thoughts</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/quantum_volume</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_research.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_haar_measure.html" title="Understanding the Haar Measure"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="qsim_beyond_classical.html" title="Beyond classical computing with qsim"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" >Research</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

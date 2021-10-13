@@ -1,0 +1,811 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Using parallel QPUs to speed up the calculation of the potential energy surface of molecular Hamiltonian." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/vqe_diagram.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="VQE with parallel QPUs on Rigetti Forest &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Using parallel QPUs to speed up the calculation of the potential energy surface of molecular Hamiltonian." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>VQE with parallel QPUs on Rigetti Forest &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Optimization" href="../demos_optimization.html" />
+    <link rel="prev" title="Measurement optimization" href="tutorial_measurement_optimize.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../demos_optimization.html" title="Optimization"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_measurement_optimize.html" title="Measurement optimization"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_quantum-chemistry.html" accesskey="U">Quantum Chemistry</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-vqe-parallel-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="vqe-with-parallel-qpus-on-rigetti-forest">
+<span id="sphx-glr-demos-tutorial-vqe-parallel-py"></span><h1>VQE with parallel QPUs on Rigetti Forest<a class="headerlink" href="#vqe-with-parallel-qpus-on-rigetti-forest" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_vqe.html"];
+    var related_tutorials_titles = ['Variational quantum eigensolver'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 8 Apr 2021.</em></p>
+<p>This tutorial showcases how using asynchronously-evaluated parallel QPUs can speed up the
+calculation of the potential energy surface of molecular hydrogen (<span class="math notranslate nohighlight">\(H_2\)</span>).</p>
+<p>Using a VQE setup, we task two devices from the
+<a class="reference external" href="https://pennylane-forest.readthedocs.io/en/latest/">PennyLane-Forest</a> plugin with evaluating
+separate terms in the qubit Hamiltonian of <span class="math notranslate nohighlight">\(H_2\)</span>. As these devices are allowed to operate
+asynchronously, i.e., at the same time and without having to wait for each other,
+the calculation can be performed in roughly half the time.</p>
+<p>We begin by importing the prerequisite libraries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">qchem</span>
+</pre></div>
+</div>
+<p>This tutorial requires the <code class="docutils literal notranslate"><span class="pre">pennylane-qchem</span></code>, <code class="docutils literal notranslate"><span class="pre">pennylane-forest</span></code> and <code class="docutils literal notranslate"><span class="pre">dask</span></code>
+packages, which are installed separately using:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pennylane-qchem
+pip install pennylane-forest
+pip install <span class="s2">&quot;dask[delayed]&quot;</span>
+</pre></div>
+</div>
+<div class="section" id="finding-the-qubit-hamiltonians-of-h-2">
+<h2>Finding the qubit Hamiltonians of <span class="math notranslate nohighlight">\(H_{2}\)</span><a class="headerlink" href="#finding-the-qubit-hamiltonians-of-h-2" title="Permalink to this headline">¶</a></h2>
+<p>The objective of this tutorial is to evaluate the potential energy surface of molecular
+hydrogen. This is achieved by finding the ground state energy of <span class="math notranslate nohighlight">\(H_{2}\)</span> as we increase
+the bond length between the hydrogen atoms.</p>
+<p>Each inter-atomic distance results in a different qubit Hamiltonian. To find the corresponding
+Hamiltonian, we use the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane_qchem.qchem.molecular_hamiltonian.html#pennylane_qchem.qchem.molecular_hamiltonian" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">molecular_hamiltonian()</span></code></a> function of the
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/qml_qchem.html#module-pennylane_qchem.qchem" title="(in PennyLane v0.18)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">qchem</span></code></a> package. Further details on the mapping from the electronic
+Hamiltonian of a molecule to a qubit Hamiltonian can be found in the
+<a class="reference internal" href="tutorial_quantum_chemistry.html"><span class="doc">Building molecular Hamiltonians</span></a> and <a class="reference internal" href="tutorial_vqe.html"><span class="doc">A brief overview of VQE</span></a>
+tutorials.</p>
+<p>We begin by creating a dictionary containing a selection of bond lengths and corresponding data
+files saved in <a class="reference external" href="https://en.wikipedia.org/wiki/XYZ_file_format">XYZ</a> format. These files
+follow a standard format for specifying the geometry of a molecule and can be downloaded as a
+Zip from <a class="reference download internal" download="" href="../_downloads/f0819e5ea7ead17ec6dd0559d844f9aa/vqe_parallel.zip"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># keys: atomic separations (in Angstroms), values: corresponding files</span>
+    <span class="mf">0.3</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_0.30.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">0.5</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_0.50.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">0.7</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_0.70.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">0.9</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_0.90.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">1.1</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_1.10.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">1.3</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_1.30.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">1.5</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_1.50.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">1.7</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_1.70.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">1.9</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_1.90.xyz&quot;</span><span class="p">,</span>
+    <span class="mf">2.1</span><span class="p">:</span> <span class="s2">&quot;vqe_parallel/h2_2.10.xyz&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The next step is to create the qubit Hamiltonians for each value of the inter-atomic distance.
+We do this by first reading the molecular geometry from the external file using the
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane_qchem.qchem.read_structure.html#pennylane_qchem.qchem.read_structure" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_structure()</span></code></a> function and passing the atomic symbols
+and coordinates to <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane_qchem.qchem.molecular_hamiltonian.html#pennylane_qchem.qchem.molecular_hamiltonian" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">molecular_hamiltonian()</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hamiltonians</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">separation</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">symbols</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">read_structure</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span></a> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">molecular_hamiltonian</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">separation</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">hamiltonians</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each Hamiltonian can be written as a linear combination of fifteen tensor products of Pauli
+matrices. Let’s take a look more closely at one of the Hamiltonians:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span></a> <span class="o">=</span> <span class="n">hamiltonians</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of terms: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian.ops" title="pennylane.Hamiltonian.ops" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">h</span><span class="o">.</span><span class="n">ops</span></a><span class="p">)))</span>
+<span class="k">for</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Tensor.html#pennylane.operation.Tensor" title="pennylane.operation.Tensor" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">op</span></a> <span class="ow">in</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian.ops" title="pennylane.Hamiltonian.ops" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">h</span><span class="o">.</span><span class="n">ops</span></a><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Measurement </span><span class="si">{}</span><span class="s2"> on wires </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Tensor.html#pennylane.operation.Tensor.name" title="pennylane.operation.Tensor.name" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-attribute"><span class="n">op</span><span class="o">.</span><span class="n">name</span></a><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Tensor.html#pennylane.operation.Tensor.wires" title="pennylane.operation.Tensor.wires" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-attribute"><span class="n">op</span><span class="o">.</span><span class="n">wires</span></a><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Number of terms: 15
+
+Measurement Identity on wires &lt;Wires = [0]&gt;
+Measurement PauliZ on wires &lt;Wires = [0]&gt;
+Measurement PauliZ on wires &lt;Wires = [1]&gt;
+Measurement PauliZ on wires &lt;Wires = [2]&gt;
+Measurement PauliZ on wires &lt;Wires = [3]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [0, 1]&gt;
+Measurement [&#39;PauliY&#39;, &#39;PauliX&#39;, &#39;PauliX&#39;, &#39;PauliY&#39;] on wires &lt;Wires = [0, 1, 2, 3]&gt;
+Measurement [&#39;PauliY&#39;, &#39;PauliY&#39;, &#39;PauliX&#39;, &#39;PauliX&#39;] on wires &lt;Wires = [0, 1, 2, 3]&gt;
+Measurement [&#39;PauliX&#39;, &#39;PauliX&#39;, &#39;PauliY&#39;, &#39;PauliY&#39;] on wires &lt;Wires = [0, 1, 2, 3]&gt;
+Measurement [&#39;PauliX&#39;, &#39;PauliY&#39;, &#39;PauliY&#39;, &#39;PauliX&#39;] on wires &lt;Wires = [0, 1, 2, 3]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [0, 2]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [0, 3]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [1, 2]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [1, 3]&gt;
+Measurement [&#39;PauliZ&#39;, &#39;PauliZ&#39;] on wires &lt;Wires = [2, 3]&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="defining-the-energy-function">
+<h2>Defining the energy function<a class="headerlink" href="#defining-the-energy-function" title="Permalink to this headline">¶</a></h2>
+<p>The fifteen Pauli terms comprising each Hamiltonian can conventionally be evaluated in a
+sequential manner: we evaluate one expectation value at a time before moving on to the next.
+However, this task is highly suited to parallelization. With access to multiple QPUs,
+we can split up evaluating the terms between the QPUs and gain an increase in processing speed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some of the Pauli terms commute, and so they can be evaluated in practice with fewer than
+fifteen quantum circuit runs. Nevertheless, these quantum circuit runs can still be
+parallelized to multiple QPUs.</p>
+</div>
+<p>Let’s suppose we have access to two quantum devices. In this tutorial we consider two
+simulators from Rigetti: <code class="docutils literal notranslate"><span class="pre">4q-qvm</span></code> and <code class="docutils literal notranslate"><span class="pre">9q-square-qvm</span></code>, but we could also run on hardware
+devices from Rigetti or other providers.</p>
+<p>We can evaluate the expectation value of each Hamiltonian with eight terms run on
+one device and seven terms run on the other, as summarized by the diagram below:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/vqe_diagram.png"><img alt="../_images/vqe_diagram.png" src="../_images/vqe_diagram.png" style="width: 65%;" /></a>
+</div>
+<p>To do this, start by instantiating a device for each term:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev1</span> <span class="o">=</span> <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;forest.qvm&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;4q-qvm&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+<span class="n">dev2</span> <span class="o">=</span> <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;forest.qvm&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;9q-square-qvm&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
+<span class="n">devs</span> <span class="o">=</span> <span class="n">dev1</span> <span class="o">+</span> <span class="n">dev2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For the purposes of this demonstration, we are simulating the QPUs using the
+<code class="docutils literal notranslate"><span class="pre">forest.qvm</span></code> simulator. To run this demonstration on hardware, simply
+swap <code class="docutils literal notranslate"><span class="pre">forest.qvm</span></code> for <code class="docutils literal notranslate"><span class="pre">forest.qpu</span></code> and specify the hardware device to run on.</p>
+<p class="last">Please refer to the <a class="reference external" href="https://rigetti.com/">Rigetti website</a> for an up-to-date
+list on available QPUs.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Rigetti’s QVM and Quil Compiler services must be running for this tutorial to execute. They
+can be installed by consulting the <a class="reference external" href="http://docs.rigetti.com/en/stable/">Rigetti documentation</a> or, for users with Docker, by running:</p>
+<div class="last highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -d -p <span class="m">5555</span>:5555 rigetti/quilc -R -p <span class="m">5555</span>
+docker run -d -p <span class="m">5000</span>:5000 rigetti/qvm -S -p <span class="m">5000</span>
+</pre></div>
+</div>
+</div>
+<p>We must also define a circuit to prepare the ground state, which is a superposition of the
+Hartree-Fock (<span class="math notranslate nohighlight">\(|1100\rangle\)</span>) and doubly-excited (<span class="math notranslate nohighlight">\(|0011\rangle\)</span>) configurations.
+The simple circuit below is able to prepare states of the form <span class="math notranslate nohighlight">\(\alpha |1100\rangle +
+\beta |0011\rangle\)</span> and hence encode the ground state wave function of the hydrogen molecule. The
+circuit has a single free parameter, which controls a Y-rotation on the third qubit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The ground state for each inter-atomic distance is characterized by a different Y-rotation angle.
+The values of these Y-rotations can be found by minimizing the ground state energy as outlined in
+<a class="reference internal" href="tutorial_vqe.html"><span class="doc">A brief overview of VQE</span></a>. In this tutorial, we load pre-optimized rotations and focus on
+comparing the speed of evaluating the potential energy surface with sequential and parallel
+evaluation. These parameters can be downloaded by clicking <a class="reference download internal" download="" href="../_downloads/4c3bef8c0422db23f879a9746935a2f8/RY_params.npy"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;vqe_parallel/RY_params.npy&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, the energies as functions of rotation angle can be given using
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpvalCost</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">energies</span> <span class="o">=</span> <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span></a><span class="p">,</span> <span class="n">devs</span><span class="p">)</span> <span class="k">for</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">h</span></a> <span class="ow">in</span> <span class="n">hamiltonians</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calculating-the-potential-energy-surface">
+<h2>Calculating the potential energy surface<a class="headerlink" href="#calculating-the-potential-energy-surface" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpvalCost</span></code></a> returns a <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNodeCollection</span></code></a> which can be
+evaluated using the input parameters to the ansatz circuit. The
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNodeCollection</span></code></a> can be evaluated asynchronously by passing the keyword
+argument <code class="docutils literal notranslate"><span class="pre">parallel=True</span></code>. When <code class="docutils literal notranslate"><span class="pre">parallel=False</span></code> (the default behaviour), the QNodes are
+instead evaluated sequentially.</p>
+<p>We can use this feature to compare the sequential and parallel times required to calculate the
+potential energy surface. The following function calculates the surface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_surface</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">energies</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running for inter-atomic distance </span><span class="si">{}</span><span class="s2"> Å&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">))</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluation time: </span><span class="si">{0:.2f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Evaluating the potential energy surface sequentially&quot;</span><span class="p">)</span>
+<span class="n">surface_seq</span><span class="p">,</span> <span class="n">t_seq</span> <span class="o">=</span> <span class="n">calculate_surface</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Evaluating the potential energy surface in parallel&quot;</span><span class="p">)</span>
+<span class="n">surface_par</span><span class="p">,</span> <span class="n">t_par</span> <span class="o">=</span> <span class="n">calculate_surface</span><span class="p">(</span><span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Evaluating the potential energy surface sequentially
+Running for inter-atomic distance 0.3 Å
+Running for inter-atomic distance 0.5 Å
+Running for inter-atomic distance 0.7 Å
+Running for inter-atomic distance 0.9 Å
+Running for inter-atomic distance 1.1 Å
+Running for inter-atomic distance 1.3 Å
+Running for inter-atomic distance 1.5 Å
+Running for inter-atomic distance 1.7 Å
+Running for inter-atomic distance 1.9 Å
+Running for inter-atomic distance 2.1 Å
+Evaluation time: 286.73 s
+
+Evaluating the potential energy surface in parallel
+Running for inter-atomic distance 0.3 Å
+Running for inter-atomic distance 0.5 Å
+Running for inter-atomic distance 0.7 Å
+Running for inter-atomic distance 0.9 Å
+Running for inter-atomic distance 1.1 Å
+Running for inter-atomic distance 1.3 Å
+Running for inter-atomic distance 1.5 Å
+Running for inter-atomic distance 1.7 Å
+Running for inter-atomic distance 1.9 Å
+Running for inter-atomic distance 2.1 Å
+Evaluation time: 101.81 s
+</pre></div>
+</div>
+<p>We have seen how a <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNodeCollection</span></code></a> can be evaluated in parallel. This results
+in a speed up in processing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Speed up: </span><span class="si">{0:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t_seq</span> <span class="o">/</span> <span class="n">t_par</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Speed up: 2.82
+</pre></div>
+</div>
+<p>Can you think of other ways to combine multiple QPUs to improve the
+performance of quantum algorithms? To conclude the tutorial, let’s plot the calculated
+potential energy surfaces:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surface_seq</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surface_par</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Potential energy surface for molecular hydrogen&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Atomic separation (Å)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Ground state energy (Ha)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="Potential energy surface for molecular hydrogen" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqe_parallel_001.png" />
+<p>These surfaces overlap, with any variation due to the limited number of shots used to evaluate the
+expectation values in the <code class="docutils literal notranslate"><span class="pre">forest.qvm</span></code> device (we are using the default value of
+<code class="docutils literal notranslate"><span class="pre">shots=1024</span></code>).</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 6 minutes  31.565 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-vqe-parallel-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/b06ff76d92f752a05b12f3e60bae76ce/tutorial_vqe_parallel.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_vqe_parallel.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/5c34a8fe175a7ac4d40852cbbf2b8db5/tutorial_vqe_parallel.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_vqe_parallel.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_vqe_parallel</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">VQE with parallel QPUs on Rigetti Forest</a><ul>
+<li><a class="reference internal" href="#finding-the-qubit-hamiltonians-of-h-2">Finding the qubit Hamiltonians of <span class="math notranslate nohighlight">\(H_{2}\)</span></a></li>
+<li><a class="reference internal" href="#defining-the-energy-function">Defining the energy function</a></li>
+<li><a class="reference internal" href="#calculating-the-potential-energy-surface">Calculating the potential energy surface</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_vqe_parallel</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_quantum-chemistry.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../demos_optimization.html" title="Optimization"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_measurement_optimize.html" title="Measurement optimization"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_quantum-chemistry.html" >Quantum Chemistry</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

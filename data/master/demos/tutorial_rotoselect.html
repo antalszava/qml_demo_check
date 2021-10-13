@@ -1,0 +1,998 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Applying the Rotoselect optimization algorithm to find the minimum in a variational quantum algorithm." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/rotoselect_structure.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Quantum circuit structure learning &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_rotoselect.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Applying the Rotoselect optimization algorithm to find the minimum in a variational quantum algorithm." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Quantum circuit structure learning &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_rotoselect.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Frugal shot optimization with Rosalin" href="tutorial_rosalin.html" />
+    <link rel="prev" title="The Stochastic Parameter-Shift Rule" href="tutorial_stochastic_parameter_shift.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_rosalin.html" title="Frugal shot optimization with Rosalin"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_stochastic_parameter_shift.html" title="The Stochastic Parameter-Shift Rule"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_optimization.html" accesskey="U">Optimization</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-rotoselect-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="quantum-circuit-structure-learning">
+<span id="rotoselect"></span><span id="sphx-glr-demos-tutorial-rotoselect-py"></span><h1>Quantum circuit structure learning<a class="headerlink" href="#quantum-circuit-structure-learning" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_vqe.html", "tutorial_vqe_qng.html", "tutorial_rosalin.html"];
+    var related_tutorials_titles = ['Variational quantum eigensolver', 'Accelerating VQEs with quantum natural gradient', 'Frugal shot optimization with Rosalin'];
+</script></p>
+<p><em>Author: PennyLane dev team. Posted: 16 Oct 2019. Last updated: 20 Jan 2021.</em></p>
+<p>This example shows how to learn a good selection of rotation
+gates so as to minimize a cost
+function using the Rotoselect algorithm of <a class="reference external" href="https://arxiv.org/abs/1905.09692">Ostaszewski et al.
+(2019)</a>. We apply this algorithm to minimize a Hamiltonian for a
+variational quantum eigensolver (VQE) problem,
+and improve upon an initial circuit structure ansatz.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Rotoselect and Rotosolve algorithms are directly implemented and
+available in PennyLane via the optimizers <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RotoselectOptimizer.html#pennylane.RotoselectOptimizer" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RotoselectOptimizer</span></code></a>
+and <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RotosolveOptimizer.html#pennylane.RotosolveOptimizer" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RotosolveOptimizer</span></code></a>, respectively.</p>
+</div>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>In quantum machine learning and optimization problems,
+one wishes to minimize a cost function with respect to some parameters in the circuit. It is desirable
+to keep the circuit as shallow as possible to reduce the effects of noise, but an arbitrary
+choice of gates is generally suboptimal for performing the optimization.
+Therefore, it would be useful to employ an
+algorithm which learns a good circuit structure at fixed depth to minimize the cost function.</p>
+<p>Furthermore, PennyLane’s optimizers perform automatic differentiation of quantum nodes by evaluating phase-shifted
+expectation values using the quantum circuit itself.
+The output of these calculations, the gradient, is used in optimization methods to minimize
+the cost function. However,
+there exists a technique to discover the optimal parameters of a quantum circuit through phase-shifted evaluations,
+without the need for calculating the gradient as an intermediate step (i.e., a gradient-free optimization).
+It could be desirable, in some cases, to
+take advantage of this.</p>
+<p>The Rotoselect algorithm addresses the above two points: it allows one to jump directly to the
+optimal value for a single parameter
+with respect to fixed values for the other parameters, skipping gradient descent, and tries various
+rotation gates along the way.
+The algorithm works by updating the parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}=\theta_1,\dots,\theta_D\)</span> and gate choices
+<span class="math notranslate nohighlight">\(\boldsymbol{R}=R_1,\dots,R_D\)</span>
+one at a time according to a <em>closed-form expression</em> for the optimal value of the <span class="math notranslate nohighlight">\(d^{\text{th}}\)</span> parameter
+<span class="math notranslate nohighlight">\(\theta^{*}_d\)</span> when the other parameters and gate choices are fixed:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\theta^{*}_d &amp;= \underset{\theta_d}{\text{argmin}} \langle H \rangle_{\theta_d} \\
+             &amp;= -\frac{\pi}{2} - \text{arctan}\left(\frac{2\langle H \rangle_{\theta_d = 0} -
+             \langle H \rangle_{\theta_d=\pi/2} - \langle H \rangle_{\theta_d=-\pi/2}}{\langle
+             H \rangle_{\theta_d=\pi/2} -
+             \langle H \rangle_{\theta_d=-\pi/2}}\right)\end{split}\]</div>
+<p>The calculation makes use of 3 separate evaluations
+of the expectation value <span class="math notranslate nohighlight">\(\langle H \rangle_{\theta_d}\)</span> using the quantum circuit. Although
+<span class="math notranslate nohighlight">\(\langle H \rangle\)</span> is really a function of all parameters and gate choices
+(<span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, <span class="math notranslate nohighlight">\(\boldsymbol{R}\)</span>), we
+are fixing every parameter and gate choice apart from <span class="math notranslate nohighlight">\(\theta_d\)</span> in this expression so we write it as
+<span class="math notranslate nohighlight">\(\langle H \rangle = \langle H \rangle_{\theta_d}\)</span>.
+For each parameter in the quantum circuit, the algorithm proceeds by evaluating <span class="math notranslate nohighlight">\(\theta^{*}_d\)</span>
+for each choice of
+gate <span class="math notranslate nohighlight">\(R_d \in \{R_x,R_y,R_z\}\)</span> and selecting the gate which yields the minimum value of
+<span class="math notranslate nohighlight">\(\langle H \rangle\)</span>.</p>
+<p>Thus, one might expect the number of circuit evaluations required to be 9 for each parameter (3 for each gate
+choice). However, since all 3 rotation gates yield identity when <span class="math notranslate nohighlight">\(\theta_d=0\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[R_x(0) = R_y(0) = R_z(0) = 1,\]</div>
+<p>the value of <span class="math notranslate nohighlight">\(\langle H \rangle_{\theta_d=0}\)</span> in the expression for <span class="math notranslate nohighlight">\(\theta_d^{*}\)</span> above
+is the same for each of the gate choices, and this 3-fold
+degeneracy reduces the number of evaluations required to 7.</p>
+<p>One cycle of the Rotoselect algorithm involves
+iterating through every parameter and performing the calculation above.
+This cycle is repeated for a fixed number of steps or until convergence. In this way, one could learn both
+the optimal parameters and gate choices for the task of minimizing
+a given cost function. Next, we present an example of this algorithm
+applied to a VQE Hamiltonian.</p>
+</div>
+<div class="section" id="example-vqe-problem">
+<h2>Example VQE Problem<a class="headerlink" href="#example-vqe-problem" title="Permalink to this headline">¶</a></h2>
+<p>We focus on a 2-qubit VQE circuit for simplicity. Here, the Hamiltonian
+is</p>
+<div class="math notranslate nohighlight">
+\[H = 0.5Y_2 + 0.8Z_1 - 0.2X_1\]</div>
+<p>where the subscript denotes the qubit upon which the Pauli operator acts. The
+expectation value of this quantity acts as the cost function for our
+optimization.</p>
+</div>
+<div class="section" id="rotosolve">
+<h2>Rotosolve<a class="headerlink" href="#rotosolve" title="Permalink to this headline">¶</a></h2>
+<p>As a precursor to implementing Rotoselect we can analyze a version of the algorithm
+which does not optimize the choice of gates and only optimizes the parameters for a given circuit ansatz,
+called Rotosolve. Later, we will build on this example
+to implement Rotoselect and vary the circuit structure.</p>
+<div class="section" id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>To get started, we import PennyLane and the PennyLane-wrapped version of NumPy. We also
+create a 2-qubit device using the <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code> plugin and set the <code class="docutils literal notranslate"><span class="pre">analytic</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">True</span></code>
+in order to obtain exact values for any expectation values calculated. In contrast to real
+devices, simulators have the capability of doing these calculations without sampling.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">n_wires</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-fixed-quantum-circuit">
+<h3>Creating a fixed quantum circuit<a class="headerlink" href="#creating-a-fixed-quantum-circuit" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/original_ansatz.png"><img alt="original_ansatz" src="../_images/original_ansatz.png" style="width: 348.40000000000003px; height: 180.70000000000002px;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Next, we set up a circuit with a fixed ansatz structure—which will later be subject to change—and encode
+the Hamiltonian into a cost function. The structure is shown in the figure above.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ansatz</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">ansatz</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit2</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">ansatz</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="n">Z_1</span><span class="p">,</span> <span class="n">Y_2</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">X_1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit2</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">Y_2</span> <span class="o">+</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">Z_1</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">X_1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="helper-methods-for-the-algorithm">
+<h3>Helper methods for the algorithm<a class="headerlink" href="#helper-methods-for-the-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>We define methods to evaluate
+the expression in the previous section. These will serve as the basis for
+our optimization algorithm.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># calculation as described above</span>
+<span class="k">def</span> <span class="nf">opt_theta</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cost</span><span class="p">):</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">M_0</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">M_0_plus</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">M_0_minus</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span>
+        <span class="mf">2.0</span> <span class="o">*</span> <span class="n">M_0</span> <span class="o">-</span> <span class="n">M_0_plus</span> <span class="o">-</span> <span class="n">M_0_minus</span><span class="p">,</span> <span class="n">M_0_plus</span> <span class="o">-</span> <span class="n">M_0_minus</span>
+    <span class="p">)</span>  <span class="c1"># returns value in (-pi,pi]</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">a</span>
+    <span class="c1"># restrict output to lie in (-pi,pi], a convention</span>
+    <span class="c1"># consistent with the Rotosolve paper</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+
+<span class="c1"># one cycle of rotosolve</span>
+<span class="k">def</span> <span class="nf">rotosolve_cycle</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+        <span class="n">opt_theta</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cost</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">params</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optimization-and-comparison-with-gradient-descent">
+<h3>Optimization and comparison with gradient descent<a class="headerlink" href="#optimization-and-comparison-with-gradient-descent" title="Permalink to this headline">¶</a></h3>
+<p>We set up some initial parameters for the <span class="math notranslate nohighlight">\(R_x\)</span> and <span class="math notranslate nohighlight">\(R_y\)</span>
+gates in the ansatz circuit structure and perform an optimization using the
+Rotosolve algorithm.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">init_params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]</span>
+<span class="n">params_rsol</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">n_steps</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">costs_rotosolve</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+    <span class="n">costs_rotosolve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">(</span><span class="n">params_rsol</span><span class="p">))</span>
+    <span class="n">params_rsol</span> <span class="o">=</span> <span class="n">rotosolve_cycle</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params_rsol</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then compare the results of Rotosolve to an optimization
+performed with gradient descent and plot
+the cost functions at each step (or cycle in the case of Rotosolve).
+This comparison is fair since the number of circuit
+evaluations involved in a cycle of Rotosolve is similar to those required to calculate
+the gradient of the circuit and step in this direction. Evidently, the Rotosolve algorithm
+converges on the minimum after the first cycle for this simple circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params_gd</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">costs_gd</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+    <span class="n">costs_gd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">(</span><span class="n">params_gd</span><span class="p">))</span>
+    <span class="n">params_gd</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step" title="pennylane.GradientDescentOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params_gd</span><span class="p">)</span>
+
+
+<span class="c1"># plot cost function optimization using the 2 techniques</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">costs_gd</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;grad. desc.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">costs_rotosolve</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;rotosolve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;cycles&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="grad. desc., rotosolve" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_rotoselect_001.png" />
+</div>
+<div class="section" id="cost-function-surface-for-circuit-ansatz">
+<h3>Cost function surface for circuit ansatz<a class="headerlink" href="#cost-function-surface-for-circuit-ansatz" title="Permalink to this headline">¶</a></h3>
+<p>Now, we plot the cost function surface for later comparison with the surface generated
+by learning the circuit structure.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cost</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">surf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">coolwarm</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\theta_1$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\theta_2$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">prune</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial rotoselect" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_rotoselect_002.png" />
+<p>It is apparent that, based on the circuit structure
+chosen above, the cost function does not depend on the angle parameter <span class="math notranslate nohighlight">\(\theta_2\)</span>
+for the rotation gate <span class="math notranslate nohighlight">\(R_y\)</span>. As we will show in the following sections, this independence is not true
+for alternative gate choices.</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Rotoselect<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/rotoselect_structure.png"><img alt="rotoselect_structure" src="../_images/rotoselect_structure.png" style="width: 347.75px; height: 180.70000000000002px;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>We now implement the Rotoselect algorithm to learn a good selection of gates to minimize
+our cost function. The structure is similar to the original ansatz, but the generators of rotation are
+selected from the set of Pauli gates <span class="math notranslate nohighlight">\(P_d \in \{X,Y,Z\}\)</span> as shown in the figure above. For example,
+<span class="math notranslate nohighlight">\(U(\theta,Z) = R_z(\theta)\)</span>.</p>
+<div class="section" id="creating-a-quantum-circuit-with-variable-gates">
+<h3>Creating a quantum circuit with variable gates<a class="headerlink" href="#creating-a-quantum-circuit-with-variable-gates" title="Permalink to this headline">¶</a></h3>
+<p>First, we set up a quantum circuit with a similar structure to the one above, but
+instead of fixed rotation gates <span class="math notranslate nohighlight">\(R_x\)</span> and <span class="math notranslate nohighlight">\(R_y\)</span>, we allow the gates to be specified with the
+<code class="docutils literal notranslate"><span class="pre">generators</span></code> keyword, which is a list of the generators of rotation that will be used for the gates in the circuit.
+For example, <code class="docutils literal notranslate"><span class="pre">generators=['X',</span> <span class="pre">'Y']</span></code> reproduces the original circuit ansatz used in the Rotosolve example
+above.
+A helper method <code class="docutils literal notranslate"><span class="pre">RGen</span></code> returns the correct unitary gate according to the
+rotation specified by an element of <code class="docutils literal notranslate"><span class="pre">generators</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">RGen</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">wires</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">generator</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">generator</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">generator</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">ansatz_rsel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">):</span>
+    <span class="n">RGen</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">generators</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">RGen</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">generators</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit_rsel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">):</span>
+    <span class="n">ansatz_rsel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit_rsel2</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">):</span>
+    <span class="n">ansatz_rsel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX" title="pennylane.PauliX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span></a><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">cost_rsel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">):</span>
+    <span class="n">Z_1</span><span class="p">,</span> <span class="n">Y_2</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_rsel</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="n">X_1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_rsel2</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">Y_2</span> <span class="o">+</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">Z_1</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">X_1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="helper-methods">
+<h3>Helper methods<a class="headerlink" href="#helper-methods" title="Permalink to this headline">¶</a></h3>
+<p>We define helper methods in a similar fashion to Rotosolve. In this case,
+we must iterate through the possible gate choices in addition to optimizing each parameter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rotosolve</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">M_0</span><span class="p">):</span>  <span class="c1"># M_0 only calculated once</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">M_0_plus</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">M_0_minus</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span>
+        <span class="mf">2.0</span> <span class="o">*</span> <span class="n">M_0</span> <span class="o">-</span> <span class="n">M_0_plus</span> <span class="o">-</span> <span class="n">M_0_minus</span><span class="p">,</span> <span class="n">M_0_plus</span> <span class="o">-</span> <span class="n">M_0_minus</span>
+    <span class="p">)</span>  <span class="c1"># returns value in (-pi,pi]</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="n">a</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="k">return</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">optimal_theta_and_gen_helper</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">cost</span><span class="p">):</span>
+    <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">M_0</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>  <span class="c1"># M_0 independent of generator selection</span>
+    <span class="k">for</span> <span class="n">generator</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">]:</span>
+        <span class="n">generators</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">generator</span>
+        <span class="n">params_cost</span> <span class="o">=</span> <span class="n">rotosolve</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">M_0</span><span class="p">)</span>
+        <span class="c1"># initialize optimal generator with first item in list, &quot;X&quot;, and update if necessary</span>
+        <span class="k">if</span> <span class="n">generator</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span> <span class="ow">or</span> <span class="n">params_cost</span> <span class="o">&lt;=</span> <span class="n">params_opt_cost</span><span class="p">:</span>
+            <span class="n">params_opt_d</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+            <span class="n">params_opt_cost</span> <span class="o">=</span> <span class="n">params_cost</span>
+            <span class="n">generators_opt_d</span> <span class="o">=</span> <span class="n">generator</span>
+    <span class="k">return</span> <span class="n">params_opt_d</span><span class="p">,</span> <span class="n">generators_opt_d</span>
+
+
+<span class="k">def</span> <span class="nf">rotoselect_cycle</span><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+        <span class="n">params</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="n">generators</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">optimal_theta_and_gen_helper</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span><span class="p">,</span> <span class="n">cost</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">generators</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optimizing-the-circuit-structure">
+<h3>Optimizing the circuit structure<a class="headerlink" href="#optimizing-the-circuit-structure" title="Permalink to this headline">¶</a></h3>
+<p>We perform the optimization and print the optimal generators for the rotation gates. The minimum value of the
+cost function obtained by optimizing using Rotoselect is less than the minimum value of the cost function obtained by
+gradient descent or Rotosolve, which were performed on the original circuit structure ansatz.
+In other words, Rotoselect performs better without
+increasing the depth of the circuit by selecting better gates for the task of minimizing the cost function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">costs_rsel</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">params_rsel</span> <span class="o">=</span> <span class="n">init_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">init_generators</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">generators</span> <span class="o">=</span> <span class="n">init_generators</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+    <span class="n">costs_rsel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost_rsel</span><span class="p">(</span><span class="n">params_rsel</span><span class="p">,</span> <span class="n">generators</span><span class="p">))</span>
+    <span class="n">params_rsel</span><span class="p">,</span> <span class="n">generators</span> <span class="o">=</span> <span class="n">rotoselect_cycle</span><span class="p">(</span><span class="n">cost_rsel</span><span class="p">,</span> <span class="n">params_rsel</span><span class="p">,</span> <span class="n">generators</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal generators are: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">generators</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+
+<span class="c1"># plot cost function vs. steps comparison</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">costs_gd</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;grad. desc. on original ansatz&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">costs_rsel</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;rotoselect&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;cycles&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="grad. desc. on original ansatz, rotoselect" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_rotoselect_003.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Optimal generators are: [&#39;Y&#39;, &#39;X&#39;]
+</pre></div>
+</div>
+</div>
+<div class="section" id="cost-function-surface-for-learned-circuit-structure">
+<h3>Cost function surface for learned circuit structure<a class="headerlink" href="#cost-function-surface-for-learned-circuit-structure" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/learned_structure.png"><img alt="learned_structure" src="../_images/learned_structure.png" style="width: 347.75px; height: 180.05px;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Finally, we plot the cost function surface for the newly discovered optimized
+circuit structure shown in the figure above. It is apparent from the minima in the plot that
+the new circuit structure is better suited for the problem.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="c1"># plot cost for fixed optimal generators</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cost_rsel</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">generators</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+    <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">surf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="o">.</span><span class="n">coolwarm</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\theta_1$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\theta_2$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">prune</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial rotoselect" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_rotoselect_004.png" />
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Mateusz Ostaszewski, Edward Grant, Marcello Bendetti. “Quantum circuit structure learning.”
+<a class="reference external" href="https://arxiv.org/abs/1905.09692">arxiv:1905.09692</a>, 2019.</li>
+</ol>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  9.447 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-rotoselect-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/7f0de9d0f95e6fbe777f79bd2c5299a0/tutorial_rotoselect.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_rotoselect.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/48535c0f8fc055ad115b99f9c6210e5d/tutorial_rotoselect.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_rotoselect.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_rotoselect</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Quantum circuit structure learning</a><ul>
+<li><a class="reference internal" href="#background">Background</a></li>
+<li><a class="reference internal" href="#example-vqe-problem">Example VQE Problem</a></li>
+<li><a class="reference internal" href="#rotosolve">Rotosolve</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#creating-a-fixed-quantum-circuit">Creating a fixed quantum circuit</a></li>
+<li><a class="reference internal" href="#helper-methods-for-the-algorithm">Helper methods for the algorithm</a></li>
+<li><a class="reference internal" href="#optimization-and-comparison-with-gradient-descent">Optimization and comparison with gradient descent</a></li>
+<li><a class="reference internal" href="#cost-function-surface-for-circuit-ansatz">Cost function surface for circuit ansatz</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">Rotoselect</a><ul>
+<li><a class="reference internal" href="#creating-a-quantum-circuit-with-variable-gates">Creating a quantum circuit with variable gates</a></li>
+<li><a class="reference internal" href="#helper-methods">Helper methods</a></li>
+<li><a class="reference internal" href="#optimizing-the-circuit-structure">Optimizing the circuit structure</a></li>
+<li><a class="reference internal" href="#cost-function-surface-for-learned-circuit-structure">Cost function surface for learned circuit structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_rotoselect</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_optimization.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_rosalin.html" title="Frugal shot optimization with Rosalin"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_stochastic_parameter_shift.html" title="The Stochastic Parameter-Shift Rule"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_optimization.html" >Optimization</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

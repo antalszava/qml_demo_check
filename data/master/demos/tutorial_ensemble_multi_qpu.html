@@ -1,0 +1,1012 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="We demonstrate how two QPUs can be combined in parallel to help solve a machine learning classification problem, using PyTorch and PennyLane." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/ensemble_diagram.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Ensemble classification with Forest and Qiskit devices &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_ensemble_multi_qpu.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="We demonstrate how two QPUs can be combined in parallel to help solve a machine learning classification problem, using PyTorch and PennyLane." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Ensemble classification with Forest and Qiskit devices &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_ensemble_multi_qpu.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quantum Computing" href="../demos_quantum-computing.html" />
+    <link rel="prev" title="Quanvolutional Neural Networks" href="tutorial_quanvolution.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../demos_quantum-computing.html" title="Quantum Computing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quanvolution.html" title="Quanvolutional Neural Networks"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" accesskey="U">Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-ensemble-multi-qpu-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="ensemble-classification-with-forest-and-qiskit-devices">
+<span id="sphx-glr-demos-tutorial-ensemble-multi-qpu-py"></span><h1>Ensemble classification with Forest and Qiskit devices<a class="headerlink" href="#ensemble-classification-with-forest-and-qiskit-devices" title="Permalink to this headline">¶</a></h1>
+<p><em>Author: PennyLane dev team. Last updated: 6 Aug 2020.</em></p>
+<p>This tutorial outlines how two QPUs can be combined in parallel to help solve a machine learning
+classification problem.</p>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">forest.qvm</span></code> device to simulate one QPU and the <code class="docutils literal notranslate"><span class="pre">qiskit.aer</span></code> device to
+simulate another. Each QPU makes an independent prediction, and an ensemble model is
+formed by choosing the prediction of the most confident QPU. The iris dataset is used in this
+tutorial, consisting of three classes of iris flower. Using a pre-trained model and the PyTorch
+interface, we’ll see that ensembling allows the QPUs to specialize towards
+different classes.</p>
+<p>Let’s begin by importing the prerequisite libraries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">import</span> <span class="nn">sklearn.datasets</span>
+<span class="kn">import</span> <span class="nn">sklearn.decomposition</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Patch</span>
+</pre></div>
+</div>
+<p>This tutorial requires the <code class="docutils literal notranslate"><span class="pre">pennylane-forest</span></code> and <code class="docutils literal notranslate"><span class="pre">pennylane-qiskit</span></code> packages, which can be
+installed by following the instructions <a class="reference external" href="https://pennylane.ai/install.html">here</a>. We also
+make use of the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/introduction/interfaces.html">PyTorch interface</a>, which can be installed from <a class="reference external" href="https://pytorch.org/get-started/locally/">here</a>.</p>
+<div class="section" id="load-data">
+<h2>Load data<a class="headerlink" href="#load-data" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to load the iris dataset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">n_features</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">n_classes</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">150</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We shuffle the data and then embed the four features into a two-dimensional space for ease of
+plotting later on. The first two principal components of the data are used.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1967</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))))</span>
+
+<span class="n">pca</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_features</span><span class="p">)</span>
+<span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We will be encoding these two features into quantum circuits using <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RX</span></code></a>
+rotations, and hence renormalize our features to be between <span class="math notranslate nohighlight">\([-\pi, \pi]\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+</pre></div>
+</div>
+<p>The data is split between a training and a test set. This tutorial uses a model that is
+pre-trained on the training set.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">split</span> <span class="o">=</span> <span class="mi">125</span>
+
+<span class="n">x_train</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">split</span><span class="p">]</span>
+<span class="n">x_test</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">split</span><span class="p">]</span>
+<span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">split</span><span class="p">:]</span>
+</pre></div>
+</div>
+<p>Finally, let’s take a quick look at our data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colours</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#ec6f86&quot;</span><span class="p">,</span> <span class="s2">&quot;#4573e7&quot;</span><span class="p">,</span> <span class="s2">&quot;#ad61ed&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">plot_points</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">):</span>
+    <span class="n">c_train</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">c_test</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_train</span><span class="p">:</span>
+        <span class="n">c_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colours</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_test</span><span class="p">:</span>
+        <span class="n">c_test</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colours</span><span class="p">[</span><span class="n">y</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_train</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">x_train</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">c_train</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_test</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">x_test</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">c_test</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Feature 1&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Feature 2&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">c_transparent</span> <span class="o">=</span> <span class="s2">&quot;#00000000&quot;</span>
+
+    <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colours</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 0&quot;</span><span class="p">),</span>
+        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colours</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 1&quot;</span><span class="p">),</span>
+        <span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colours</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 2&quot;</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Train&quot;</span><span class="p">,</span>
+               <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span><span class="p">,</span>
+               <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">custom_lines</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+
+
+<span class="n">plot_points</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="tutorial ensemble multi qpu" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_ensemble_multi_qpu_001.png" />
+<p>This plot shows us that class 0 points can be nicely separated, but that there is an overlap
+between points from classes 1 and 2.</p>
+</div>
+<div class="section" id="define-model">
+<h2>Define model<a class="headerlink" href="#define-model" title="Permalink to this headline">¶</a></h2>
+<p>Our model is summarized in the figure below. We use two 4-qubit devices: <code class="docutils literal notranslate"><span class="pre">4q-qvm</span></code>
+from the PennyLane-Forest plugin and <code class="docutils literal notranslate"><span class="pre">qiskit.aer</span></code> from the PennyLane-Qiskit plugin.</p>
+<p>Data is input using <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RX</span></code></a> rotations and then a different circuit is enacted
+for each device with a unique set of trainable parameters. The output of both circuits is a
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PauliZ</span></code></a> measurement on three of the qubits. This is then fed through a
+softmax function, resulting in two 3-dimensional probability vectors corresponding to the 3
+classes.</p>
+<p>Finally, the ensemble model chooses the QPU which is most confident about its prediction
+(i.e., the class with the highest overall probability over all QPUs) and uses that to make a
+prediction.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/ensemble_diagram.png"><img alt="../_images/ensemble_diagram.png" src="../_images/ensemble_diagram.png" style="width: 50%;" /></a>
+</div>
+<div class="section" id="quantum-nodes">
+<h3>Quantum nodes<a class="headerlink" href="#quantum-nodes" title="Permalink to this headline">¶</a></h3>
+<p>We begin by defining the two quantum devices and the circuits to be run on them.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">n_wires</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">dev0</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;forest.qvm&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;4q-qvm&quot;</span><span class="p">)</span>
+<span class="n">dev1</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;qiskit.aer&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">devs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev0</span><span class="p">,</span> <span class="n">dev1</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have access to Rigetti hardware, you can swap out <code class="docutils literal notranslate"><span class="pre">forest.qvm</span></code> for <code class="docutils literal notranslate"><span class="pre">forest.qpu</span></code>
+and specify the hardware device to run on. Users with access to the IBM Q Experience can
+swap <code class="docutils literal notranslate"><span class="pre">qiskit.aer</span></code> for <code class="docutils literal notranslate"><span class="pre">qiskit.ibmq</span></code> and specify their chosen backend (see <a class="reference external" href="https://pennylane-qiskit.readthedocs.io/en/latest/gettingstarted.html#ibm-q-experience">here</a>).</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Rigetti’s QVM and Quil Compiler services must be running for this tutorial to execute. They
+can be installed by consulting the <a class="reference external" href="http://docs.rigetti.com/en/stable/">Rigetti documentation</a> or, for users with Docker, by running:</p>
+<div class="last highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -d -p <span class="m">5555</span>:5555 rigetti/quilc -R -p <span class="m">5555</span>
+docker run -d -p <span class="m">5000</span>:5000 rigetti/qvm -S -p <span class="m">5000</span>
+</pre></div>
+</div>
+</div>
+<p>The circuits for both QPUs are shown in the figure below:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/diagram_circuits.png"><img alt="../_images/diagram_circuits.png" src="../_images/diagram_circuits.png" style="width: 50%;" /></a>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">circuit0</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_wires</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">n_features</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_wires</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">circuit1</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_wires</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">n_features</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_wires</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Rot.html#pennylane.Rot" title="pennylane.Rot" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Rot</span></a><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We finally combine the two devices into a <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNodeCollection</span></code></a> that uses the
+PyTorch interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="pennylane.QNodeCollection" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnodes</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="pennylane.QNodeCollection" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNodeCollection</span></a><span class="p">(</span>
+    <span class="p">[</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit0</span><span class="p">,</span> <span class="n">dev0</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">),</span>
+     <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit1</span><span class="p">,</span> <span class="n">dev1</span><span class="p">,</span> <span class="n">interface</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="postprocessing-into-a-prediction">
+<h3>Postprocessing into a prediction<a class="headerlink" href="#postprocessing-into-a-prediction" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">predict_point</span></code> function below allows us to find the ensemble prediction, as well as keeping
+track of the individual predictions from each QPU.</p>
+<p>We include a <code class="docutils literal notranslate"><span class="pre">parallel</span></code> keyword argument for evaluating the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="(in PennyLane v0.18)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QNodeCollection</span></code></a>
+in a parallel asynchronous manner. This feature requires the <code class="docutils literal notranslate"><span class="pre">dask</span></code> library, which can be
+installed using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;dask[delayed]&quot;</span></code>. When <code class="docutils literal notranslate"><span class="pre">parallel=True</span></code>, we are able to make
+predictions faster because we do not need to wait for one QPU to output before running on the
+other.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">decision</span><span class="p">(</span><span class="n">softmax</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">softmax</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">predict_point</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_point</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNodeCollection.html#pennylane.QNodeCollection" title="pennylane.QNodeCollection" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnodes</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_point</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">)</span>
+    <span class="n">softmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">softmax</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">softmax</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">chosen_softmax</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">decision</span><span class="p">(</span><span class="n">chosen_softmax</span><span class="p">),</span> <span class="n">decision</span><span class="p">(</span><span class="n">softmax</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">decision</span><span class="p">(</span><span class="n">softmax</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, let’s define a function to make a predictions over multiple data points.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">predictions_ensemble</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predictions_0</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">predictions_1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">choices</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x_point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed up to iteration </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">predict_point</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_point</span><span class="o">=</span><span class="n">x_point</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">)</span>
+        <span class="n">predictions_ensemble</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">predictions_0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">predictions_1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">choices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">predictions_ensemble</span><span class="p">,</span> <span class="n">predictions_0</span><span class="p">,</span> <span class="n">predictions_1</span><span class="p">,</span> <span class="n">choices</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="make-predictions">
+<h2>Make predictions<a class="headerlink" href="#make-predictions" title="Permalink to this headline">¶</a></h2>
+<p>To test our model, we first load a pre-trained set of parameters which can also be downloaded
+by clicking <a class="reference download internal" download="" href="../_downloads/244bf2520cee43ec96706e7f889e9458/params.npy"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ensemble_multi_qpu/params.npy&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can then make predictions for the training and test datasets.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Predicting on training dataset&quot;</span><span class="p">)</span>
+<span class="n">p_train</span><span class="p">,</span> <span class="n">p_train_0</span><span class="p">,</span> <span class="n">p_train_1</span><span class="p">,</span> <span class="n">choices_train</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_train</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Predicting on test dataset&quot;</span><span class="p">)</span>
+<span class="n">p_test</span><span class="p">,</span> <span class="n">p_test_0</span><span class="p">,</span> <span class="n">p_test_1</span><span class="p">,</span> <span class="n">choices_test</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Predicting on training dataset
+Completed up to iteration 10
+Completed up to iteration 20
+Completed up to iteration 30
+Completed up to iteration 40
+Completed up to iteration 50
+Completed up to iteration 60
+Completed up to iteration 70
+Completed up to iteration 80
+Completed up to iteration 90
+Completed up to iteration 100
+Completed up to iteration 110
+Completed up to iteration 120
+Predicting on test dataset
+Completed up to iteration 10
+Completed up to iteration 20
+</pre></div>
+</div>
+</div>
+<div class="section" id="analyze-performance">
+<h2>Analyze performance<a class="headerlink" href="#analyze-performance" title="Permalink to this headline">¶</a></h2>
+<p>The last thing to do is test how well the model performs. We begin by looking at the accuracy.</p>
+<div class="section" id="accuracy">
+<h3>Accuracy<a class="headerlink" href="#accuracy" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">actuals</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">actuals</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">accuracy</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training accuracy (ensemble): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training accuracy (QPU0):  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_train_0</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training accuracy (QPU1):  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_train_1</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Training accuracy (ensemble): 0.824
+Training accuracy (QPU0):  0.648
+Training accuracy (QPU1):  0.288
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test accuracy (ensemble): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test accuracy (QPU0):  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_test_0</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test accuracy (QPU1):  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">(</span><span class="n">p_test_1</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Test accuracy (ensemble): 0.72
+Test accuracy (QPU0):  0.56
+Test accuracy (QPU1):  0.24
+</pre></div>
+</div>
+<p>These numbers tell us a few things:</p>
+<ul class="simple">
+<li>On both training and test datasets, the ensemble model outperforms the predictions from each
+QPU. This provides a nice example of how QPUs can be used in parallel to gain a performance
+advantage.</li>
+<li>The accuracy of QPU0 is much higher than the accuracy of QPU1. This does not mean that one
+device is intrinsically better than the other. In fact, another set of parameters can lead to
+QPU1 becoming more accurate. We will see in the next section that the difference in accuracy
+is due to specialization of each QPU, which leads to overall better performance of the
+ensemble model.</li>
+<li>The test accuracy is lower than the training accuracy. Here our focus is on analyzing the
+performance of the ensemble model, rather than minimizing the generalization error.</li>
+</ul>
+</div>
+<div class="section" id="choice-of-qpu">
+<h3>Choice of QPU<a class="headerlink" href="#choice-of-qpu" title="Permalink to this headline">¶</a></h3>
+<p>Is there a link between the class of a datapoint and the QPU chosen to make the prediction in
+the ensemble model? Let’s investigate.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Combine choices_train and choices_test to simplify analysis</span>
+<span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">choices_train</span><span class="p">,</span> <span class="n">choices_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Choices: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">choices</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Choices counts: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">choices</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Choices: [0 0 1 1 0 0 1 0 0 0 1 0 0 0 0 0 0 1 1 0 0 1 0 1 1 0 0 0 1 0 0 1 0 1 0 0 0
+ 0 1 1 0 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 0
+ 0 0 0 0 0 1 1 1 1 0 0 0 1 0 1 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0
+ 1 0 0 0 1 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 1 0 1 0 0
+ 0 0]
+Choices counts: Counter({0: 110, 1: 40})
+</pre></div>
+</div>
+<p>The following lines keep track of choices and corresponding predictions in the ensemble model.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_train</span><span class="p">,</span> <span class="n">p_test</span><span class="p">)</span>
+<span class="n">choice_vs_prediction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">choices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">predictions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>We can hence find the predictions each QPU was responsible for.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">choices_vs_prediction_0</span> <span class="o">=</span> <span class="n">choice_vs_prediction</span><span class="p">[</span><span class="n">choice_vs_prediction</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">choices_vs_prediction_1</span> <span class="o">=</span> <span class="n">choice_vs_prediction</span><span class="p">[</span><span class="n">choice_vs_prediction</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">predictions_0</span> <span class="o">=</span> <span class="n">choices_vs_prediction_0</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">predictions_1</span> <span class="o">=</span> <span class="n">choices_vs_prediction_1</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="n">expl</span> <span class="o">=</span> <span class="s2">&quot;When QPU</span><span class="si">{}</span><span class="s2"> was chosen by the ensemble, it made the following distribution of &quot;</span> \
+       <span class="s2">&quot;predictions:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">expl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">predictions_0</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">expl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">predictions_1</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Distribution of classes in iris dataset: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>When QPU0 was chosen by the ensemble, it made the following distribution of predictions:
+Counter({0: 55, 2: 55})
+
+When QPU1 was chosen by the ensemble, it made the following distribution of predictions:
+Counter({1: 37, 0: 3})
+
+Distribution of classes in iris dataset: Counter({0: 50, 2: 50, 1: 50})
+</pre></div>
+</div>
+<p>These results show us that QPU0 specializes to making predictions on classes 0 and 2,
+while QPU1 specializes to class 1.</p>
+</div>
+<div class="section" id="visualization">
+<h3>Visualization<a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h3>
+<p>We conclude by visualizing the correct and incorrect predictions on the dataset. The following
+function plots correctly predicted points in green and incorrectly predicted points in red.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">colours_prediction</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;correct&quot;</span><span class="p">:</span> <span class="s2">&quot;#83b5b9&quot;</span><span class="p">,</span> <span class="s2">&quot;incorrect&quot;</span><span class="p">:</span> <span class="s2">&quot;#f98d91&quot;</span><span class="p">}</span>
+<span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">plot_points_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[],</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[],</span> <span class="mi">2</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">x_</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">[],</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[],</span> <span class="mi">2</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
+        <span class="n">x_</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">c</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colours_prediction</span><span class="p">[</span><span class="s2">&quot;correct&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">colours_prediction</span><span class="p">[</span><span class="s2">&quot;incorrect&quot;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_classes</span><span class="p">):</span>
+        <span class="n">x_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_class</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">x_class</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Feature 1&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Feature 2&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Predictions from </span><span class="si">{}</span><span class="s2"> model&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">c_transparent</span> <span class="o">=</span> <span class="s2">&quot;#00000000&quot;</span>
+
+    <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Patch</span><span class="p">(</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="n">colours_prediction</span><span class="p">[</span><span class="s2">&quot;correct&quot;</span><span class="p">],</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Correct&quot;</span>
+        <span class="p">),</span>
+        <span class="n">Patch</span><span class="p">(</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="n">colours_prediction</span><span class="p">[</span><span class="s2">&quot;incorrect&quot;</span><span class="p">],</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Incorrect&quot;</span>
+        <span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 0&quot;</span><span class="p">,</span>
+               <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 1&quot;</span><span class="p">,</span>
+               <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">c_transparent</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Class 2&quot;</span><span class="p">,</span>
+               <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">custom_lines</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We can again compare the ensemble model with the individual models from each QPU.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_points_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="s2">&quot;ensemble&quot;</span><span class="p">)</span>  <span class="c1"># ensemble</span>
+</pre></div>
+</div>
+<img alt="Predictions from ensemble model" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_ensemble_multi_qpu_002.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_points_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_train_0</span><span class="p">,</span> <span class="n">p_test_0</span><span class="p">),</span> <span class="s2">&quot;QPU0&quot;</span><span class="p">)</span>  <span class="c1"># QPU 0</span>
+</pre></div>
+</div>
+<img alt="Predictions from QPU0 model" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_ensemble_multi_qpu_003.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_points_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_train_1</span><span class="p">,</span> <span class="n">p_test_1</span><span class="p">),</span> <span class="s2">&quot;QPU1&quot;</span><span class="p">)</span>  <span class="c1"># QPU 1</span>
+</pre></div>
+</div>
+<img alt="Predictions from QPU1 model" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_ensemble_multi_qpu_004.png" />
+<p>These plots reinforce the specialization of the two QPUs. QPU1 concentrates on doing a good job
+at predicting class 1, while QPU0 is focused on classes 0 and 2. By combining together,
+the resultant ensemble performs better.</p>
+<p>This tutorial shows how QPUs can work in parallel to realize a performance advantage. Check out
+our <a class="reference internal" href="tutorial_vqe_parallel.html"><span class="doc">VQE with parallel QPUs on Rigetti Forest</span></a> tutorial to see how multiple QPUs can be
+evaluated asynchronously to speed up calculating the potential energy surface of molecular
+hydrogen!</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  48.693 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-ensemble-multi-qpu-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/a800e4b35f5a402b0807e4388224f4c2/tutorial_ensemble_multi_qpu.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_ensemble_multi_qpu.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/7ecf477cb4c5847e7692024a67217fa5/tutorial_ensemble_multi_qpu.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_ensemble_multi_qpu.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_ensemble_multi_qpu</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Ensemble classification with Forest and Qiskit devices</a><ul>
+<li><a class="reference internal" href="#load-data">Load data</a></li>
+<li><a class="reference internal" href="#define-model">Define model</a><ul>
+<li><a class="reference internal" href="#quantum-nodes">Quantum nodes</a></li>
+<li><a class="reference internal" href="#postprocessing-into-a-prediction">Postprocessing into a prediction</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#make-predictions">Make predictions</a></li>
+<li><a class="reference internal" href="#analyze-performance">Analyze performance</a><ul>
+<li><a class="reference internal" href="#accuracy">Accuracy</a></li>
+<li><a class="reference internal" href="#choice-of-qpu">Choice of QPU</a></li>
+<li><a class="reference internal" href="#visualization">Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_ensemble_multi_qpu</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_qml.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../demos_quantum-computing.html" title="Quantum Computing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_quanvolution.html" title="Quanvolutional Neural Networks"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" >Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

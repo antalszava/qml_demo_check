@@ -1,0 +1,810 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Learn how to simulate noisy quantum circuits" property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/N-Nisq.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Noisy circuits &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Learn how to simulate noisy quantum circuits" name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Noisy circuits &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Computing gradients in parallel with Amazon Braket" href="braket-parallel-gradients.html" />
+    <link rel="prev" title="Using JAX with PennyLane" href="tutorial_jax_transformations.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="braket-parallel-gradients.html" title="Computing gradients in parallel with Amazon Braket"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_jax_transformations.html" title="Using JAX with PennyLane"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" accesskey="U">Basics</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-noisy-circuits-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="noisy-circuits">
+<span id="sphx-glr-demos-tutorial-noisy-circuits-py"></span><h1>Noisy circuits<a class="headerlink" href="#noisy-circuits" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_noisy_circuit_optimization.html", "pytorch_noise.html"];
+    var related_tutorials_titles = ['Optimizing noisy circuits with Cirq', 'PyTorch and noisy devices'];
+</script></p>
+<p>In this demonstration, you’ll learn how to simulate noisy circuits using built-in functionality in
+PennyLane. We’ll cover the basics of noisy channels and density matrices, then use example code to
+simulate noisy circuits. PennyLane, the library for differentiable quantum computations, has
+unique features that enable us to compute gradients of noisy channels. We’ll also explore how
+to employ channel gradients to optimize noise parameters in a circuit.</p>
+<p>We’re putting the N in NISQ.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/N-Nisq.png"><img alt="../_images/N-Nisq.png" src="../_images/N-Nisq.png" style="width: 20%;" /></a>
+</div>
+<div class="section" id="noisy-operations">
+<h2>Noisy operations<a class="headerlink" href="#noisy-operations" title="Permalink to this headline">¶</a></h2>
+<p>Noise is any unwanted transformation that corrupts the intended
+output of a quantum computation. It can be separated into two categories.</p>
+<ul class="simple">
+<li><strong>Coherent noise</strong> is described by unitary operations that maintain the purity of the
+output quantum state. A common source are systematic errors originating from
+imperfectly-calibrated devices that do not exactly apply the desired gates, e.g., applying
+a rotation by an angle <span class="math notranslate nohighlight">\(\phi+\epsilon\)</span> instead of <span class="math notranslate nohighlight">\(\phi\)</span>.</li>
+<li><strong>Incoherent noise</strong> is more problematic: it originates from a quantum computer
+becoming entangled with the environment, resulting in mixed states — probability
+distributions over different pure states. Incoherent noise thus leads to outputs that are
+always random, regardless of what basis we measure in.</li>
+</ul>
+<p>Mixed states are described by <a class="reference external" href="https://en.wikipedia.org/wiki/Density_matrices">density matrices</a>.
+They provide a more general method of describing quantum states that elegantly
+encodes a distribution over pure states in a single mathematical object.
+Mixed states are the most general description of a quantum state, of which pure
+states are a special case.</p>
+<p>The purpose of PennyLane’s <code class="docutils literal notranslate"><span class="pre">default.mixed</span></code> device is to provide native
+support for mixed states and for simulating noisy computations. Let’s use <code class="docutils literal notranslate"><span class="pre">default.mixed</span></code> to
+simulate a simple circuit for preparing the
+Bell state <span class="math notranslate nohighlight">\(|\psi\rangle=\frac{1}{\sqrt{2}}(|00\rangle+|11\rangle)\)</span>. We ask the QNode to
+return the expectation value of <span class="math notranslate nohighlight">\(Z_0\otimes Z_1\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s1">&#39;default.mixed&#39;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">():</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QNode output = </span><span class="si">{</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>QNode output = 1.0000
+</pre></div>
+</div>
+<p>The device stores the output state as a density matrix. In this case, the density matrix is
+equal to <span class="math notranslate nohighlight">\(|\psi\rangle\langle\psi|\)</span>,
+where <span class="math notranslate nohighlight">\(|\psi\rangle=\frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output state is = </span><span class="se">\n</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitDevice.html#pennylane.QubitDevice.state" title="pennylane.QubitDevice.state" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">dev</span><span class="o">.</span><span class="n">state</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Output state is =
+[[0.5 0.  0.  0.5]
+ [0.  0.  0.  0. ]
+ [0.  0.  0.  0. ]
+ [0.5 0.  0.  0.5]]
+</pre></div>
+</div>
+<p>Incoherent noise is modelled by
+quantum channels. Mathematically, a quantum channel is a linear, completely positive,
+and trace-preserving (<a class="reference external" href="https://www.quantiki.org/wiki/channel-cp-map">CPTP</a>) map. A convenient strategy for representing
+quantum channels is to employ <a class="reference external" href="https://en.wikipedia.org/wiki/Quantum_operation#Kraus_operators">Kraus operators</a>
+<span class="math notranslate nohighlight">\(\{K_i\}\)</span> satisfying the condition
+<span class="math notranslate nohighlight">\(\sum_i K_{i}^{\dagger} K_i = I\)</span>. For an initial state <span class="math notranslate nohighlight">\(\rho\)</span>, the output
+state after the action of a channel <span class="math notranslate nohighlight">\(\Phi\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\Phi(\rho) = \sum_i K_i \rho K_{i}^{\dagger}.\]</div>
+<p>Just like pure states are special cases of mixed states, unitary
+transformations are special cases of quantum channels. Unitary transformations are represented
+by a single Kraus operator,
+the unitary <span class="math notranslate nohighlight">\(U\)</span>, and they transform a state as
+<span class="math notranslate nohighlight">\(U\rho U^\dagger\)</span>.</p>
+<p>More generally, the action of a quantum channel can be interpreted as applying a
+transformation corresponding to the Kraus operator <span class="math notranslate nohighlight">\(K_i\)</span> with some associated
+probability. More precisely, the channel applies the
+transformation
+<span class="math notranslate nohighlight">\(\frac{1}{p_i}K_i\rho K_i^\dagger\)</span> with probability <span class="math notranslate nohighlight">\(p_i = \text{Tr}[K_i \rho K_{i}^{
+\dagger}]\)</span>. Quantum
+channels therefore represent a probability distribution over different possible
+transformations on a quantum state. For
+example, consider the bit flip channel. It describes a transformation that flips the state of
+a qubit (applies an X gate) with probability <span class="math notranslate nohighlight">\(p\)</span> and leaves it unchanged with probability
+<span class="math notranslate nohighlight">\(1-p\)</span>. Its Kraus operators are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}K_0 &amp;= \sqrt{1-p}\begin{pmatrix}1 &amp; 0\\ 0 &amp; 1\end{pmatrix}, \\
+K_1 &amp;= \sqrt{p}\begin{pmatrix}0 &amp; 1\\ 1 &amp; 0\end{pmatrix}.\end{split}\]</div>
+<p>This channel can be implemented in PennyLane using the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BitFlip.html#pennylane.BitFlip" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">qml.BitFlip</span></code></a>
+operation.</p>
+<p>Let’s see what happens when we simulate this type of noise acting on
+both qubits in the circuit. We’ll evaluate the QNode for different bit flip probabilities.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bitflip_circuit</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BitFlip.html#pennylane.BitFlip" title="pennylane.BitFlip" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BitFlip</span></a><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BitFlip.html#pennylane.BitFlip" title="pennylane.BitFlip" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BitFlip</span></a><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="n">ps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ps</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QNode output for bit flip probability </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">bitflip_circuit</span></a><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>QNode output for bit flip probability 0.001 is 0.9960
+QNode output for bit flip probability 0.01 is 0.9604
+QNode output for bit flip probability 0.1 is 0.6400
+QNode output for bit flip probability 0.2 is 0.3600
+</pre></div>
+</div>
+<p>The circuit behaves quite differently in the presence of noise! This will be familiar to anyone
+that has run an algorithm on quantum hardware. It is also highlights why error
+mitigation and error correction are so important. We can use PennyLane to look under the hood and
+see the output state of the circuit for the largest noise parameter</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output state for bit flip probability </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> is </span><span class="se">\n</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitDevice.html#pennylane.QubitDevice.state" title="pennylane.QubitDevice.state" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-attribute"><span class="n">dev</span><span class="o">.</span><span class="n">state</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Output state for bit flip probability 0.2 is
+[[0.34 0.   0.   0.34]
+ [0.   0.16 0.16 0.  ]
+ [0.   0.16 0.16 0.  ]
+ [0.34 0.   0.   0.34]]
+</pre></div>
+</div>
+<p>Besides the bit flip channel, PennyLane supports several other noisy channels that are commonly
+used to describe experimental imperfections: <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PhaseFlip.html#pennylane.PhaseFlip" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseFlip</span></code></a>,
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AmplitudeDamping.html#pennylane.AmplitudeDamping" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmplitudeDamping</span></code></a>, <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GeneralizedAmplitudeDamping.html#pennylane.GeneralizedAmplitudeDamping" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedAmplitudeDamping</span></code></a>,
+<a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PhaseDamping.html#pennylane.PhaseDamping" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhaseDamping</span></code></a>, and the <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DepolarizingChannel.html#pennylane.DepolarizingChannel" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DepolarizingChannel</span></code></a>. You can also
+build your own custom channel using the operation <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitChannel.html#pennylane.QubitChannel" title="(in PennyLane v0.17)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QubitChannel</span></code></a> by
+specifying its Kraus operators, or even submit a <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/development/guide.html">pull request</a> introducing a new channel.</p>
+<p>Let’s take a look at another example. The depolarizing channel is a
+generalization of
+the bit flip and phase flip channels, where each of the three possible Pauli errors can be
+applied to a single qubit. Its Kraus operators are given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}K_0 &amp;= \sqrt{1-p}\begin{pmatrix}1 &amp; 0\\ 0 &amp; 1\end{pmatrix}, \\
+K_1 &amp;= \sqrt{p/3}\begin{pmatrix}0 &amp; 1\\ 1 &amp; 0\end{pmatrix}, \\
+K_2 &amp;= \sqrt{p/3}\begin{pmatrix}0 &amp; -i\\ i &amp; 0\end{pmatrix}, \\
+K_3 &amp;= \sqrt{p/3}\begin{pmatrix}1 &amp; 0\\ 0 &amp; -1\end{pmatrix}.\end{split}\]</div>
+<p>A circuit modelling the effect of depolarizing noise in preparing a Bell state is implemented
+below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">depolarizing_circuit</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DepolarizingChannel.html#pennylane.DepolarizingChannel" title="pennylane.DepolarizingChannel" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DepolarizingChannel</span></a><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DepolarizingChannel.html#pennylane.DepolarizingChannel" title="pennylane.DepolarizingChannel" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DepolarizingChannel</span></a><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="n">ps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ps</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QNode output for depolarizing probability </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> is </span><span class="si">{</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">depolarizing_circuit</span></a><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>QNode output for depolarizing probability 0.001 is 0.9973
+QNode output for depolarizing probability 0.01 is 0.9735
+QNode output for depolarizing probability 0.1 is 0.7511
+QNode output for depolarizing probability 0.2 is 0.5378
+</pre></div>
+</div>
+<p>As before, the output deviates from the desired value as the amount of
+noise increases.
+Modelling the noise that occurs in real experiments requires careful consideration.
+PennyLane
+offers the flexibility to experiment with different combinations of noisy channels to either mimic
+the performance of quantum algorithms when deployed on real devices, or to explore the effect
+of more general quantum transformations.</p>
+</div>
+<div class="section" id="channel-gradients">
+<h2>Channel gradients<a class="headerlink" href="#channel-gradients" title="Permalink to this headline">¶</a></h2>
+<p>The ability to compute gradients of any operation is an essential ingredient of
+<a class="reference internal" href="../glossary/quantum_differentiable_programming.html"><span class="doc">quantum differentiable programming</span></a>.
+In PennyLane, it is possible to
+compute gradients of noisy channels and optimize them inside variational circuits.
+PennyLane supports analytical
+gradients for channels whose Kraus operators are proportional to unitary
+matrices <a class="footnote-reference" href="#johannes" id="id1">[1]</a>. In other cases, gradients are evaluated using finite differences.</p>
+<p>To illustrate this property, we’ll consider an elementary example. We aim to learn the noise
+parameters of a circuit in order to reproduce an observed expectation value. So suppose that we
+run the circuit to prepare a Bell state
+on a hardware device and observe that the expectation value of <span class="math notranslate nohighlight">\(Z_0\otimes Z_1\)</span> is
+not equal to 1 (as would occur with an ideal device), but instead has the value 0.7781. In the
+experiment, it is known that the
+major source of noise is amplitude damping, for example as a result of photon loss.
+Amplitude damping projects a state to <span class="math notranslate nohighlight">\(|0\rangle\)</span> with probability <span class="math notranslate nohighlight">\(p\)</span> and
+otherwise leaves it unchanged. It is
+described by the Kraus operators</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}K_0 = \begin{pmatrix}1 &amp; 0\\ 0 &amp; \sqrt{1-p}\end{pmatrix}, \quad
+K_1 = \begin{pmatrix}0 &amp; \sqrt{p}\\ 0 &amp; 0\end{pmatrix}.\end{split}\]</div>
+<p>What damping parameter (<span class="math notranslate nohighlight">\(p\)</span>) explains the experimental outcome? We can answer this question
+by optimizing the channel parameters to reproduce the experimental
+observation! 💪 Since the parameter <span class="math notranslate nohighlight">\(p\)</span> is a probability, we use a sigmoid function to
+ensure that the trainable parameters give rise to a valid channel parameter, i.e., a number
+between 0 and 1.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.7781</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># observed expectation value</span>
+
+<span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">damping_circuit</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AmplitudeDamping.html#pennylane.AmplitudeDamping" title="pennylane.AmplitudeDamping" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">AmplitudeDamping</span></a><span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># p = sigmoid(x)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AmplitudeDamping.html#pennylane.AmplitudeDamping" title="pennylane.AmplitudeDamping" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">AmplitudeDamping</span></a><span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We optimize the circuit with respect to a simple cost function that attains its minimum when
+the output of the QNode is equal to the experimental value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">damping_circuit</span></a><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>All that remains is to optimize the parameter. We use a straightforward gradient descent
+method.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ev</span><span class="p">),</span> <span class="n">cost_val</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step_and_cost" title="pennylane.GradientDescentOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ev</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">==</span> <span class="n">steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Step: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">    Cost: </span><span class="si">{</span><span class="n">cost_val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;QNode output after optimization = </span><span class="si">{</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">damping_circuit</span></a><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Experimental expectation value = </span><span class="si">{</span><span class="n">ev</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optimized noise parameter p = </span><span class="si">{</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Step: 0    Cost: 0.07733961000000007
+Step: 5    Cost: 0.07733960999999957
+Step: 10    Cost: 0.0773396099969988
+Step: 15    Cost: 0.07733959171203489
+Step: 20    Cost: 0.07722827121891838
+Step: 25    Cost: 0.0017923029380396919
+Step: 30    Cost: 3.0199179590479204e-07
+Step: 34    Cost: 5.228404765345524e-10
+QNode output after optimization = 0.7781
+Experimental expectation value = 0.7781
+Optimized noise parameter p = 0.1271
+</pre></div>
+</div>
+<p>Voilà! We’ve trained the noisy channel to reproduce the experimental observation. 😎</p>
+<p>Developing quantum algorithms that leverage the power of NISQ devices requires serious
+consideration of the effects of noise. With PennyLane, you have access to tools that can
+help you design, simulate, and optimize noisy quantum circuits. We look forward to seeing what
+the quantum community can achieve with them! 🚀 🎉 😸</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="johannes" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Johannes Jakob Meyer, Johannes Borregaard, and Jens Eisert, “A variational toolbox for quantum
+multi-parameter estimation.” <a class="reference external" href="https://arxiv.org/abs/2006.06303">arXiv:2006.06303 (2020)</a>.</td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.179 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-noisy-circuits-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/3c3e1603a9663d8a1e61f297f0cbf69f/tutorial_noisy_circuits.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_noisy_circuits.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/68e36efff9b0609b3b417bdd596161e9/tutorial_noisy_circuits.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_noisy_circuits.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_noisy_circuits</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Noisy circuits</a><ul>
+<li><a class="reference internal" href="#noisy-operations">Noisy operations</a></li>
+<li><a class="reference internal" href="#channel-gradients">Channel gradients</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_noisy_circuits</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_basics.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="braket-parallel-gradients.html" title="Computing gradients in parallel with Amazon Braket"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_jax_transformations.html" title="Using JAX with PennyLane"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_basics.html" >Basics</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

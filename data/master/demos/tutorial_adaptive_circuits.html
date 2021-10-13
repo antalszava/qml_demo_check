@@ -1,0 +1,949 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Learn how to build quantum chemistry circuits adaptively" property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/adaptive_circuits.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Adaptive circuits for quantum chemistry &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_adaptive_circuits.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Learn how to build quantum chemistry circuits adaptively" name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Adaptive circuits for quantum chemistry &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_adaptive_circuits.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modelling chemical reactions on a quantum computer" href="tutorial_chemical_reactions.html" />
+    <link rel="prev" title="Givens rotations for quantum chemistry" href="tutorial_givens_rotations.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_chemical_reactions.html" title="Modelling chemical reactions on a quantum computer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_givens_rotations.html" title="Givens rotations for quantum chemistry"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_quantum-chemistry.html" accesskey="U">Quantum Chemistry</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-adaptive-circuits-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="adaptive-circuits-for-quantum-chemistry">
+<span id="sphx-glr-demos-tutorial-adaptive-circuits-py"></span><h1>Adaptive circuits for quantum chemistry<a class="headerlink" href="#adaptive-circuits-for-quantum-chemistry" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_quantum_chemistry.html", "tutorial_vqe.html", "tutorial_givens_rotations.html"];
+    var related_tutorials_titles = ['Quantum chemistry with PennyLane', 'A brief overview of VQE', 'Givens rotations for quantum chemistry'];
+</script></p>
+<p><em>Author: PennyLane dev team. Posted:  2021. Last updated: 13 September 2021</em></p>
+<p>The key component of variational quantum algorithms for quantum chemistry is the circuit used to
+prepare electronic ground states of a molecule. The variational quantum eigensolver (VQE)
+<a class="footnote-reference" href="#peruzzo2014" id="id1">[1]</a>, <a class="footnote-reference" href="#yudong2019" id="id2">[2]</a> is the method of choice for performing such quantum chemistry
+simulations on quantum devices with few qubits. For a given molecule, the appropriate circuit can
+be generated by using a pre-selected wavefunction ansatz, for example, the unitary coupled cluster
+with single and double excitations (UCCSD) <a class="footnote-reference" href="#romero2017" id="id3">[3]</a>. In this approach, we include all
+possible single and double excitations of electrons from the occupied spin-orbitals of a reference
+state to the unoccupied spin-orbitals <a class="footnote-reference" href="#givenstutorial" id="id4">[4]</a>. This makes the construction of the ansatz
+straightforward for any given molecule. However, using a pre-constructed ansatz has the disadvantage
+of reducing performance in favour of generality: the approach may work well in many cases, but it
+will not be optimized for a specific problem.</p>
+<p>In practical applications, including all possible excitations usually increases the cost of the
+simulations without improving the accuracy of the results. This motivates implementing a strategy
+that allows for approximation of the contribution of the excitations and selects only those
+excitations that are found to be important for the given molecule. This can be done by using
+adaptive methods to construct a circuit for each given problem <a class="footnote-reference" href="#grimsley2019" id="id5">[5]</a>. Using adaptive
+circuits helps improve performance at the cost of reducing generality.</p>
+<div class="figure align-center" id="id8">
+<a class="reference internal image-reference" href="../_images/main.png"><img alt="../_images/main.png" src="../_images/main.png" style="width: 75%;" /></a>
+<p class="caption"><span class="caption-text">Examples of selecting specific gates to generate adaptive circuits.</span></p>
+</div>
+<p>In this tutorial, you will learn how to <strong>adaptively</strong> build customized quantum chemistry circuits.
+This includes a recipe to adaptively select gates that have a significant contribution to
+the desired state, while neglecting those that have a small contribution. You will also learn how to
+use the functionality in PennyLane for leveraging the sparsity of a molecular Hamiltonian to make
+the computation of the expectation values even more efficient. Let’s get started!</p>
+<div class="section" id="adaptive-circuits">
+<h2>Adaptive circuits<a class="headerlink" href="#adaptive-circuits" title="Permalink to this headline">¶</a></h2>
+<p>The main idea behind building adaptive circuits is to compute the gradients with respect to all
+possible excitation gates and then select gates based on the magnitude of the computed gradients.</p>
+<p>There are different ways to make use of the gradient information and here we discuss one of
+these strategies and apply it to compute the ground state energy of LiH. This method requires constructing the
+Hamiltonian and determining all possible excitations, which we can do with functionality built into PennyLane.
+But we first need to define the molecular parameters, including atomic symbols and coordinates.
+Note that the atomic coordinates are in <a class="reference external" href="https://en.wikipedia.org/wiki/Bohr_radius">Bohr</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">qchem</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">symbols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Li&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">]</span>
+<span class="n">geometry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.969280527</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We now compute the molecular Hamiltonian in the
+<a class="reference external" href="https://en.wikipedia.org/wiki/STO-nG_basis_sets">STO-3G</a> basis and obtain the electronic
+excitations. We restrict ourselves to single and double excitations, but higher-level ones such
+as triple and quadruple excitations can be considered as well. Each of these electronic excitations
+is represented by a gate that excites electrons from the occupied orbitals of a reference state to
+the unoccupied ones. This allows us to prepare a state that is a superposition of the reference
+state and all of the excited states.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">qubits</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">molecular_hamiltonian</span><span class="p">(</span>
+    <span class="n">symbols</span><span class="p">,</span>
+    <span class="n">geometry</span><span class="p">,</span>
+    <span class="n">active_electrons</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">active_orbitals</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="n">active_electrons</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">singles</span><span class="p">,</span> <span class="n">doubles</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">excitations</span><span class="p">(</span><span class="n">active_electrons</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total number of excitations = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">singles</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">doubles</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Total number of excitations = 24
+</pre></div>
+</div>
+<p>Note that we have a total of 24 excitations which can be represented by the same number of
+excitation gates <a class="footnote-reference" href="#givenstutorial" id="id6">[4]</a>. We now implement a strategy that constructs
+the circuit by adding groups of gates one at a time. We follow these steps:</p>
+<ol class="arabic simple">
+<li>Compute gradients for all double excitations.</li>
+<li>Select the double excitations with gradients larger than a pre-defined threshold.</li>
+<li>Perform VQE to obtain the optimized parameters for the selected double excitations.</li>
+<li>Repeat steps 1 and 2 for the single excitations.</li>
+<li>Perform the final VQE optimization with all the selected excitations.</li>
+</ol>
+<p>We create a circuit that applies a selected group of gates to a reference Hartree-Fock state.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hf_state</span> <span class="o">=</span> <span class="n">qchem</span><span class="o">.</span><span class="n">hf_state</span><span class="p">(</span><span class="n">active_electrons</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">circuit_1</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="p">,</span> <span class="n">excitations</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">hf_state</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">excitation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">excitations</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">excitation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="pennylane.DoubleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DoubleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">excitation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.SingleExcitation.html#pennylane.SingleExcitation" title="pennylane.SingleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">excitation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We now construct our first group of gates by including all the double excitations and compute the
+gradient for each one. We also need to define a device and a cost
+function. We initialize the parameter values to zero such that the gradients are computed
+with respect to the Hartree-Fock state.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubits</span><span class="p">)</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit_1</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_gradient</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">grad</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">,</span> <span class="n">argnum</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">doubles</span><span class="p">)</span>
+<span class="n">grads</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_gradient</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">excitations</span><span class="o">=</span><span class="n">doubles</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">doubles</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Excitation : </span><span class="si">{</span><span class="n">doubles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, Gradient: </span><span class="si">{</span><span class="n">grads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Excitation : [0, 1, 2, 3], Gradient: -0.012782175157709469
+Excitation : [0, 1, 2, 5], Gradient: 5.421010862427519e-20
+Excitation : [0, 1, 2, 7], Gradient: 5.421010862427519e-20
+Excitation : [0, 1, 2, 9], Gradient: 0.034264511701737846
+Excitation : [0, 1, 3, 4], Gradient: -9.486769009248158e-20
+Excitation : [0, 1, 3, 6], Gradient: 9.486769009248158e-20
+Excitation : [0, 1, 3, 8], Gradient: -0.03426451170173819
+Excitation : [0, 1, 4, 5], Gradient: -0.02358152902068951
+Excitation : [0, 1, 4, 7], Gradient: 0.0
+Excitation : [0, 1, 4, 9], Gradient: 0.0
+Excitation : [0, 1, 5, 6], Gradient: 0.0
+Excitation : [0, 1, 5, 8], Gradient: -2.7105054312137563e-19
+Excitation : [0, 1, 6, 7], Gradient: -0.02358152902068951
+Excitation : [0, 1, 6, 9], Gradient: 0.0
+Excitation : [0, 1, 7, 8], Gradient: -2.7105054312137563e-19
+Excitation : [0, 1, 8, 9], Gradient: -0.12362273485596209
+</pre></div>
+</div>
+<p>The computed gradients have different values, reflecting the contribution of each gate
+in the final state prepared by the circuit. Many of the gradient values are zero and we select
+those gates that have a gradient above a pre-defined threshold, which we set to <span class="math notranslate nohighlight">\(10^{-5}\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">doubles_select</span> <span class="o">=</span> <span class="p">[</span><span class="n">doubles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">doubles</span><span class="p">))</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">grads</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0e-5</span><span class="p">]</span>
+<span class="n">doubles_select</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[0, 1, 2, 3], [0, 1, 2, 9], [0, 1, 3, 8], [0, 1, 4, 5], [0, 1, 6, 7], [0, 1, 8, 9]]
+</pre></div>
+</div>
+<p>There are only 6 double excitation gates, out of the original 16, that have gradients above the
+threshold. We add the selected gates to the circuit and perform one optimization step to determine
+the updated parameters for the selected gates. We also need to define an optimizer. Note that the
+optimization is not very costly as we only have six gates in our circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">params_doubles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">doubles_select</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">params_doubles</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step" title="pennylane.GradientDescentOptimizer.step" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">,</span> <span class="n">params_doubles</span><span class="p">,</span> <span class="n">excitations</span><span class="o">=</span><span class="n">doubles_select</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, we keep the selected gates in the circuit and compute the gradients with respect to all of
+the single excitation gates, selecting those that have a non-negligible gradient. To do that, we
+need to slightly modify our circuit such that parameters of the double excitation gates are kept
+fixed while the gradients are computed for the single excitation gates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">circuit_2</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="p">,</span> <span class="n">excitations</span><span class="p">,</span> <span class="n">gates_select</span><span class="p">,</span> <span class="n">params_select</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">hf_state</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">wires</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gates_select</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="pennylane.DoubleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DoubleExcitation</span></a><span class="p">(</span><span class="n">params_select</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">gate</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.SingleExcitation.html#pennylane.SingleExcitation" title="pennylane.SingleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span></a><span class="p">(</span><span class="n">params_select</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">gate</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">excitations</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="pennylane.DoubleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DoubleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">gate</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.SingleExcitation.html#pennylane.SingleExcitation" title="pennylane.SingleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">gate</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We now compute the gradients for the single excitation gates.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit_2</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_gradient</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">grad</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">,</span> <span class="n">argnum</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">singles</span><span class="p">)</span>
+
+<span class="n">grads</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit_gradient</span></a><span class="p">(</span>
+    <span class="n">params</span><span class="p">,</span>
+    <span class="n">excitations</span><span class="o">=</span><span class="n">singles</span><span class="p">,</span>
+    <span class="n">gates_select</span><span class="o">=</span><span class="n">doubles_select</span><span class="p">,</span>
+    <span class="n">params_select</span><span class="o">=</span><span class="n">params_doubles</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">singles</span><span class="p">)):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Excitation : </span><span class="si">{</span><span class="n">singles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">, Gradient: </span><span class="si">{</span><span class="n">grads</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Excitation : [0, 2], Gradient: -0.005062536239280378
+Excitation : [0, 4], Gradient: 1.4577809288612703e-17
+Excitation : [0, 6], Gradient: -8.201179524043019e-19
+Excitation : [0, 8], Gradient: -0.000944804462571824
+Excitation : [1, 3], Gradient: 0.00492661687694969
+Excitation : [1, 5], Gradient: -2.1881520689152376e-18
+Excitation : [1, 7], Gradient: -1.1867111409395882e-18
+Excitation : [1, 9], Gradient: 0.0014535534853937677
+</pre></div>
+</div>
+<p>Similar to the double excitation gates, we select those single excitations that have a gradient
+larger than a predefined threshold.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">singles_select</span> <span class="o">=</span> <span class="p">[</span><span class="n">singles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">singles</span><span class="p">))</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">grads</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0e-5</span><span class="p">]</span>
+<span class="n">singles_select</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[[0, 2], [0, 8], [1, 3], [1, 9]]
+</pre></div>
+</div>
+<p>We now have all of the gates we need to build our circuit. The selected single and double
+excitation gates are highlighted in the figure below.</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../_images/adapted_circuit.png"><img alt="../_images/adapted_circuit.png" src="../_images/adapted_circuit.png" style="width: 90%;" /></a>
+</div>
+<p>We perform one final step of optimization to get the ground-state energy. The resulting energy
+should match the exact energy of the ground electronic state of LiH which is -7.8825378193 Ha.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">ExpvalCost</span></a><span class="p">(</span><span class="n">circuit_1</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">doubles_select</span> <span class="o">+</span> <span class="n">singles_select</span><span class="p">)</span>
+
+<span class="n">gates_select</span> <span class="o">=</span> <span class="n">doubles_select</span> <span class="o">+</span> <span class="n">singles_select</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step_and_cost" title="pennylane.GradientDescentOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.ExpvalCost.html#pennylane.ExpvalCost" title="pennylane.ExpvalCost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cost_fn</span></a><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">excitations</span><span class="o">=</span><span class="n">gates_select</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n = </span><span class="si">{:}</span><span class="s2">,  E = </span><span class="si">{:.8f}</span><span class="s2"> H, t = </span><span class="si">{:.2f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>n = 0,  E = -7.86266587 H, t = 1.47 s
+n = 1,  E = -7.87094621 H, t = 1.96 s
+n = 2,  E = -7.87563100 H, t = 1.49 s
+n = 3,  E = -7.87829146 H, t = 2.00 s
+n = 4,  E = -7.87981705 H, t = 1.59 s
+n = 5,  E = -7.88070477 H, t = 2.01 s
+n = 6,  E = -7.88123143 H, t = 1.49 s
+n = 7,  E = -7.88155161 H, t = 1.96 s
+n = 8,  E = -7.88175217 H, t = 1.51 s
+n = 9,  E = -7.88188237 H, t = 1.96 s
+n = 10,  E = -7.88197041 H, t = 2.04 s
+n = 11,  E = -7.88203267 H, t = 1.57 s
+n = 12,  E = -7.88207879 H, t = 2.01 s
+n = 13,  E = -7.88211452 H, t = 1.52 s
+n = 14,  E = -7.88214335 H, t = 2.00 s
+n = 15,  E = -7.88216743 H, t = 1.51 s
+n = 16,  E = -7.88218814 H, t = 1.99 s
+n = 17,  E = -7.88220634 H, t = 1.54 s
+n = 18,  E = -7.88222261 H, t = 2.03 s
+n = 19,  E = -7.88223734 H, t = 1.52 s
+</pre></div>
+</div>
+<p>Success! We obtained the ground state energy of LiH, within chemical accuracy, by having
+only 10 gates in our circuit. This is less than half of the total number of single and double
+excitations of LiH (24).</p>
+</div>
+<div class="section" id="sparse-hamiltonians">
+<h2>Sparse Hamiltonians<a class="headerlink" href="#sparse-hamiltonians" title="Permalink to this headline">¶</a></h2>
+<p>Molecular Hamiltonians and quantum states are sparse. For instance, let’s look at the Hamiltonian
+we built for LiH. We can compute its matrix representation in the computational basis using the
+PennyLane function <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.utils.sparse_hamiltonian.html#pennylane.utils.sparse_hamiltonian" title="(in PennyLane v0.18)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sparse_hamiltonian()</span></code></a>. This function
+returns the matrix in the SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html">sparse coordinate</a> format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">H_sparse</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.utils.sparse_hamiltonian.html#pennylane.utils.sparse_hamiltonian" title="pennylane.utils.sparse_hamiltonian" class="sphx-glr-backref-module-pennylane-utils sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">sparse_hamiltonian</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hamiltonian.html#pennylane.Hamiltonian" title="pennylane.Hamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">H</span></a><span class="p">)</span>
+<span class="n">H_sparse</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;1024x1024 sparse matrix of type &#39;&lt;class &#39;numpy.complex128&#39;&gt;&#39;
+    with 11264 stored elements in COOrdinate format&gt;
+</pre></div>
+</div>
+<p>The matrix has <span class="math notranslate nohighlight">\(1024^2=1,048,576\)</span> entries, but only <span class="math notranslate nohighlight">\(11264\)</span> of them are non-zero.</p>
+<div class="figure align-center" id="id9">
+<a class="reference internal image-reference" href="../_images/h_sparse.png"><img alt="../_images/h_sparse.png" src="../_images/h_sparse.png" style="width: 65%;" /></a>
+<p class="caption"><span class="caption-text">Matrix representation of the LiH Hamiltonian in the computational basis.</span></p>
+</div>
+<p>Leveraging this sparsity can significantly reduce the
+simulation times. We use the implemented functionality in PennyLane for computing the expectation
+value of the sparse Hamiltonian observable. This can reduce the cost of simulations by
+orders of magnitude depending on the size of the molecule. We use the selected gates obtained in
+the previous steps and perform the final optimization step with the sparse method. Note that the
+sparse method currently only works with the parameter-shift differentiation method.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">excitations</span> <span class="o">=</span> <span class="n">doubles_select</span> <span class="o">+</span> <span class="n">singles_select</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">excitations</span><span class="p">)</span>
+
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;parameter-shift&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.BasisState.html#pennylane.BasisState" title="pennylane.BasisState" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">BasisState</span></a><span class="p">(</span><span class="n">hf_state</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">qubits</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">excitation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">excitations</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">excitation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.DoubleExcitation.html#pennylane.DoubleExcitation" title="pennylane.DoubleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">DoubleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">excitation</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">excitation</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.SingleExcitation.html#pennylane.SingleExcitation" title="pennylane.SingleExcitation" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="n">excitation</span><span class="p">)</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.SparseHamiltonian.html#pennylane.SparseHamiltonian" title="pennylane.SparseHamiltonian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">SparseHamiltonian</span></a><span class="p">(</span><span class="n">H_sparse</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">qubits</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">circuit</span></a><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">energy</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step_and_cost" title="pennylane.GradientDescentOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><span class="n">cost</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n = </span><span class="si">{:}</span><span class="s2">,  E = </span><span class="si">{:.8f}</span><span class="s2"> H, t = </span><span class="si">{:.2f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>n = 0,  E = -7.86266587 H, t = 0.09 s
+n = 1,  E = -7.87094621 H, t = 0.08 s
+n = 2,  E = -7.87563100 H, t = 0.08 s
+n = 3,  E = -7.87829146 H, t = 0.08 s
+n = 4,  E = -7.87981705 H, t = 0.08 s
+n = 5,  E = -7.88070477 H, t = 0.08 s
+n = 6,  E = -7.88123143 H, t = 0.08 s
+n = 7,  E = -7.88155161 H, t = 0.09 s
+n = 8,  E = -7.88175217 H, t = 0.08 s
+n = 9,  E = -7.88188237 H, t = 0.08 s
+n = 10,  E = -7.88197041 H, t = 0.08 s
+n = 11,  E = -7.88203267 H, t = 0.08 s
+n = 12,  E = -7.88207879 H, t = 0.08 s
+n = 13,  E = -7.88211452 H, t = 0.08 s
+n = 14,  E = -7.88214335 H, t = 0.08 s
+n = 15,  E = -7.88216743 H, t = 0.08 s
+n = 16,  E = -7.88218814 H, t = 0.08 s
+n = 17,  E = -7.88220634 H, t = 0.08 s
+n = 18,  E = -7.88222261 H, t = 0.08 s
+n = 19,  E = -7.88223734 H, t = 0.09 s
+</pre></div>
+</div>
+<p>Using the sparse method reproduces the ground state energy while the optimization time is
+much shorter. The average iteration time for the sparse method is about 18 times smaller than that
+of the original non-sparse approach. The performance of the sparse optimization will be even
+better for larger molecules.</p>
+</div>
+<div class="section" id="conclusions">
+<h2>Conclusions<a class="headerlink" href="#conclusions" title="Permalink to this headline">¶</a></h2>
+<p>We have learned that building quantum chemistry circuits adaptively and using the
+functionality for sparse objects makes molecular simulations significantly more efficient. In this
+tutorial, we followed an adaptive strategy that selects a group of gates based on information
+about the gradients. This method can be extended such that the gates are selected one at time, or
+even to other more elaborate strategies <a class="footnote-reference" href="#grimsley2019" id="id7">[5]</a>.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="peruzzo2014" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Alberto Peruzzo, Jarrod McClean <em>et al.</em>, “A variational eigenvalue solver on a photonic
+quantum processor”. <a class="reference external" href="https://www.nature.com/articles/ncomms5213?origin=ppub">Nature Communications 5, 4213 (2014).</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="yudong2019" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Yudong Cao, Jonathan Romero, <em>et al.</em>, “Quantum Chemistry in the Age of Quantum Computing”.
+<a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.chemrev.8b00803">Chem. Rev. 2019, 119, 19, 10856-10915.</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="romero2017" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>J. Romero, R. Babbush, <em>et al.</em>, “Strategies for quantum computing molecular
+energies using the unitary coupled cluster ansatz”. <a class="reference external" href="https://arxiv.org/abs/1701.02691">arXiv:1701.02691</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="givenstutorial" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[4]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id6">2</a>)</em> <a class="reference internal" href="tutorial_givens_rotations.html"><span class="doc">Givens rotations for quantum chemistry</span></a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="grimsley2019" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id7">2</a>)</em> Harper R. Grimsley, Sophia E. Economou, Edwin Barnes,  Nicholas J. Mayhall, “An adaptive
+variational algorithm for exact molecular simulations on a quantum computer”.
+<a class="reference external" href="https://www.nature.com/articles/s41467-019-10988-2">Nat. Commun. 2019, 10, 3007.</a></td></tr>
+</tbody>
+</table>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 1 minutes  20.010 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-adaptive-circuits-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/5c8635cda2c01745ec7ec4c2497748a3/tutorial_adaptive_circuits.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_adaptive_circuits.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/cc19f3c7b7b98acbfe512d1a53adeb87/tutorial_adaptive_circuits.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_adaptive_circuits.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_adaptive_circuits</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Adaptive circuits for quantum chemistry</a><ul>
+<li><a class="reference internal" href="#adaptive-circuits">Adaptive circuits</a></li>
+<li><a class="reference internal" href="#sparse-hamiltonians">Sparse Hamiltonians</a></li>
+<li><a class="reference internal" href="#conclusions">Conclusions</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_adaptive_circuits</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_quantum-chemistry.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_chemical_reactions.html" title="Modelling chemical reactions on a quantum computer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_givens_rotations.html" title="Givens rotations for quantum chemistry"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_quantum-chemistry.html" >Quantum Chemistry</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

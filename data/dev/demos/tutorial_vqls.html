@@ -1,0 +1,1038 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Implementing the variational quantum linear solver to solve a system of linear equation with a quantum device." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/vqls_zoom.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Variational Quantum Linear Solver &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_vqls.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Implementing the variational quantum linear solver to solve a system of linear equation with a quantum device." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Variational Quantum Linear Solver &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_vqls.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Coherent Variational Quantum Linear Solver" href="tutorial_coherent_vqls.html" />
+    <link rel="prev" title="Alleviating barren plateaus with local cost functions" href="tutorial_local_cost_functions.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://qhack.ai"><img src="https://pennylane.ai/img/qhack_plain_black.png"></a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_coherent_vqls.html" title="Coherent Variational Quantum Linear Solver"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_local_cost_functions.html" title="Alleviating barren plateaus with local cost functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" accesskey="U">Research</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-vqls-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="variational-quantum-linear-solver">
+<span id="vqls"></span><span id="sphx-glr-demos-tutorial-vqls-py"></span><h1>Variational Quantum Linear Solver<a class="headerlink" href="#variational-quantum-linear-solver" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_coherent_vqls.html"];
+    var related_tutorials_titles = ['Coherent VQLS'];
+</script></p>
+<p><em>Author: Andrea Mari. Last updated: 20 Jan 2021.</em></p>
+<p>In this tutorial we implement a quantum algorithm known as the <em>variational quantum linear
+solver</em> (VQLS), originally introduced in
+<a class="reference external" href="https://arxiv.org/abs/1909.05820">Bravo-Prieto et al. (2019)</a>.</p>
+<div class="figure align-center">
+<a class="reference external image-reference" href="javascript:void(0)"><img alt="../_images/vqls_circuit.png" src="../_images/vqls_circuit.png" style="width: 100%;" /></a>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>We first define the problem and the general structure of a VQLS.
+As a second step, we consider a particular case and we solve it explicitly with PennyLane.</p>
+<div class="section" id="the-problem">
+<h3>The problem<a class="headerlink" href="#the-problem" title="Permalink to this headline">¶</a></h3>
+<p>We are given a <span class="math notranslate nohighlight">\(2^n \times 2^n\)</span> matrix <span class="math notranslate nohighlight">\(A\)</span> which can be expressed as a linear
+combination of <span class="math notranslate nohighlight">\(L\)</span> unitary matrices <span class="math notranslate nohighlight">\(A_0, A_1, \dots A_{L-1}\)</span>, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[A = \sum_{l=0}^{L-1} c_l A_l,\]</div>
+<p>where <span class="math notranslate nohighlight">\(c_l\)</span> are arbitrary complex numbers. Importantly, we assume that each of the
+unitary components <span class="math notranslate nohighlight">\(A_l\)</span> can be efficiently implemented with a quantum circuit
+acting on <span class="math notranslate nohighlight">\(n\)</span> qubits.</p>
+<p>We are also given a normalized complex vector in the physical form of a quantum
+state <span class="math notranslate nohighlight">\(|b\rangle\)</span>, which can be generated by a unitary operation <span class="math notranslate nohighlight">\(U\)</span>
+applied to the ground state of <span class="math notranslate nohighlight">\(n\)</span> qubits. , i.e.,</p>
+<div class="math notranslate nohighlight">
+\[|b\rangle = U |0\rangle,\]</div>
+<p>where again we assume that <span class="math notranslate nohighlight">\(U\)</span> can be efficiently implemented with a quantum circuit.</p>
+<p>The problem that we aim to solve is that of preparing a quantum state <span class="math notranslate nohighlight">\(|x\rangle\)</span>, such that
+<span class="math notranslate nohighlight">\(A |x\rangle\)</span> is proportional to <span class="math notranslate nohighlight">\(|b\rangle\)</span> or, equivalently, such that</p>
+<div class="math notranslate nohighlight">
+\[|\Psi\rangle :=  \frac{A |x\rangle}{\sqrt{\langle x |A^\dagger A |x\rangle}} \approx |b\rangle.\]</div>
+</div>
+<div class="section" id="id1">
+<h3>Variational quantum linear solver<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The approach used in a VQLS is to approximate the solution <span class="math notranslate nohighlight">\(|x\rangle\)</span> with a variational quantum
+circuit, i.e., a unitary circuit <span class="math notranslate nohighlight">\(V\)</span> depending on a finite number of classical real parameters
+<span class="math notranslate nohighlight">\(w = (w_0, w_1, \dots)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[|x \rangle = V(w) |0\rangle.\]</div>
+<p>The parameters should be optimized in order to maximize the overlap between the quantum states
+<span class="math notranslate nohighlight">\(|\Psi\rangle\)</span> and <span class="math notranslate nohighlight">\(|b\rangle\)</span>. This suggests to define the following cost function:</p>
+<div class="math notranslate nohighlight">
+\[C_G = 1- |\langle b | \Psi \rangle|^2,\]</div>
+<p>such that its minimization with respect to the variational parameters should lead towards the problem solution.</p>
+<p>Now we discuss two alternative methods which could be used to experimentally solve the minimization problem.</p>
+<div class="section" id="first-method">
+<h4>First method<a class="headerlink" href="#first-method" title="Permalink to this headline">¶</a></h4>
+<p>Let us write <span class="math notranslate nohighlight">\(C_G\)</span> more explicitly:</p>
+<div class="math notranslate nohighlight">
+\[C_G = 1- \frac{ \sum_{l, l'}  c_l c_{l'}^* \langle 0|  V^\dagger A_{l'}^\dagger U \color{blue}{|0\rangle \langle 0|} U^\dagger A_l  V |0\rangle}
+{\sum_{l,l'} c_l c_{l'}^* \langle 0| V^\dagger A_{l'}^\dagger A_l V |0\rangle} .\]</div>
+<p>All expectation values of the previous expression could be estimated with a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Hadamard_test_(quantum_computation)">Hadamard test</a>,
+which is a standard quantum computation technique. This method however might be experimentally challenging since it requires us to apply
+all the unitaries (<span class="math notranslate nohighlight">\(U^\dagger, A_l\)</span> and <span class="math notranslate nohighlight">\(V\)</span>) in a controlled way,
+i.e., conditioned on the state of an ancillary qubit. A possible workaround for estimating the same expectation values in a simpler
+way has been proposed in Ref. [1], but will not be considered here.</p>
+</div>
+<div class="section" id="second-method">
+<h4>Second method<a class="headerlink" href="#second-method" title="Permalink to this headline">¶</a></h4>
+<p>The second method, which is the one used in this tutorial, is to minimize a “local” version of the cost function which is easier to
+measure and, at the same time, leads to the same optimal solution.
+This local cost function, originally proposed in Ref. [1], can be obtained by replacing the blue-colored projector
+<span class="math notranslate nohighlight">\(\color{blue}{|0\rangle\langle 0|}\)</span> in the previous expression with the following positive operator:</p>
+<div class="math notranslate nohighlight">
+\[\color{blue}{P} =  \frac{1}{2} + \frac{1}{2n}\sum_{j=0}^{n-1} Z_j,\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z_j\)</span> is the Pauli <span class="math notranslate nohighlight">\(Z\)</span> operator locally applied to the <span class="math notranslate nohighlight">\(j\rm{th}\)</span> qubit. This gives a new cost function:</p>
+<div class="math notranslate nohighlight">
+\[C_L = 1- \frac{ \sum_{l, l'}  c_l c_{l'}^* \langle 0|  V^\dagger A_{l'}^\dagger U \color{blue}{P} U^\dagger A_l  V |0\rangle}
+{\sum_{l,l'} c_l c_{l'}^* \langle 0| V^\dagger A_{l'}^\dagger A_l V |0\rangle},\]</div>
+<p>which, as shown in Ref. [1], satisfies</p>
+<div class="math notranslate nohighlight">
+\[C_G \rightarrow 0   \Leftrightarrow C_L \rightarrow 0,\]</div>
+<p>and so we can solve our problem by minimizing <span class="math notranslate nohighlight">\(C_L\)</span> instead of <span class="math notranslate nohighlight">\(C_G\)</span>.</p>
+<p>Substituting the definition of <span class="math notranslate nohighlight">\(P\)</span> into the expression for <span class="math notranslate nohighlight">\(C_L\)</span> we get:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}C_L
+&amp;=&amp; \frac{1}{2} - \frac{1}{2n} \frac{ \sum_{j=0}^{n-1} \sum_{l, l'}  c_l c_{l'}^* \langle 0|  V^\dagger A_{l'}^\dagger U Z_j U^\dagger A_l  V |0\rangle}
+{\sum_{l,l'} c_l c_{l'}^* \langle 0| V^\dagger A_{l'}^\dagger A_l V |0\rangle} \\
+&amp;&amp;\\
+&amp;=&amp; \frac{1}{2} - \frac{1}{2n} \frac{ \sum_{j=0}^{n-1} \sum_{l, l'}  c_l c_{l'}^* \mu_{l,l',j}}
+{\sum_{l,l'} c_l c_{l'}^* \mu_{l,l',-1}},\end{split}\]</div>
+<p>which can be computed whenever we are able to measure the following coefficients</p>
+<div class="math notranslate nohighlight">
+\[\mu_{l, l', j} = \langle 0|  V^\dagger A_{l'}^\dagger U Z_j U^\dagger A_l  V |0\rangle,\]</div>
+<p>where we used the convention that if <span class="math notranslate nohighlight">\(j=-1\)</span>,  <span class="math notranslate nohighlight">\(Z_{-1}\)</span> is replaced with the identity.</p>
+<p>Also in this case the complex coefficients <span class="math notranslate nohighlight">\(\mu_{l, l', j}\)</span> can be experimentally measured with a Hadamard test.
+The corresponding quantum circuit is shown in the image at the top of this tutorial.
+Compared with the previous method, the main advantage of this approach is that only the unitary operations
+<span class="math notranslate nohighlight">\(A_l, A_l^\dagger\)</span> and <span class="math notranslate nohighlight">\(Z_j\)</span> need to be controlled by an external ancillary qubit,
+while <span class="math notranslate nohighlight">\(V, V^\dagger, U\)</span> and <span class="math notranslate nohighlight">\(U^\dagger\)</span> can be directly applied to the system.
+This is particularly convenient whenever <span class="math notranslate nohighlight">\(V\)</span> has a complex structure, e.g., if it is composed of
+many variational layers.</p>
+</div>
+</div>
+<div class="section" id="a-simple-example">
+<h3>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h3>
+<p>In this tutorial we consider the following simple example based on a system of 3 qubits (plus an ancilla),
+which is very similar to the one experimentally tested in Ref. [1]:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+A  &amp;=  c_0 A_0 + c_1 A_1 + c_2 A_2 = \mathbb{I} + 0.2 X_0 Z_1 + 0.2 X_0, \\
+\\
+|b\rangle &amp;= U |0 \rangle = H_0  H_1  H_2 |0\rangle,
+\end{align}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z_j, X_j, H_j\)</span> represent the Pauli <span class="math notranslate nohighlight">\(Z\)</span>, Pauli <span class="math notranslate nohighlight">\(X\)</span> and Hadamard gates applied to the qubit with index <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p>This problem is computationally quite easy since a single layer of local rotations is enough to generate the
+solution state, i.e., we can use the following simple ansatz:</p>
+<div class="math notranslate nohighlight">
+\[|x\rangle = V(w) |0\rangle = \Big [  R_y(w_0) \otimes  R_y(w_1) \otimes  R_y(w_2) \Big ]  H_0  H_1  H_2 |0\rangle.\]</div>
+<p>In the code presented below we solve this particular problem by minimizing the local cost function <span class="math notranslate nohighlight">\(C_L\)</span>.
+Eventually we will compare the quantum solution with the classical one.</p>
+</div>
+</div>
+<div class="section" id="general-setup">
+<h2>General setup<a class="headerlink" href="#general-setup" title="Permalink to this headline">¶</a></h2>
+<p>This Python code requires <em>PennyLane</em> and the plotting library <em>matplotlib</em>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pennylane</span>
+<span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="c1"># Plotting</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="section" id="setting-of-the-main-hyper-parameters-of-the-model">
+<h3>Setting of the main hyper-parameters of the model<a class="headerlink" href="#setting-of-the-main-hyper-parameters-of-the-model" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Number of system qubits.</span>
+<span class="n">n_shots</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>  <span class="c1"># Number of quantum measurements.</span>
+<span class="n">tot_qubits</span> <span class="o">=</span> <span class="n">n_qubits</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Addition of an ancillary qubit.</span>
+<span class="n">ancilla_idx</span> <span class="o">=</span> <span class="n">n_qubits</span>  <span class="c1"># Index of the ancillary qubit (last position).</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># Number of optimization steps</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># Learning rate</span>
+<span class="n">q_delta</span> <span class="o">=</span> <span class="mf">0.001</span>  <span class="c1"># Initial spread of random quantum weights</span>
+<span class="n">rng_seed</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Seed for random number generator</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="circuits-of-the-quantum-linear-problem">
+<h3>Circuits of the quantum linear problem<a class="headerlink" href="#circuits-of-the-quantum-linear-problem" title="Permalink to this headline">¶</a></h3>
+<p>We now define the unitary operations associated to the simple example
+presented in the introduction.
+Since we want to implement a Hadamard test, we need the unitary operations
+<span class="math notranslate nohighlight">\(A_j\)</span> to be controlled by the state of an ancillary qubit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Coefficients of the linear combination A = c_0 A_0 + c_1 A_1 ...</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">U_b</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Unitary matrix rotating the ground state to the problem vector |b&gt; = U_b |0&gt;.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">CA</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Controlled versions of the unitary components A_l of the problem matrix A.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Identity operation</span>
+        <span class="kc">None</span>
+
+    <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">ancilla_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">ancilla_idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">ancilla_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variational-quantum-circuit">
+<h3>Variational quantum circuit<a class="headerlink" href="#variational-quantum-circuit" title="Permalink to this headline">¶</a></h3>
+<p>What follows is the variational quantum circuit that should generate the solution
+state <span class="math notranslate nohighlight">\(|x\rangle= V(w)|0\rangle\)</span>.</p>
+<p>The first layer of the circuit is a product of Hadamard gates preparing a
+balanced superposition of all basis states.</p>
+<p>After that, we apply a very simple variational ansatz
+which is just a single layer of qubit rotations
+<span class="math notranslate nohighlight">\(R_y(w_0) \otimes  R_y(w_1) \otimes  R_y(w_2)\)</span>.
+For solving more complex problems, we suggest to use more expressive circuits as,
+e.g., the PennyLane <code class="xref py py-func docutils literal notranslate"><span class="pre">StronglyEntanglingLayers()</span></code> template.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">variational_block</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Variational circuit mapping the ground state |0&gt; to the ansatz state |x&gt;.&quot;&quot;&quot;</span>
+    <span class="c1"># We first prepare an equal superposition of all the states of the computational basis.</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="c1"># A very minimal variational circuit.</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>Hadamard test<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>We first initialize a PennyLane device with the <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code> backend.</p>
+<p>As a second step, we define a PennyLane <code class="docutils literal notranslate"><span class="pre">QNode</span></code> representing a model of the actual quantum computation.</p>
+<p>The circuit is based on the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Hadamard_test_(quantum_computation)">Hadamard test</a>
+and will be used to estimate the coefficients <span class="math notranslate nohighlight">\(\mu_{l,l',j}\)</span> defined in the introduction.
+A graphical representation of this circuit is shown at the top of this tutorial.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev_mu</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">tot_qubits</span><span class="p">)</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev_mu</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">local_hadamard_test</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># First Hadamard gate applied to the ancillary qubit.</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">ancilla_idx</span><span class="p">)</span>
+
+    <span class="c1"># For estimating the imaginary part of the coefficient &quot;mu&quot;, we must add a &quot;-i&quot;</span>
+    <span class="c1"># phase gate.</span>
+    <span class="k">if</span> <span class="n">part</span> <span class="o">==</span> <span class="s2">&quot;Im&quot;</span> <span class="ow">or</span> <span class="n">part</span> <span class="o">==</span> <span class="s2">&quot;im&quot;</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PhaseShift.html#pennylane.PhaseShift" title="pennylane.PhaseShift" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PhaseShift</span></a><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">ancilla_idx</span><span class="p">)</span>
+
+    <span class="c1"># Variational circuit generating a guess for the solution vector |x&gt;</span>
+    <span class="n">variational_block</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="c1"># Controlled application of the unitary component A_l of the problem matrix A.</span>
+    <span class="n">CA</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+    <span class="c1"># Adjoint of the unitary U_b associated to the problem vector |b&gt;.</span>
+    <span class="c1"># In this specific example Adjoint(U_b) = U_b.</span>
+    <span class="n">U_b</span><span class="p">()</span>
+
+    <span class="c1"># Controlled Z operator at position j. If j = -1, apply the identity.</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CZ.html#pennylane.CZ" title="pennylane.CZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">ancilla_idx</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+
+    <span class="c1"># Unitary U_b associated to the problem vector |b&gt;.</span>
+    <span class="n">U_b</span><span class="p">()</span>
+
+    <span class="c1"># Controlled application of Adjoint(A_lp).</span>
+    <span class="c1"># In this specific example Adjoint(A_lp) = A_lp.</span>
+    <span class="n">CA</span><span class="p">(</span><span class="n">lp</span><span class="p">)</span>
+
+    <span class="c1"># Second Hadamard gate applied to the ancillary qubit.</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">ancilla_idx</span><span class="p">)</span>
+
+    <span class="c1"># Expectation value of Z for the ancillary qubit.</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">ancilla_idx</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>To get the real and imaginary parts of <span class="math notranslate nohighlight">\(\mu_{l,l',j}\)</span>, one needs to run the previous
+quantum circuit with and without a phase-shift of the ancillary qubit. This is automatically
+done by the following function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mu</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates the coefficients to compute the &quot;local&quot; cost function C_L.&quot;&quot;&quot;</span>
+
+    <span class="n">mu_real</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">local_hadamard_test</span></a><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">lp</span><span class="o">=</span><span class="n">lp</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="s2">&quot;Re&quot;</span><span class="p">)</span>
+    <span class="n">mu_imag</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">local_hadamard_test</span></a><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">lp</span><span class="o">=</span><span class="n">lp</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">part</span><span class="o">=</span><span class="s2">&quot;Im&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mu_real</span> <span class="o">+</span> <span class="mf">1.0</span><span class="n">j</span> <span class="o">*</span> <span class="n">mu_imag</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="local-cost-function">
+<h2>Local cost function<a class="headerlink" href="#local-cost-function" title="Permalink to this headline">¶</a></h2>
+<p>Let us first define a function for estimating <span class="math notranslate nohighlight">\(\langle x| A^\dagger A|x\rangle\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">psi_norm</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the normalization constant &lt;psi|psi&gt;, where |psi&gt; = A |x&gt;.&quot;&quot;&quot;</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">lp</span><span class="p">])</span> <span class="o">*</span> <span class="n">mu</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">lp</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can finally define the cost function of our minimization problem.
+We use the analytical expression of <span class="math notranslate nohighlight">\(C_L\)</span> in terms of the
+coefficients <span class="math notranslate nohighlight">\(\mu_{l,l',j}\)</span> given in the introduction.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost_loc</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Local version of the cost function. Tends to zero when A|x&gt; is proportional to |b&gt;.&quot;&quot;&quot;</span>
+    <span class="n">mu_sum</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
+                <span class="n">mu_sum</span> <span class="o">=</span> <span class="n">mu_sum</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">lp</span><span class="p">])</span> <span class="o">*</span> <span class="n">mu</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">lp</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+    <span class="n">mu_sum</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">mu_sum</span><span class="p">)</span>
+
+    <span class="c1"># Cost function C_L</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mu_sum</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_qubits</span> <span class="o">*</span> <span class="n">psi_norm</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variational-optimization">
+<h2>Variational optimization<a class="headerlink" href="#variational-optimization" title="Permalink to this headline">¶</a></h2>
+<p>We first initialize the variational weights with random parameters (with a fixed seed).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">rng_seed</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">q_delta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To minimize the cost function we use the gradient-descent optimizer.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">opt</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer" title="pennylane.GradientDescentOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">GradientDescentOptimizer</span></a><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We are ready to perform the optimization loop.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cost_history</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.GradientDescentOptimizer.html#pennylane.GradientDescentOptimizer.step_and_cost" title="pennylane.GradientDescentOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">opt</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><span class="n">cost_loc</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Step </span><span class="si">{:3d}</span><span class="s2">       Cost_L = </span><span class="si">{:9.7f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">cost</span><span class="p">))</span>
+    <span class="n">cost_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Step   0       Cost_L = 0.0089888
+Step   1       Cost_L = 0.0070072
+Step   2       Cost_L = 0.0054157
+Step   3       Cost_L = 0.0041528
+Step   4       Cost_L = 0.0031617
+Step   5       Cost_L = 0.0023917
+Step   6       Cost_L = 0.0017988
+Step   7       Cost_L = 0.0013461
+Step   8       Cost_L = 0.0010028
+Step   9       Cost_L = 0.0007442
+Step  10       Cost_L = 0.0005503
+Step  11       Cost_L = 0.0004058
+Step  12       Cost_L = 0.0002984
+Step  13       Cost_L = 0.0002190
+Step  14       Cost_L = 0.0001604
+Step  15       Cost_L = 0.0001173
+Step  16       Cost_L = 0.0000857
+Step  17       Cost_L = 0.0000625
+Step  18       Cost_L = 0.0000455
+Step  19       Cost_L = 0.0000331
+Step  20       Cost_L = 0.0000241
+Step  21       Cost_L = 0.0000175
+Step  22       Cost_L = 0.0000127
+Step  23       Cost_L = 0.0000092
+Step  24       Cost_L = 0.0000067
+Step  25       Cost_L = 0.0000049
+Step  26       Cost_L = 0.0000035
+Step  27       Cost_L = 0.0000026
+Step  28       Cost_L = 0.0000019
+Step  29       Cost_L = 0.0000013
+</pre></div>
+</div>
+<p>We plot the cost function with respect to the optimization steps.
+We remark that this is not an abstract mathematical quantity
+since it also represents a bound for the error between the generated state
+and the exact solution of the problem.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cost_history</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cost function&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Optimization steps&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial vqls" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqls_001.png" />
+</div>
+<div class="section" id="comparison-of-quantum-and-classical-results">
+<h2>Comparison of quantum and classical results<a class="headerlink" href="#comparison-of-quantum-and-classical-results" title="Permalink to this headline">¶</a></h2>
+<p>Since the specific problem considered in this tutorial has a small size, we can also
+solve it in a classical way and then compare the results with our quantum solution.</p>
+<div class="section" id="classical-algorithm">
+<h3>Classical algorithm<a class="headerlink" href="#classical-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>To solve the problem in a classical way, we use the explicit matrix representation in
+terms of numerical NumPy arrays.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+<span class="n">A_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">A_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">),</span> <span class="n">Id</span><span class="p">)</span>
+<span class="n">A_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Id</span><span class="p">),</span> <span class="n">Id</span><span class="p">)</span>
+
+<span class="n">A_num</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">A_0</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">A_1</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">A_2</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can print the explicit values of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(b\)</span>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;A = </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">A_num</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;b = </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>A =
+ [[1.  0.  0.  0.  0.4 0.  0.  0. ]
+ [0.  1.  0.  0.  0.  0.4 0.  0. ]
+ [0.  0.  1.  0.  0.  0.  0.  0. ]
+ [0.  0.  0.  1.  0.  0.  0.  0. ]
+ [0.4 0.  0.  0.  1.  0.  0.  0. ]
+ [0.  0.4 0.  0.  0.  1.  0.  0. ]
+ [0.  0.  0.  0.  0.  0.  1.  0. ]
+ [0.  0.  0.  0.  0.  0.  0.  1. ]]
+b =
+ [0.35355339 0.35355339 0.35355339 0.35355339 0.35355339 0.35355339
+ 0.35355339 0.35355339]
+</pre></div>
+</div>
+<p>The solution can be computed via a matrix inversion:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A_num</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A_inv</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, in order to compare x with the quantum state <span class="math notranslate nohighlight">\(|x\rangle\)</span>, we normalize
+and square its elements.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c_probs</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="preparation-of-the-quantum-solution">
+<h3>Preparation of the quantum solution<a class="headerlink" href="#preparation-of-the-quantum-solution" title="Permalink to this headline">¶</a></h3>
+<p>Given the variational weights <code class="docutils literal notranslate"><span class="pre">w</span></code> that we have previously optimized,
+we can generate the quantum state <span class="math notranslate nohighlight">\(|x\rangle\)</span>. By measuring <span class="math notranslate nohighlight">\(|x\rangle\)</span>
+in the computational basis we can estimate the probability of each basis state.</p>
+<p>For this task, we initialize a new PennyLane device and define the associated
+<em>qnode</em> circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev_x</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">shots</span><span class="o">=</span><span class="n">n_shots</span><span class="p">)</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev_x</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">prepare_and_sample</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+
+    <span class="c1"># Variational circuit generating a guess for the solution vector |x&gt;</span>
+    <span class="n">variational_block</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="c1"># We assume that the system is measured in the computational basis.</span>
+    <span class="c1"># If we label each basis state with a decimal integer j = 0, 1, ... 2 ** n_qubits - 1,</span>
+    <span class="c1"># this is equivalent to a measurement of the following diagonal observable.</span>
+    <span class="n">basis_obs</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hermitian.html#pennylane.Hermitian" title="pennylane.Hermitian" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hermitian</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span><span class="p">)),</span> <span class="n">wires</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">))</span>
+
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.sample.html#pennylane.sample" title="pennylane.sample" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">sample</span></a><span class="p">(</span><span class="n">basis_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To estimate the probability distribution over the basis states we first take <code class="docutils literal notranslate"><span class="pre">n_shots</span></code>
+samples and then compute the relative frequency of each outcome.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">prepare_and_sample</span></a><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">q_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_shots</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="comparison">
+<h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
+<p>Let us print the classical result.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x_n^2 =</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">c_probs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>x_n^2 =
+ [0.08445946 0.08445946 0.16554054 0.16554054 0.08445946 0.08445946
+ 0.16554054 0.16554054]
+</pre></div>
+</div>
+<p>The previous probabilities should match the following quantum state probabilities.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|&lt;x|n&gt;|^2=</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">q_probs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>|&lt;x|n&gt;|^2=
+ [0.084589 0.085022 0.164642 0.164879 0.085241 0.084731 0.165431 0.165465]
+</pre></div>
+</div>
+<p>Let us graphically visualize both distributions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span><span class="p">),</span> <span class="n">c_probs</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Vector space basis&quot;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Classical probabilities&quot;</span><span class="p">)</span>
+
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span><span class="p">),</span> <span class="n">q_probs</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Hilbert space basis&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Quantum probabilities&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="Classical probabilities, Quantum probabilities" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_vqls_002.png" />
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Carlos Bravo-Prieto, Ryan LaRose, Marco Cerezo, Yigit Subasi, Lukasz Cincio, Patrick J. Coles.
+“Variational Quantum Linear Solver: A Hybrid Algorithm for Linear Systems.”
+<a class="reference external" href="https://arxiv.org/abs/1909.05820">arXiv:1909.05820</a>, 2019.</li>
+</ol>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  16.657 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-vqls-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/117348fabc795cae987a38d4a567abcc/tutorial_vqls.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_vqls.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/a9e086523c5473a7896c8887b33b8edc/tutorial_vqls.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_vqls.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_vqls</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Variational Quantum Linear Solver</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#the-problem">The problem</a></li>
+<li><a class="reference internal" href="#id1">Variational quantum linear solver</a><ul>
+<li><a class="reference internal" href="#first-method">First method</a></li>
+<li><a class="reference internal" href="#second-method">Second method</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#a-simple-example">A simple example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#general-setup">General setup</a><ul>
+<li><a class="reference internal" href="#setting-of-the-main-hyper-parameters-of-the-model">Setting of the main hyper-parameters of the model</a></li>
+<li><a class="reference internal" href="#circuits-of-the-quantum-linear-problem">Circuits of the quantum linear problem</a></li>
+<li><a class="reference internal" href="#variational-quantum-circuit">Variational quantum circuit</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id2">Hadamard test</a></li>
+<li><a class="reference internal" href="#local-cost-function">Local cost function</a></li>
+<li><a class="reference internal" href="#variational-optimization">Variational optimization</a></li>
+<li><a class="reference internal" href="#comparison-of-quantum-and-classical-results">Comparison of quantum and classical results</a><ul>
+<li><a class="reference internal" href="#classical-algorithm">Classical algorithm</a></li>
+<li><a class="reference internal" href="#preparation-of-the-quantum-solution">Preparation of the quantum solution</a></li>
+<li><a class="reference internal" href="#comparison">Comparison</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_vqls</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_research.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_coherent_vqls.html" title="Coherent Variational Quantum Linear Solver"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_local_cost_functions.html" title="Alleviating barren plateaus with local cost functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_research.html" >Research</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

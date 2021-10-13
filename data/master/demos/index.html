@@ -1,0 +1,886 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  
+
+  <meta property="og:title" content="&lt;no title&gt; &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/index.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>&lt;no title&gt; &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/index.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-thumbcontainer" tooltip="In the previous three introductory tutorials (:ref:`qubit rotation &lt;qubit_rotation&gt;`, Gaussian ..."><div class="figure" id="id1">
+<img alt="Advanced Usage" src="../_images/sphx_glr_tutorial_advanced_usage_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_advanced_usage.html#sphx-glr-demos-tutorial-advanced-usage-py"><span class="std std-ref">Advanced Usage</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 16 Oct 2020.*"><div class="figure" id="id2">
+<img alt="Gaussian transformation" src="../_images/sphx_glr_tutorial_gaussian_transformation_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_gaussian_transformation.html#sphx-glr-demos-tutorial-gaussian-transformation-py"><span class="std std-ref">Gaussian transformation</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_plugins_hybrid Plugins and Hybrid computation    tutorial_gaussian_transformation G..."><div class="figure" id="id3">
+<img alt="Basic tutorial: qubit rotation" src="../_images/sphx_glr_tutorial_qubit_rotation_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qubit_rotation.html#sphx-glr-demos-tutorial-qubit-rotation-py"><span class="std std-ref">Basic tutorial: qubit rotation</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip=" .. meta::     :property=&quot;og:description&quot;: Learn how to build electronic Hamiltonians of molecu..."><div class="figure" id="id4">
+<img alt="Building molecular Hamiltonians" src="../_images/sphx_glr_tutorial_quantum_chemistry_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quantum_chemistry.html#sphx-glr-demos-tutorial-quantum-chemistry-py"><span class="std std-ref">Building molecular Hamiltonians</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:image&quot;: https://pennylane.ai/qml/_images/tutorial_gbs_expt2.png"><div class="figure" id="id5">
+<img alt="Quantum advantage with Gaussian Boson Sampling" src="../_images/sphx_glr_tutorial_gbs_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_gbs.html#sphx-glr-demos-tutorial-gbs-py"><span class="std std-ref">Quantum advantage with Gaussian Boson Sampling</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_noisy_circuit_optimization Optimizing noisy circuits with Cirq"><div class="figure" id="id6">
+<img alt="PyTorch and noisy devices" src="../_images/sphx_glr_pytorch_noise_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="pytorch_noise.html#sphx-glr-demos-pytorch-noise-py"><span class="std std-ref">PyTorch and noisy devices</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_noisy_circuit_optimization Optimizing noisy circuits with Cirq     pytorch_noise P..."><div class="figure" id="id7">
+<img alt="Noisy circuits" src="../_images/sphx_glr_tutorial_noisy_circuits_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_noisy_circuits.html#sphx-glr-demos-tutorial-noisy-circuits-py"><span class="std std-ref">Noisy circuits</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qnn_module_torch Turning quantum nodes into Torch Layers"><div class="figure" id="id8">
+<img alt="Turning quantum nodes into Keras Layers" src="../_images/sphx_glr_tutorial_qnn_module_tf_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qnn_module_tf.html#sphx-glr-demos-tutorial-qnn-module-tf-py"><span class="std std-ref">Turning quantum nodes into Keras Layers</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_quantum_chemistry Building molecular Hamiltonians    tutorial_vqe_parallel VQE with..."><div class="figure" id="id9">
+<img alt="A brief overview of VQE" src="../_images/sphx_glr_tutorial_vqe_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqe.html#sphx-glr-demos-tutorial-vqe-py"><span class="std std-ref">A brief overview of VQE</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 25 Jan 2021.*"><div class="figure" id="id10">
+<img alt="Function fitting with a photonic quantum neural network" src="../_images/sphx_glr_quantum_neural_net_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="quantum_neural_net.html#sphx-glr-demos-quantum-neural-net-py"><span class="std std-ref">Function fitting with a photonic quantum neural network</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe Variational quantum eigensolver"><div class="figure" id="id11">
+<img alt="VQE with parallel QPUs on Rigetti Forest" src="../_images/sphx_glr_tutorial_vqe_parallel_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqe_parallel.html#sphx-glr-demos-tutorial-vqe-parallel-py"><span class="std std-ref">VQE with parallel QPUs on Rigetti Forest</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qubit_rotation Basic tutorial: qubit rotation    tutorial_gaussian_transformation G..."><div class="figure" id="id12">
+<img alt="Plugins and Hybrid computation" src="../_images/sphx_glr_tutorial_plugins_hybrid_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_plugins_hybrid.html#sphx-glr-demos-tutorial-plugins-hybrid-py"><span class="std std-ref">Plugins and Hybrid computation</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 29 July 2021.*"><div class="figure" id="id13">
+<img alt="VQE in different spin sectors" src="../_images/sphx_glr_tutorial_vqe_spin_sectors_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqe_spin_sectors.html#sphx-glr-demos-tutorial-vqe-spin-sectors-py"><span class="std std-ref">VQE in different spin sectors</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_local_cost_functions Alleviating barren plateaus with local cost functions"><div class="figure" id="id14">
+<img alt="Barren plateaus in quantum neural networks" src="../_images/sphx_glr_tutorial_barren_plateaus_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_barren_plateaus.html#sphx-glr-demos-tutorial-barren-plateaus-py"><span class="std std-ref">Barren plateaus in quantum neural networks</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qubit_rotation Basic tutorial: qubit rotation    pytorch_noise PyTorch and noisy de..."><div class="figure" id="id15">
+<img alt="Training a quantum circuit with PyTorch" src="../_images/sphx_glr_tutorial_state_preparation_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_state_preparation.html#sphx-glr-demos-tutorial-state-preparation-py"><span class="std std-ref">Training a quantum circuit with PyTorch</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qaoa_maxcut QAOA for MaxCut"><div class="figure" id="id16">
+<img alt="Intro to QAOA" src="../_images/sphx_glr_tutorial_qaoa_intro_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qaoa_intro.html#sphx-glr-demos-tutorial-qaoa-intro-py"><span class="std std-ref">Intro to QAOA</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   parameter_shift Parameter shift rules    tutorial_backprop Quantum gradients with backprop  ..."><div class="figure" id="id17">
+<img alt="The Stochastic Parameter-Shift Rule" src="../_images/sphx_glr_tutorial_stochastic_parameter_shift_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_stochastic_parameter_shift.html#sphx-glr-demos-tutorial-stochastic-parameter-shift-py"><span class="std std-ref">The Stochastic Parameter-Shift Rule</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="Predicting the most stable arrangement of atoms in a molecule is one of the most important task..."><div class="figure" id="id18">
+<img alt="Optimization of molecular geometries" src="../_images/sphx_glr_tutorial_mol_geo_opt_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_mol_geo_opt.html#sphx-glr-demos-tutorial-mol-geo-opt-py"><span class="std std-ref">Optimization of molecular geometries</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   quantum_neural_net Function fitting with a photonic QNN"><div class="figure" id="id19">
+<img alt="Optimizing a quantum optical neural network" src="../_images/sphx_glr_qonn_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="qonn.html#sphx-glr-demos-qonn-py"><span class="std std-ref">Optimizing a quantum optical neural network</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_qaoa_intro Learn how to implement QAOA workflows with PennyLane     tutorial_vqe_p..."><div class="figure" id="id20">
+<img alt="Computing gradients in parallel with Amazon Braket" src="../_images/sphx_glr_braket-parallel-gradients_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="braket-parallel-gradients.html#sphx-glr-demos-braket-parallel-gradients-py"><span class="std std-ref">Computing gradients in parallel with Amazon Braket</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 15 Jan 2021.*"><div class="figure" id="id21">
+<img alt="Quantum Generative Adversarial Networks with Cirq + TensorFlow" src="../_images/sphx_glr_tutorial_QGAN_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_QGAN.html#sphx-glr-demos-tutorial-qgan-py"><span class="std std-ref">Quantum Generative Adversarial Networks with Cirq + TensorFlow</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_state_preparation Training a quantum circuit with PyTorch    pytorch_noise PyTorch ..."><div class="figure" id="id22">
+<img alt="3-qubit Ising model in PyTorch" src="../_images/sphx_glr_tutorial_isingmodel_PyTorch_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_isingmodel_PyTorch.html#sphx-glr-demos-tutorial-isingmodel-pytorch-py"><span class="std std-ref">3-qubit Ising model in PyTorch</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:image&quot;: https://pennylane.ai/qml/_images/Givens_rotations.png"><div class="figure" id="id23">
+<img alt="Givens rotations for quantum chemistry" src="../_images/sphx_glr_tutorial_givens_rotations_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_givens_rotations.html#sphx-glr-demos-tutorial-givens-rotations-py"><span class="std std-ref">Givens rotations for quantum chemistry</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qnn_module_tf Turning quantum nodes into Keras Layers"><div class="figure" id="id24">
+<img alt="Turning quantum nodes into Torch Layers" src="../_images/sphx_glr_tutorial_qnn_module_torch_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qnn_module_torch.html#sphx-glr-demos-tutorial-qnn-module-torch-py"><span class="std std-ref">Turning quantum nodes into Torch Layers</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 13 April 2021.*"><div class="figure" id="id25">
+<img alt="QAOA for MaxCut" src="../_images/sphx_glr_tutorial_qaoa_maxcut_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qaoa_maxcut.html#sphx-glr-demos-tutorial-qaoa-maxcut-py"><span class="std std-ref">QAOA for MaxCut</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:image&quot;: https://pennylane.ai/qml/_images/spherical_int_dtheta.png"><div class="figure" id="id26">
+<img alt="Understanding the Haar Measure" src="../_images/sphx_glr_tutorial_haar_measure_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_haar_measure.html#sphx-glr-demos-tutorial-haar-measure-py"><span class="std std-ref">Understanding the Haar Measure</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip=" *Author: PennyLane dev team. Posted:  2021. Last updated: 13 September 2021*"><div class="figure" id="id27">
+<img alt="Adaptive circuits for quantum chemistry" src="../_images/sphx_glr_tutorial_adaptive_circuits_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_adaptive_circuits.html#sphx-glr-demos-tutorial-adaptive-circuits-py"><span class="std std-ref">Adaptive circuits for quantum chemistry</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_noisy_circuit_optimization Optimizing noisy circuits with Cirq"><div class="figure" id="id28">
+<img alt="Variationally optimizing measurement protocols" src="../_images/sphx_glr_tutorial_quantum_metrology_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quantum_metrology.html#sphx-glr-demos-tutorial-quantum-metrology-py"><span class="std std-ref">Variationally optimizing measurement protocols</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_backprop Quantum gradients with backprop    tutorial_vqe_qng Accelerating VQE with ..."><div class="figure" id="id29">
+<img alt="Quantum natural gradient" src="../_images/sphx_glr_tutorial_quantum_natural_gradient_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quantum_natural_gradient.html#sphx-glr-demos-tutorial-quantum-natural-gradient-py"><span class="std std-ref">Quantum natural gradient</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Posted: 23 July 2021. Last updated: 23 July 2021*"><div class="figure" id="id30">
+<img alt="Modelling chemical reactions on a quantum computer" src="../_images/sphx_glr_tutorial_chemical_reactions_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_chemical_reactions.html#sphx-glr-demos-tutorial-chemical-reactions-py"><span class="std std-ref">Modelling chemical reactions on a quantum computer</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Posted: 13 Oct 2020. Last updated: 21 Jan 2021.*"><div class="figure" id="id31">
+<img alt="Quantum computation with neutral atoms" src="../_images/sphx_glr_tutorial_pasqal_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_pasqal.html#sphx-glr-demos-tutorial-pasqal-py"><span class="std std-ref">Quantum computation with neutral atoms</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qaoa_intro Intro to QAOA    tutorial_qaoa_maxcut QAOA for MaxCut"><div class="figure" id="id32">
+<img alt="Feedback-Based Quantum Optimization (FALQON)" src="../_images/sphx_glr_tutorial_falqon_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_falqon.html#sphx-glr-demos-tutorial-falqon-py"><span class="std std-ref">Feedback-Based Quantum Optimization (FALQON)</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_backprop Quantum gradients with backprop    tutorial_quantum_natural_gradient Quant..."><div class="figure" id="id33">
+<img alt="Doubly stochastic gradient descent" src="../_images/sphx_glr_tutorial_doubly_stochastic_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_doubly_stochastic.html#sphx-glr-demos-tutorial-doubly-stochastic-py"><span class="std std-ref">Doubly stochastic gradient descent</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:image&quot;: https://pennylane.ai/qml/_images/fano.png"><div class="figure" id="id34">
+<img alt="Unitary Designs" src="../_images/sphx_glr_tutorial_unitary_designs_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_unitary_designs.html#sphx-glr-demos-tutorial-unitary-designs-py"><span class="std std-ref">Unitary Designs</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_quantum_metrology Variationally optimizing measurement protocols     tutorial_nois..."><div class="figure" id="id35">
+<img alt="Beyond classical computing with qsim" src="../_images/sphx_glr_qsim_beyond_classical_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="qsim_beyond_classical.html#sphx-glr-demos-qsim-beyond-classical-py"><span class="std std-ref">Beyond classical computing with qsim</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_qubit_rotation Basic Qubit Rotation Tutorial     tutorial_vqe Variational Quantum ..."><div class="figure" id="id36">
+<img alt="Using JAX with PennyLane" src="../_images/sphx_glr_tutorial_jax_transformations_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_jax_transformations.html#sphx-glr-demos-tutorial-jax-transformations-py"><span class="std std-ref">Using JAX with PennyLane</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: Andrea Mari. Last updated: 15 Jan 2021.*"><div class="figure" id="id37">
+<img alt="Quanvolutional Neural Networks" src="../_images/sphx_glr_tutorial_quanvolution_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quanvolution.html#sphx-glr-demos-tutorial-quanvolution-py"><span class="std std-ref">Quanvolutional Neural Networks</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   pytorch_noise PyTorch and noisy devices"><div class="figure" id="id38">
+<img alt="Optimizing noisy circuits with Cirq" src="../_images/sphx_glr_tutorial_noisy_circuit_optimization_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_noisy_circuit_optimization.html#sphx-glr-demos-tutorial-noisy-circuit-optimization-py"><span class="std std-ref">Optimizing noisy circuits with Cirq</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqls Variational quantum linear solver"><div class="figure" id="id39">
+<img alt="Coherent Variational Quantum Linear Solver" src="../_images/sphx_glr_tutorial_coherent_vqls_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_coherent_vqls.html#sphx-glr-demos-tutorial-coherent-vqls-py"><span class="std std-ref">Coherent Variational Quantum Linear Solver</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_coherent_vqls Coherent VQLS"><div class="figure" id="id40">
+<img alt="Variational Quantum Linear Solver" src="../_images/sphx_glr_tutorial_vqls_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqls.html#sphx-glr-demos-tutorial-vqls-py"><span class="std std-ref">Variational Quantum Linear Solver</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe Variational quantum eigensolver    tutorial_vqe_qng Accelerating VQEs with quan..."><div class="figure" id="id41">
+<img alt="Quantum circuit structure learning" src="../_images/sphx_glr_tutorial_rotoselect_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_rotoselect.html#sphx-glr-demos-tutorial-rotoselect-py"><span class="std std-ref">Quantum circuit structure learning</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:image&quot;: https://pennylane.ai/qml/_images/sphx_glr_tutorial_backprop_002.png"><div class="figure" id="id42">
+<img alt="Quantum gradients with backpropagation" src="../_images/sphx_glr_tutorial_backprop_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_backprop.html#sphx-glr-demos-tutorial-backprop-py"><span class="std std-ref">Quantum gradients with backpropagation</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    qsim_beyond_classical Beyond classical computing with qsim"><div class="figure" id="id43">
+<img alt="Quantum volume" src="../_images/sphx_glr_quantum_volume_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="quantum_volume.html#sphx-glr-demos-quantum-volume-py"><span class="std std-ref">Quantum volume</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe Variational quantum eigensolver    tutorial_quantum_natural_gradient Quantum na..."><div class="figure" id="id44">
+<img alt="Accelerating VQEs with quantum natural gradient" src="../_images/sphx_glr_tutorial_vqe_qng_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqe_qng.html#sphx-glr-demos-tutorial-vqe-qng-py"><span class="std std-ref">Accelerating VQEs with quantum natural gradient</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_vqe Variational quantum eigensolver"><div class="figure" id="id45">
+<img alt="The Variational Quantum Thermalizer" src="../_images/sphx_glr_tutorial_vqt_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_vqt.html#sphx-glr-demos-tutorial-vqt-py"><span class="std std-ref">The Variational Quantum Thermalizer</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_variational_classifier Variational quantum classifier    tutorial_data_reuploading_..."><div class="figure" id="id46">
+<img alt="Multiclass margin classifier" src="../_images/sphx_glr_tutorial_multiclass_classification_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_multiclass_classification.html#sphx-glr-demos-tutorial-multiclass-classification-py"><span class="std std-ref">Multiclass margin classifier</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe Variational quantum eigensolver    tutorial_quantum_chemistry Quantum chemistry..."><div class="figure" id="id47">
+<img alt="Measurement optimization" src="../_images/sphx_glr_tutorial_measurement_optimize_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_measurement_optimize.html#sphx-glr-demos-tutorial-measurement-optimize-py"><span class="std std-ref">Measurement optimization</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_kernel_based_training Kernel-based training with scikit-learn     tutorial_data_re..."><div class="figure" id="id48">
+<img alt="Training and evaluating quantum kernels" src="../_images/sphx_glr_tutorial_kernels_module_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_kernels_module.html#sphx-glr-demos-tutorial-kernels-module-py"><span class="std std-ref">Training and evaluating quantum kernels</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_variational_classifier Variational classifier"><div class="figure" id="id49">
+<img alt="Kernel-based training of quantum models with scikit-learn" src="../_images/sphx_glr_tutorial_kernel_based_training_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_kernel_based_training.html#sphx-glr-demos-tutorial-kernel-based-training-py"><span class="std std-ref">Kernel-based training of quantum models with scikit-learn</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_data_reuploading_classifier Data-reuploading classifier"><div class="figure" id="id50">
+<img alt="Quantum models as Fourier series" src="../_images/sphx_glr_tutorial_expressivity_fourier_series_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_expressivity_fourier_series.html#sphx-glr-demos-tutorial-expressivity-fourier-series-py"><span class="std std-ref">Quantum models as Fourier series</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_variational_classifier Variational quantum classifier"><div class="figure" id="id51">
+<img alt="Ensemble classification with Forest and Qiskit devices" src="../_images/sphx_glr_tutorial_ensemble_multi_qpu_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_ensemble_multi_qpu.html#sphx-glr-demos-tutorial-ensemble-multi-qpu-py"><span class="std std-ref">Ensemble classification with Forest and Qiskit devices</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: Jack Ceroni. Posted: 27 July 2020. Last updated: 25 March 2021.*"><div class="figure" id="id52">
+<img alt="The Quantum Graph Recurrent Neural Network" src="../_images/sphx_glr_tutorial_qgrnn_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_qgrnn.html#sphx-glr-demos-tutorial-qgrnn-py"><span class="std std-ref">The Quantum Graph Recurrent Neural Network</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_variational_classifier Variational quantum classifier    tutorial_multiclass_classi..."><div class="figure" id="id53">
+<img alt="Data-reuploading classifier" src="../_images/sphx_glr_tutorial_data_reuploading_classifier_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_data_reuploading_classifier.html#sphx-glr-demos-tutorial-data-reuploading-classifier-py"><span class="std std-ref">Data-reuploading classifier</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_barren_plateaus Barren plateaus in QNNs"><div class="figure" id="id54">
+<img alt="Alleviating barren plateaus with local cost functions" src="../_images/sphx_glr_tutorial_local_cost_functions_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_local_cost_functions.html#sphx-glr-demos-tutorial-local-cost-functions-py"><span class="std std-ref">Alleviating barren plateaus with local cost functions</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe A brief overview of VQE    tutorial_vqe_qng Accelerating VQE with the QNG"><div class="figure" id="id55">
+<img alt="Optimization using SPSA" src="../_images/sphx_glr_spsa_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="spsa.html#sphx-glr-demos-spsa-py"><span class="std std-ref">Optimization using SPSA</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_data_reuploading_classifier Data-reuploading classifier    tutorial_multiclass_clas..."><div class="figure" id="id56">
+<img alt="Variational classifier" src="../_images/sphx_glr_tutorial_variational_classifier_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_variational_classifier.html#sphx-glr-demos-tutorial-variational-classifier-py"><span class="std std-ref">Variational classifier</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe Variational quantum eigensolver    tutorial_quantum_natural_gradient Quantum na..."><div class="figure" id="id57">
+<img alt="Frugal shot optimization with Rosalin" src="../_images/sphx_glr_tutorial_rosalin_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_rosalin.html#sphx-glr-demos-tutorial-rosalin-py"><span class="std std-ref">Frugal shot optimization with Rosalin</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_vqe A brief overview of VQE    tutorial_quantum_natural_gradient Quantum Natural Gr..."><div class="figure" id="id58">
+<img alt="Quantum analytic descent" src="../_images/sphx_glr_tutorial_quantum_analytic_descent_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quantum_analytic_descent.html#sphx-glr-demos-tutorial-quantum-analytic-descent-py"><span class="std std-ref">Quantum analytic descent</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="*Author: PennyLane dev team. Last updated: 28 Jan 2021.*"><div class="figure" id="id59">
+<img alt="Quantum transfer learning" src="../_images/sphx_glr_tutorial_quantum_transfer_learning_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_quantum_transfer_learning.html#sphx-glr-demos-tutorial-quantum-transfer-learning-py"><span class="std std-ref">Quantum transfer learning</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    tutorial_measurement_optimize Measurement optimization     quantum_volume Quantum volume   ..."><div class="figure" id="id60">
+<img alt="Classical Shadows" src="../_images/sphx_glr_tutorial_classical_shadows_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_classical_shadows.html#sphx-glr-demos-tutorial-classical-shadows-py"><span class="std std-ref">Classical Shadows</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="   tutorial_qaoa_intro QAOA    tutorial_qaoa_maxcut QAOA for MaxCut problem"><div class="figure" id="id61">
+<img alt="Learning to learn with quantum neural networks" src="../_images/sphx_glr_learning2learn_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="learning2learn.html#sphx-glr-demos-learning2learn-py"><span class="std std-ref">Learning to learn with quantum neural networks</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-thumbcontainer" tooltip="    :property=&quot;og:description&quot;: Reconstruct quantum functions and compute their derivatives.   ..."><div class="figure" id="id62">
+<img alt="Generalized parameter-shift rules" src="../_images/sphx_glr_tutorial_general_parshift_thumb.png" />
+<p class="caption"><span class="caption-text"><a class="reference internal" href="tutorial_general_parshift.html#sphx-glr-demos-tutorial-general-parshift-py"><span class="std std-ref">Generalized parameter-shift rules</span></a></span></p>
+</div>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="sphx-glr-clear"></div><div class="sphx-glr-footer class sphx-glr-footer-gallery docutils container">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/171eb896ef7a0b5930f1d12444d3f5d3/demos_python.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demos_python.zip</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/e749985dc8eec3652519ca5f21e34afc/demos_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">demos_jupyter.zip</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/index</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/index</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+                <a href="../index.html"><i class="fas fa-angle-double-left"></i></a>
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

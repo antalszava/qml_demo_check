@@ -1,0 +1,994 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Using backpropagation can speed up training of quantum circuits compared to the parameter-shift rule—if you are using a simulator. " property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/sphx_glr_tutorial_backprop_002.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="Quantum gradients with backpropagation &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_backprop.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Using backpropagation can speed up training of quantum circuits compared to the parameter-shift rule—if you are using a simulator. " name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>Quantum gradients with backpropagation &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_backprop.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plugins and Hybrid computation" href="tutorial_plugins_hybrid.html" />
+    <link rel="prev" title="Basic tutorial: qubit rotation" href="tutorial_qubit_rotation.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial_plugins_hybrid.html" title="Plugins and Hybrid computation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_qubit_rotation.html" title="Basic tutorial: qubit rotation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_getting-started.html" accesskey="U">Getting Started</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-backprop-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="quantum-gradients-with-backpropagation">
+<span id="sphx-glr-demos-tutorial-backprop-py"></span><h1>Quantum gradients with backpropagation<a class="headerlink" href="#quantum-gradients-with-backpropagation" title="Permalink to this headline">¶</a></h1>
+<p><script type="text/javascript">
+    var related_tutorials = ["tutorial_quantum_natural_gradient.html"];
+    var related_tutorials_titles = ['Quantum natural gradient'];
+</script></p>
+<p><em>Author: PennyLane dev team. Last updated: 31 Jan 2021.</em></p>
+<p>In PennyLane, any quantum device, whether a hardware device or a simulator, can be
+trained using the <a class="reference internal" href="../glossary/parameter_shift.html"><span class="doc">parameter-shift rule</span></a> to compute quantum
+gradients. Indeed, the parameter-shift rule is ideally suited to hardware devices, as it does
+not require any knowledge about the internal workings of the device; it is sufficient to treat
+the device as a ‘black box’, and to query it with different input values in order to determine the gradient.</p>
+<p>When working with simulators, however, we <em>do</em> have access to the internal (classical)
+computations being performed. This allows us to take advantage of other methods of computing the
+gradient, such as backpropagation, which may be advantageous in certain regimes. In this tutorial,
+we will compare and contrast the parameter-shift rule against backpropagation, using
+the PennyLane <code class="xref py py-class docutils literal notranslate"><span class="pre">default.qubit</span></code>
+device.</p>
+<div class="section" id="the-parameter-shift-rule">
+<h2>The parameter-shift rule<a class="headerlink" href="#the-parameter-shift-rule" title="Permalink to this headline">¶</a></h2>
+<p>The parameter-shift rule states that, given a variational quantum circuit <span class="math notranslate nohighlight">\(U(\boldsymbol
+\theta)\)</span> composed of parametrized Pauli rotations, and some measured observable <span class="math notranslate nohighlight">\(\hat{B}\)</span>, the
+derivative of the expectation value</p>
+<div class="math notranslate nohighlight">
+\[\langle \hat{B} \rangle (\boldsymbol\theta) =
+\langle 0 \vert U(\boldsymbol\theta)^\dagger \hat{B} U(\boldsymbol\theta) \vert 0\rangle\]</div>
+<p>with respect to the input circuit parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> is given by</p>
+<div class="math notranslate nohighlight">
+\[\nabla_{\theta_i}\langle \hat{B} \rangle(\boldsymbol\theta)
+   =  \frac{1}{2}
+         \left[
+             \langle \hat{B} \rangle\left(\boldsymbol\theta + \frac{\pi}{2}\hat{\mathbf{e}}_i\right)
+           - \langle \hat{B} \rangle\left(\boldsymbol\theta - \frac{\pi}{2}\hat{\mathbf{e}}_i\right)
+         \right].\]</div>
+<p>Thus, the gradient of the expectation value can be calculated by evaluating the same variational
+quantum circuit, but with shifted parameter values (hence the name, parameter-shift rule!).</p>
+<p>Let’s have a go implementing the parameter-shift rule manually in PennyLane.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">pennylane</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="c1"># set the random seed</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># create a device to execute the circuit on</span>
+<span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;parameter-shift&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.broadcast.html#pennylane.broadcast" title="pennylane.broadcast" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">broadcast</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;ring&quot;</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RY.html#pennylane.RY" title="pennylane.RY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RY</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.broadcast.html#pennylane.broadcast" title="pennylane.broadcast" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">broadcast</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CNOT.html#pennylane.CNOT" title="pennylane.CNOT" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CNOT</span></a><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;ring&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliY.html#pennylane.PauliY" title="pennylane.PauliY" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Let’s test the variational circuit evaluation with some parameter input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># initial parameters</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">([</span><span class="mi">6</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parameters:&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expectation value:&quot;</span><span class="p">,</span> <span class="n">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Parameters: [0.37454012 0.95071431 0.73199394 0.59865848 0.15601864 0.15599452]
+Expectation value: -0.11971365706871569
+</pre></div>
+</div>
+<p>We can also draw the executed quantum circuit:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">draw</span><span class="p">())</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>0: ──RX(0.375)──╭C─────────────────╭X──RX(0.599)──╭C──────╭X──╭┤ ⟨Y ⊗ Z⟩
+1: ──RY(0.951)──╰X──╭C──RY(0.156)──│──────────────╰X──╭C──│───│┤
+2: ──RZ(0.732)──────╰X─────────────╰C──RZ(0.156)──────╰X──╰C──╰┤ ⟨Y ⊗ Z⟩
+</pre></div>
+</div>
+<p>Now that we have defined our variational circuit QNode, we can construct
+a function that computes the gradient of the <span class="math notranslate nohighlight">\(i\text{th}\)</span> parameter
+using the parameter-shift rule.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parameter_shift_term</span><span class="p">(</span><span class="n">qnode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="n">shifted</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">shifted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">forward</span> <span class="o">=</span> <span class="n">qnode</span><span class="p">(</span><span class="n">shifted</span><span class="p">)</span>  <span class="c1"># forward evaluation</span>
+
+    <span class="n">shifted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">backward</span> <span class="o">=</span> <span class="n">qnode</span><span class="p">(</span><span class="n">shifted</span><span class="p">)</span> <span class="c1"># backward evaluation</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">forward</span> <span class="o">-</span> <span class="n">backward</span><span class="p">)</span>
+
+<span class="c1"># gradient with respect to the first parameter</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parameter_shift_term</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-0.0651887722495813
+</pre></div>
+</div>
+<p>In order to compute the gradient with respect to <em>all</em> parameters, we need
+to loop over the index <code class="docutils literal notranslate"><span class="pre">i</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parameter_shift</span><span class="p">(</span><span class="n">qnode</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="n">gradients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)])</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+        <span class="n">gradients</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_shift_term</span><span class="p">(</span><span class="n">qnode</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gradients</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parameter_shift</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>[-6.51887722e-02 -2.72891905e-02  0.00000000e+00 -9.33934621e-02
+ -7.61067572e-01  8.32667268e-17]
+</pre></div>
+</div>
+<p>We can compare this to PennyLane’s <em>built-in</em> parameter-shift feature by using
+the <code class="xref py py-func docutils literal notranslate"><span class="pre">qml.grad</span></code> function. Remember, when we defined the
+QNode, we specified that we wanted it to be differentiable using the parameter-shift
+method (<code class="docutils literal notranslate"><span class="pre">diff_method=&quot;parameter-shift&quot;</span></code>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grad_function</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">grad</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grad_function</span></a><span class="p">(</span><span class="n">params</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>-0.0651887722495813
+</pre></div>
+</div>
+<p>If you count the number of quantum evaluations, you will notice that we had to evaluate the circuit
+<code class="docutils literal notranslate"><span class="pre">2*len(params)</span></code> number of times in order to compute the quantum gradient with respect to all
+parameters. While reasonably fast for a small number of parameters, as the number of parameters in
+our quantum circuit grows, so does both</p>
+<ol class="arabic simple">
+<li>the circuit depth (and thus the time taken to evaluate each expectation value or ‘forward’ pass), and</li>
+<li>the number of parameter-shift evaluations required.</li>
+</ol>
+<p>Both of these factors increase the time taken to compute the gradient with
+respect to all parameters.</p>
+<div class="section" id="benchmarking">
+<h3>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this headline">¶</a></h3>
+<p>Let’s consider an example with a significantly larger number of parameters.
+We’ll make use of the <code class="xref py py-class docutils literal notranslate"><span class="pre">StronglyEntanglingLayers</span></code> template
+to make a more complicated QNode.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;parameter-shift&quot;</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Operation.html#pennylane.operation.Operation" title="pennylane.operation.Operation" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">StronglyEntanglingLayers</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Note that we specify that the QNode is <strong>immutable</strong>. This is more restrictive than a standard
+mutable QNode (the quantum circuit structure cannot change/differ between executions); however, it
+reduces processing overhead.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># initialize circuit parameters</span>
+<span class="n">params</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.init.strong_ent_layers_normal.html#pennylane.init.strong_ent_layers_normal" title="pennylane.init.strong_ent_layers_normal" class="sphx-glr-backref-module-pennylane-init sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">strong_ent_layers_normal</span></a><span class="p">(</span><span class="n">n_wires</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:173: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+180
+0.8947771876917632
+</pre></div>
+</div>
+<p>This circuit has 180 parameters. Let’s see how long it takes to perform a forward
+pass of the circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">timeit</span>
+
+<span class="n">reps</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;circuit(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+<span class="n">forward_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Forward pass (best of </span><span class="si">{</span><span class="n">reps</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">forward_time</span><span class="si">}</span><span class="s2"> sec per loop&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Forward pass (best of 3): 0.0055952865999643105 sec per loop
+</pre></div>
+</div>
+<p>We can now estimate the time taken to compute the full gradient vector,
+and see how this compares.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the gradient function</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">grad_fn</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.grad.html#pennylane.grad" title="pennylane.grad" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">grad</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">qtape</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">times</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;grad_fn(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+<span class="n">backward_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gradient computation (best of </span><span class="si">{</span><span class="n">reps</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">backward_time</span><span class="si">}</span><span class="s2"> sec per loop&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Gradient computation (best of 3): 2.194458166100003 sec per loop
+</pre></div>
+</div>
+<p>Based on the parameter-shift rule, we expect that the amount of time to compute the quantum
+gradients should be approximately <span class="math notranslate nohighlight">\(2p\Delta t_{f}\)</span> where <span class="math notranslate nohighlight">\(p\)</span> is the number of
+parameters and <span class="math notranslate nohighlight">\(\Delta t_{f}\)</span> if the time taken for the forward pass. Let’s verify this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">forward_time</span> <span class="o">*</span> <span class="n">params</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>2.014303175987152
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="backpropagation">
+<h2>Backpropagation<a class="headerlink" href="#backpropagation" title="Permalink to this headline">¶</a></h2>
+<p>An alternative to the parameter-shift rule for computing gradients is
+<a class="reference external" href="https://en.wikipedia.org/wiki/Reverse_accumulation">reverse-mode autodifferentiation</a>.
+Unlike the parameter-shift method, which requires <span class="math notranslate nohighlight">\(2p\)</span> circuit evaluations for
+<span class="math notranslate nohighlight">\(p\)</span> parameters, reverse-mode requires only a <em>single</em> forward pass of the
+differentiable function to compute
+the gradient of all variables, at the expense of increased memory usage.
+During the forward pass, the results of all intermediate subexpressions are stored;
+the computation is then traversed <em>in reverse</em>, with the gradient computed by repeatedly
+applying the chain rule.
+In most classical machine learning settings (where we are training scalar loss functions
+consisting of a large number of parameters),
+reverse-mode autodifferentiation is the
+preferred method of autodifferentiation—the reduction in computational time enables larger and
+more complex models to be successfully trained. The backpropagation algorithm is a particular
+special-case of reverse-mode autodifferentiation, which has helped lead to the machine learning
+explosion we see today.</p>
+<p>In quantum machine learning, however, the inability to store and utilize the results of
+<em>intermediate</em> quantum operations on hardware remains a barrier to using backprop;
+while reverse-mode
+autodifferentiation works fine for small quantum simulations, only the
+parameter-shift rule can be used to compute gradients on quantum hardware directly. Nevertheless,
+when training quantum models via classical simulation, it’s useful to explore the regimes where
+reverse-mode differentiation may be a better choice than the parameter-shift rule.</p>
+<div class="section" id="id1">
+<h3>Benchmarking<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>When creating a QNode, <a class="reference external" href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.qnode.html" title="(in PennyLane v0.18)"><span class="xref std std-doc">PennyLane supports various methods of differentiation</span></a>, including <code class="docutils literal notranslate"><span class="pre">&quot;parameter-shift&quot;</span></code> (which we used previously),
+<code class="docutils literal notranslate"><span class="pre">&quot;finite-diff&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;reversible&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;backprop&quot;</span></code>. While <code class="docutils literal notranslate"><span class="pre">&quot;parameter-shift&quot;</span></code> works with all devices
+(simulator or hardware), <code class="docutils literal notranslate"><span class="pre">&quot;backprop&quot;</span></code> will only work for specific simulator devices that are
+designed to support backpropagation.</p>
+<p>One such device is <code class="xref py py-class docutils literal notranslate"><span class="pre">default.qubit</span></code>. It
+has backends written using TensorFlow, JAX, and Autograd, so when used with the
+TensorFlow, JAX, and Autograd interfaces respectively, supports backpropagation.
+In this demo, we will use the default Autograd interface.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When defining the QNode, we specify <code class="docutils literal notranslate"><span class="pre">diff_method=&quot;backprop&quot;</span></code> to ensure that
+we are using backpropagation mode. Note that this is the <em>default differentiation
+mode</em> for the <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code> device.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@qml</span><span class="o">.</span><span class="n">qnode</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;backprop&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Operation.html#pennylane.operation.Operation" title="pennylane.operation.Operation" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">StronglyEntanglingLayers</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># initialize circuit parameters</span>
+<span class="n">params</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.init.strong_ent_layers_normal.html#pennylane.init.strong_ent_layers_normal" title="pennylane.init.strong_ent_layers_normal" class="sphx-glr-backref-module-pennylane-init sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">strong_ent_layers_normal</span></a><span class="p">(</span><span class="n">n_wires</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+0.9358535378025419
+</pre></div>
+</div>
+<p>Let’s see how long it takes to perform a forward pass of the circuit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">timeit</span>
+
+<span class="n">reps</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;circuit(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+<span class="n">forward_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Forward pass (best of </span><span class="si">{</span><span class="n">reps</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">forward_time</span><span class="si">}</span><span class="s2"> sec per loop&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Forward pass (best of 3): 0.0367842655000004 sec per loop
+</pre></div>
+</div>
+<p>Comparing this to the forward pass from <code class="docutils literal notranslate"><span class="pre">default.qubit</span></code>, we note that there is some potential
+overhead from using backpropagation. We can now time how long it takes to perform a
+gradient computation via backpropagation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">times</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;qml.grad(circuit)(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+<span class="n">backward_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backward pass (best of </span><span class="si">{</span><span class="n">reps</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">backward_time</span><span class="si">}</span><span class="s2"> sec per loop&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Backward pass (best of 3): 0.07303350689999207 sec per loop
+</pre></div>
+</div>
+<p>Unlike with the parameter-shift rule, the time taken to perform the backwards pass appears
+of the order of a single forward pass! The can significantly speed up training of simulated
+circuits with many parameters.</p>
+</div>
+</div>
+<div class="section" id="time-comparison">
+<h2>Time comparison<a class="headerlink" href="#time-comparison" title="Permalink to this headline">¶</a></h2>
+<p>Let’s compare the two differentiation approaches as the number of trainable parameters
+in the variational circuit increases, by timing both the forward pass and the gradient
+computation as the number of layers is allowed to increase.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.operation.Operation.html#pennylane.operation.Operation" title="pennylane.operation.Operation" class="sphx-glr-backref-module-pennylane-operation sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">templates</span><span class="o">.</span><span class="n">StronglyEntanglingLayers</span></a><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We’ll continue to use the same ansatz as before, but to reduce the time taken
+to collect the data, we’ll reduce the number and repetitions of timings per data
+point. Below, we loop over a variational circuit depth ranging from 0 (no gates/
+trainable parameters) to 20. Each layer will contain <span class="math notranslate nohighlight">\(3N\)</span> parameters, where
+<span class="math notranslate nohighlight">\(N\)</span> is the number of wires (in this case, we have <span class="math notranslate nohighlight">\(N=4\)</span>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">reps</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">num</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">forward_shift</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">gradient_shift</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">forward_backprop</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">gradient_backprop</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">21</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.init.strong_ent_layers_normal.html#pennylane.init.strong_ent_layers_normal" title="pennylane.init.strong_ent_layers_normal" class="sphx-glr-backref-module-pennylane-init sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">strong_ent_layers_normal</span></a><span class="p">(</span><span class="n">n_wires</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="n">depth</span><span class="p">)</span>
+    <span class="n">num_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># forward pass timing</span>
+    <span class="c1"># ===================</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode_shift</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;parameter-shift&quot;</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode_backprop</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;backprop&quot;</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># parameter-shift</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;qnode_shift(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+    <span class="n">forward_shift</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num_params</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">])</span>
+
+    <span class="c1"># backprop</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;qnode_backprop(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+    <span class="n">forward_backprop</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num_params</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">num_params</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="c1"># Gradient timing</span>
+    <span class="c1"># ===============</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode_shift</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;parameter-shift&quot;</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qnode_backprop</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">diff_method</span><span class="o">=</span><span class="s2">&quot;backprop&quot;</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># parameter-shift</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;qml.grad(qnode_shift)(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+    <span class="n">gradient_shift</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num_params</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">])</span>
+
+    <span class="c1"># backprop</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">&quot;qml.grad(qnode_backprop)(params)&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="nb">globals</span><span class="p">(),</span> <span class="n">number</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">reps</span><span class="p">)</span>
+    <span class="n">gradient_backprop</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num_params</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">])</span>
+
+<span class="n">gradient_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gradient_shift</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">gradient_backprop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gradient_backprop</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">forward_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forward_shift</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">forward_backprop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forward_backprop</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:329: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+</pre></div>
+</div>
+<p>We now import matplotlib, and plot the results.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;bmh&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_shift</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Parameter-shift&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_backprop</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Backprop&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Time (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Number of parameters&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial backprop" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_backprop_001.png" />
+<br><p>We can see that the computational time for the parameter-shift rule increases with
+increasing number of parameters, as expected, whereas the computational time
+for backpropagation appears much more constant, with perhaps a minute linear increase
+with <span class="math notranslate nohighlight">\(p\)</span>. Note that the plots are not perfectly linear, with some ‘bumpiness’ or
+noisiness. This is likely due to low-level operating system jitter, and
+other environmental fluctuations—increasing the number of repeats can help smooth
+out the plot.</p>
+<p>For a better comparison, we can scale the time required for computing the quantum
+gradients against the time taken for the corresponding forward pass:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gradient_shift</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">forward_shift</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+<span class="n">gradient_backprop</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/=</span> <span class="n">forward_backprop</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_shift</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Parameter-shift&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_backprop</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Backprop&quot;</span><span class="p">)</span>
+
+<span class="c1"># perform a least squares regression to determine the linear best fit/gradient</span>
+<span class="c1"># for the normalized time vs. number of parameters</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">gradient_shift</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">m_shift</span><span class="p">,</span> <span class="n">c_shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_shift</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">m_back</span><span class="p">,</span> <span class="n">c_back</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="o">*</span><span class="n">gradient_backprop</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m_shift</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c_shift</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m_shift</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">p</span><span class="si">{</span><span class="n">c_shift</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m_back</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c_back</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m_back</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">p</span><span class="si">{</span><span class="n">c_back</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized time&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Number of parameters&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial backprop" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_backprop_002.png" />
+<br><p>We can now see clearly that there is constant overhead for backpropagation with
+<code class="docutils literal notranslate"><span class="pre">default.qubit</span></code>, but the parameter-shift rule scales as <span class="math notranslate nohighlight">\(\sim 2p\)</span>.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 4 minutes  11.812 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-backprop-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/a35636a6c06383b11e82215aa231d2d6/tutorial_backprop.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_backprop.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/78d71dbf8d5ae2aa7585067d03ea9fbf/tutorial_backprop.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_backprop.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_backprop</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">Quantum gradients with backpropagation</a><ul>
+<li><a class="reference internal" href="#the-parameter-shift-rule">The parameter-shift rule</a><ul>
+<li><a class="reference internal" href="#benchmarking">Benchmarking</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#backpropagation">Backpropagation</a><ul>
+<li><a class="reference internal" href="#id1">Benchmarking</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#time-comparison">Time comparison</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_backprop</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_getting-started.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial_plugins_hybrid.html" title="Plugins and Hybrid computation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial_qubit_rotation.html" title="Basic tutorial: qubit rotation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_getting-started.html" >Getting Started</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1360 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Using a quantum graph recurrent neural network to learn quantum dynamics." property="og:description" />
+<meta content="https://pennylane.ai/qml/_images/qgrnn_thumbnail.png" property="og:image" />
+
+  
+
+  <meta property="og:title" content="The Quantum Graph Recurrent Neural Network &#8212; PennyLane">
+  <meta property="og:url" content="https://pennylane.ai/qml/demos/tutorial_qgrnn.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  
+  
+  <meta content="Using a quantum graph recurrent neural network to learn quantum dynamics." name="description" />
+  
+
+  <link href="https://fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Material Design Bootstrap -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet"> -->
+
+  <!-- nanoscroller -->
+  <link rel="stylesheet" type="text/css" href="../_static/css/nanoscroller.css" />
+
+  <!-- lightslider -->
+  <link type="text/css" rel="stylesheet" href="../_static/css/lightslider.min.css" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       "HTML-CSS": { scale: 90, linebreaks: { automatic: true } },
+       SVG: { linebreaks: { automatic: true } },
+       TeX: {
+         Macros: {
+           pr : ['|\#1\\rangle\\langle\#1|',1],
+           ket: ['\\left| \#1\\right\\rangle',1],
+           bra: ['\\left\\langle \#1\\right|',1],
+           xket: ['\\left| \#1\\right\\rangle_x',1],
+           xbra: ['\\left\\langle \#1\\right|_x',1],
+           braket: ['\\langle \#1 \\rangle',1],
+           braketD: ['\\langle \#1 \\mid \#2 \\rangle',2],
+           braketT: ['\\langle \#1 \\mid \#2 \\mid \#3 \\rangle',3],
+           ketbra: ['| #1 \\rangle \\langle #2 |',2],
+           hc: ['\\text{h.c.}',0],
+           cc: ['\\text{c.c.}',0],
+           h: ['\\hat',0],
+           nn: ['\\nonumber',0],
+           di: ['\\frac{d}{d \#1}',1],
+           bm: ['\\mathbf{\#1}',1],
+           uu: ['\\mathcal{U}',0],
+           inn: ['\\text{in}',0],
+           out: ['\\text{out}',0],
+           vac: ['\\text{vac}',0],
+           I: ['I',0],
+           x: ['\\hat{x}',0],
+           p: ['\\hat{p}',0],
+           a: ['\\hat{a}',0],
+           ad: ['\\hat{a}^\\dagger',0],
+           n: ['\\hat{n}',0],
+           nbar: ['\\overline{n}',0],
+           sech: ['\\mathrm{sech~}',0],
+           tanh: ['\\mathrm{tanh~}',0],
+           re: ['\\text{Re}',0],
+           im: ['\\text{Im}',0],
+           tr: ['\\mathrm{Tr} #1',1],
+           diag: ['\\mathrm{diag} #1',1],
+           sign: ['\\text{sign}',0],
+           overlr: ['\\overset\\leftrightarrow{\#1}',1],
+           overl: ['\\overset\leftarrow{\#1}',1],
+           overr: ['\\overset\rightarrow{\#1}',1],
+           avg: ['\\left< \#1 \\right>',1],
+           slashed: ['\\cancel{\#1}',1],
+           bold: ['\\boldsymbol{\#1}',1],
+           d: ['\\mathrm d',0]
+         }
+       }
+     });
+     </script>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130507810-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-130507810-1');
+      </script>
+
+  <title>The Quantum Graph Recurrent Neural Network &#8212; PennyLane</title>
+  
+    <link rel="stylesheet" href="../_static/xanadu.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/gallery-rendered-html.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <link rel="canonical" href="https://pennylane.ai/qml/demos/tutorial_qgrnn.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Learning to learn with quantum neural networks" href="learning2learn.html" />
+    <link rel="prev" title="Function fitting with a photonic quantum neural network" href="quantum_neural_net.html" /> 
+  </head><body><link rel="stylesheet" type="text/css" href="../_static/xanadu_gallery.css" />
+  <!--Navbar-->
+<nav class="navbar navbar-expand-lg navbar-light white sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="https://pennylane.ai">
+    <img class="pr-1" src="../_static/xanadu_x.png" width="28px"></img>
+    <img src="../_static/pennylane.png" width="180px"></img>
+  </a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="https://pennylane.ai/qml">Quantum machine learning
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://pennylane.ai/qml/demonstrations.html" class="nav-link">Demos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/install.html">Install</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/plugins.html">Plugins</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.readthedocs.io">Documentation</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://pennylane.ai/blog">Blog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link q-hack-link" href="https://qhack.ai">
+          <img src="https://pennylane.ai/img/qhack_plain_black.png">
+        </a>
+      </li>
+    </ul>
+    <!-- Links -->
+
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link" href="http://pennylane.ai/faq.html">
+          <i class="fab fas fa-question"></i> FAQ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://discuss.pennylane.ai">
+          <i class="fab fab fa-discourse"></i> Support
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/XanaduAI/PennyLane">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- Collapsible content -->
+</nav>
+<!--/.Navbar-->
+
+<script type="text/javascript">
+var isDemoPages = window.location.pathname.includes('/demos_') || window.location.pathname.includes('/demonstrations') || window.location.pathname.includes('/demos/');
+
+if (isDemoPages) {
+  var $navItems = $('.nav-item');
+
+  var previousActiveLink = $navItems.filter(function(index, item) {
+    var $item = $(item);
+    return $item.hasClass('active') && $item.innerText !== 'Demos';
+  });
+
+  if (previousActiveLink.length) $(previousActiveLink[0]).removeClass('active');
+
+  var demoLink = $navItems.filter(function(index, item) {
+    return item.innerText === 'Demos';
+  });
+
+  if (demoLink.length) $(demoLink[0]).addClass('active');
+}
+</script>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="learning2learn.html" title="Learning to learn with quantum neural networks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quantum_neural_net.html" title="Function fitting with a photonic quantum neural network"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" accesskey="U">Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+        <div id="content">
+
+
+          <div id="right-column">
+            <div class="document clearer body">
+
+              <div class="container-wrapper">
+
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                  <ol class="breadcrumb">
+                  </ol>
+                </div>
+
+              
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-demos-tutorial-qgrnn-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="the-quantum-graph-recurrent-neural-network">
+<span id="sphx-glr-demos-tutorial-qgrnn-py"></span><h1>The Quantum Graph Recurrent Neural Network<a class="headerlink" href="#the-quantum-graph-recurrent-neural-network" title="Permalink to this headline">¶</a></h1>
+<p><em>Author: Jack Ceroni. Posted: 27 July 2020. Last updated: 25 March 2021.</em></p>
+<p>This demonstration investigates quantum graph
+recurrent neural networks (QGRNN), which are the quantum analogue of a
+classical graph recurrent neural network, and a subclass of the more
+general quantum graph
+neural network ansatz. Both the QGNN and QGRNN were introduced in
+<a class="reference external" href="https://arxiv.org/abs/1909.12264">this paper (2019)</a>.</p>
+<div class="section" id="the-idea">
+<h2>The Idea<a class="headerlink" href="#the-idea" title="Permalink to this headline">¶</a></h2>
+<p>A graph is defined as a set of <em>nodes</em> along with a set of
+<strong>edges</strong>, which represent connections between nodes.
+Information can be encoded into graphs by assigning numbers
+to nodes and edges, which we call <strong>weights</strong>.
+It is usually convenient to think of a graph visually:</p>
+<a class="reference internal image-reference" href="../_images/graph4.png"><img alt="../_images/graph4.png" class="align-center" src="../_images/graph4.png" style="width: 70%;" /></a>
+<p>In recent years, the concept of a
+<a class="reference external" href="https://arxiv.org/abs/1812.08434">graph neural network</a> (GNN) has been
+receiving a lot of attention from the machine learning community.
+A GNN seeks
+to learn a representation (a mapping of data into a
+low-dimensional vector space) of a given graph with feature vectors assigned
+to nodes and edges. Each of the vectors in the learned
+representation preserves not only the features, but also the overall
+topology of the graph, i.e., which nodes are connected by edges. The
+quantum graph neural network attempts to do something similar, but for
+features that are quantum-mechanical; for instance, a
+collection of quantum states.</p>
+<p>Consider the class of qubit Hamiltonians that are <em>quadratic</em>, meaning that
+the terms of the Hamiltonian represent either interactions between two
+qubits, or the energy of individual qubits.
+This class of Hamiltonians is naturally described by graphs, with
+second-order terms between qubits corresponding to weighted edges between
+nodes, and first-order terms corresponding to node weights.</p>
+<p>A well known example of a quadratic Hamiltonian is the transverse-field
+Ising model, which is defined as</p>
+<div class="math notranslate nohighlight">
+\[\hat{H}_{\text{Ising}}(\boldsymbol\theta) \ = \ \displaystyle\sum_{(i, j) \in E}
+\theta_{ij}^{(1)} Z_{i} Z_{j} \ + \ \displaystyle\sum_{i} \theta_{i}^{(2)} Z_{i} \ + \
+\displaystyle\sum_{i} X_{i},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol\theta \ = \ \{\theta^{(1)}, \ \theta^{(2)}\}\)</span>.
+In this Hamiltonian, the set <span class="math notranslate nohighlight">\(E\)</span> that determines which pairs of qubits
+have <span class="math notranslate nohighlight">\(ZZ\)</span> interactions can be represented by the set of edges for some graph. With
+the qubits as nodes, this graph is called the <em>interaction graph</em>.
+The <span class="math notranslate nohighlight">\(\theta^{(1)}\)</span> parameters correspond to the edge weights and
+the <span class="math notranslate nohighlight">\(\theta^{(2)}\)</span>
+parameters correspond to weights on the nodes.</p>
+<p>This result implies that we can think about <em>quantum circuits</em> with
+graph-theoretic properties. Recall that the time-evolution operator
+with respect to some Hamiltonian <span class="math notranslate nohighlight">\(H\)</span> is defined as:</p>
+<div class="math notranslate nohighlight">
+\[U \ = \ e^{-it H}.\]</div>
+<p>Thus, we have a clean way of taking quadratic Hamiltonians and turning
+them into unitaries (quantum circuits) that preserve the same correspondance to a graph.
+In the case of the Ising Hamiltonian, we have:</p>
+<div class="math notranslate nohighlight">
+\[U_{\text{Ising}} \ = \ e^{-it \hat{H}_{\text{Ising}} (\boldsymbol\theta)} \ = \ \exp \Big[ -it
+\Big( \displaystyle\sum_{(i, j) \in E} \theta_{ij}^{(1)} Z_{i} Z_{j} \ + \
+\displaystyle\sum_{i} \theta_{i}^{(2)} Z_{i} \ + \ \displaystyle\sum_{i} X_{i} \Big) \Big]\]</div>
+<p>In general, this kind of unitary is very difficult to implement on a quantum computer.
+However, we can approximate it using the <a class="reference external" href="https://en.wikipedia.org/wiki/Time-evolving_block_decimation#The_Suzuki-Trotter_expansion">Trotter-Suzuki decomposition</a>:</p>
+<div class="math notranslate nohighlight">
+\[\exp \Big[ -it \Big( \displaystyle\sum_{(i, j) \in E} \theta_{ij}^{(1)} Z_{i} Z_{j} \ + \
+\displaystyle\sum_{i} \theta_{i}^{(2)} Z_{i} \ + \ \displaystyle\sum_{i} X_{i} \Big) \Big]
+\ \approx \ \displaystyle\prod_{k \ = \ 1}^{t / \Delta} \Bigg[ \displaystyle\prod_{j \ = \
+1}^{Q} e^{-i \Delta \hat{H}_{\text{Ising}}^{j}(\boldsymbol\theta)} \Bigg]\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{H}_{\text{Ising}}^{j}(\boldsymbol\theta)\)</span> is the <span class="math notranslate nohighlight">\(j\)</span>-th term of the
+Ising Hamiltonian and <span class="math notranslate nohighlight">\(\Delta\)</span> is some small number.</p>
+<p>This circuit is a specific instance of the <strong>Quantum Graph
+Recurrent Neural Network</strong>, which in general is defined as a variational ansatz of
+the form</p>
+<div class="math notranslate nohighlight">
+\[U_{H}(\boldsymbol\mu, \ \boldsymbol\gamma) \ = \ \displaystyle\prod_{i \ = \ 1}^{P} \Bigg[
+\displaystyle\prod_{j \ = \ 1}^{Q} e^{-i \gamma_j H^{j}(\boldsymbol\mu)} \Bigg],\]</div>
+<p>for some parametrized quadratic Hamiltonian, <span class="math notranslate nohighlight">\(H(\boldsymbol\mu)\)</span>.</p>
+<div class="section" id="using-the-qgrnn">
+<h3>Using the QGRNN<a class="headerlink" href="#using-the-qgrnn" title="Permalink to this headline">¶</a></h3>
+<p>Since the QGRNN ansatz is equivalent to the
+approximate time evolution of some quadratic Hamiltonian, we can use it
+to learn the dynamics of a quantum system.</p>
+<p>Continuing with the Ising model example, let’s imagine we have some system
+governed by <span class="math notranslate nohighlight">\(\hat{H}_{\text{Ising}}(\boldsymbol\alpha)\)</span> for an unknown set of
+target parameters,
+<span class="math notranslate nohighlight">\(\boldsymbol\alpha\)</span> and an unknown interaction graph <span class="math notranslate nohighlight">\(G\)</span>. Let’s also
+suppose we have access to copies of some
+low-energy, non-ground state of the target Hamiltonian, <span class="math notranslate nohighlight">\(|\psi_0\rangle\)</span>. In addition,
+we have access to a collection of time-evolved states,
+<span class="math notranslate nohighlight">\(\{ |\psi(t_1)\rangle, \ |\psi(t_2)\rangle, \ ..., \ |\psi(t_N)\rangle \}\)</span>, defined by:</p>
+<div class="math notranslate nohighlight">
+\[|\psi(t_k)\rangle \ = \ e^{-i t_k \hat{H}_{\text{Ising}}(\boldsymbol\alpha)} |\psi_0\rangle.\]</div>
+<p>We call the low-energy states and the collection of time-evolved states <em>quantum data</em>.
+From here, we randomly pick a number of time-evolved states
+from our collection. For any state that we choose, which is
+evolved to some time <span class="math notranslate nohighlight">\(t_k\)</span>, we compare it
+to</p>
+<div class="math notranslate nohighlight">
+\[U_{\hat{H}_{\text{Ising}}}(\boldsymbol\mu, \ \Delta) |\psi_0\rangle \ \approx \ e^{-i t_k
+\hat{H}_{\text{Ising}}(\boldsymbol\mu)} |\psi_0\rangle.\]</div>
+<p>This is done by feeding one of the copies of <span class="math notranslate nohighlight">\(|\psi_0\rangle\)</span> into a quantum circuit
+with the QGRNN ansatz, with some guessed set of parameters <span class="math notranslate nohighlight">\(\boldsymbol\mu\)</span>
+and a guessed interaction graph, <span class="math notranslate nohighlight">\(G'\)</span>.
+We then use a classical optimizer to maximize the average
+“similarity” between the time-evolved states and the states prepared
+with the QGRNN.</p>
+<p>As the QGRNN states becomes more similar to
+each time-evolved state for each sampled time, it follows that
+<span class="math notranslate nohighlight">\(\boldsymbol\mu \ \rightarrow \ \boldsymbol\alpha\)</span>
+and we are able to learn the unknown parameters of the Hamiltonian.</p>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/qgrnn3.png"><img alt="../_images/qgrnn3.png" src="../_images/qgrnn3.png" style="width: 90%;" /></a>
+<p class="caption"><span class="caption-text">A visual representation of one execution of the QGRNN for one piece of quantum data.</span></p>
+</div>
+</div>
+</div>
+<div class="section" id="learning-an-ising-model-with-the-qgrnn">
+<h2>Learning an Ising Model with the QGRNN<a class="headerlink" href="#learning-an-ising-model-with-the-qgrnn" title="Permalink to this headline">¶</a></h2>
+<p>We now attempt to use the QGRNN to learn the parameters corresponding
+to an arbitrary transverse-field Ising model Hamiltonian.</p>
+<div class="section" id="getting-started">
+<h3>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
+<p>We begin by importing the necessary dependencies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pennylane</span> <span class="k">as</span> <span class="nn">qml</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+</pre></div>
+</div>
+<p>We also define some fixed values that are used throughout
+the simulation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qubit_number</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">qubits</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this
+simulation, we don’t have quantum data readily available to pass into
+the QGRNN, so we have to generate it ourselves. To do this, we must
+have knowledge of the target interaction graph and the target Hamiltonian.</p>
+<p>Let us use the following cyclic graph as the target interaction graph
+of the Ising Hamiltonian:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ising_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">cycle_graph</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edges: </span><span class="si">{</span><span class="n">ising_graph</span><span class="o">.</span><span class="n">edges</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">ising_graph</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="tutorial qgrnn" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_qgrnn_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Edges: [(0, 1), (0, 3), (1, 2), (2, 3)]
+</pre></div>
+</div>
+<p>We can then initialize the “unknown” target parameters that describe the
+target Hamiltonian, <span class="math notranslate nohighlight">\(\boldsymbol\alpha \ = \ \{\alpha^{(1)}, \ \alpha^{(2)}\}\)</span>.
+Recall from the introduction that we have defined our parametrized
+Ising Hamiltonian to be of the form:</p>
+<div class="math notranslate nohighlight">
+\[\hat{H}_{\text{Ising}}(\boldsymbol\theta) \ = \ \displaystyle\sum_{(i, j) \in E}
+\theta_{ij}^{(1)} Z_{i} Z_{j} \ + \ \displaystyle\sum_{i} \theta_{i}^{(2)} Z_{i} \ + \
+\displaystyle\sum_{i} X_{i},\]</div>
+<p>where <span class="math notranslate nohighlight">\(E\)</span> is the set of edges in the interaction graph, and
+<span class="math notranslate nohighlight">\(X_i\)</span> and <span class="math notranslate nohighlight">\(Z_i\)</span> are the Pauli-X and Pauli-Z on the
+<span class="math notranslate nohighlight">\(i\)</span>-th qubit.</p>
+<p>For this tutorial, we choose the target parameters by sampling from
+a uniform probability distribution ranging from <span class="math notranslate nohighlight">\(-2\)</span> to <span class="math notranslate nohighlight">\(2\)</span>, with
+two-decimal precision.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.56</span><span class="p">,</span> <span class="mf">1.24</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.79</span><span class="p">]</span>
+<span class="n">target_bias</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.44</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.43</span><span class="p">,</span> <span class="mf">1.18</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.93</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In theory, these parameters can
+be any value we want, provided they are reasonably small enough that the QGRNN can reach them
+in a tractable number of optimization steps.
+In <code class="docutils literal notranslate"><span class="pre">matrix_params</span></code>, the first list represents the <span class="math notranslate nohighlight">\(ZZ\)</span> interaction parameters and
+the second list represents the single-qubit <span class="math notranslate nohighlight">\(Z\)</span> parameters.</p>
+<p>Finally,
+we use this information to generate the matrix form of the
+Ising model Hamiltonian in the computational basis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_hamiltonian_matrix</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+
+    <span class="n">full_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span><span class="p">,</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span><span class="p">))</span>
+
+    <span class="c1"># Creates the interaction component of the Hamiltonian</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
+        <span class="n">interaction_term</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">:</span>
+                <span class="n">interaction_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">interaction_term</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ.matrix" title="pennylane.PauliZ.matrix" class="sphx-glr-backref-module-pennylane-PauliZ sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">interaction_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">interaction_term</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">full_matrix</span> <span class="o">+=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">interaction_term</span>
+
+    <span class="c1"># Creates the bias components of the matrix</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
+        <span class="n">z_term</span> <span class="o">=</span> <span class="n">x_term</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">z_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">z_term</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ.matrix" title="pennylane.PauliZ.matrix" class="sphx-glr-backref-module-pennylane-PauliZ sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+                <span class="n">x_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">x_term</span><span class="p">,</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html#pennylane.PauliX.matrix" title="pennylane.PauliX.matrix" class="sphx-glr-backref-module-pennylane-PauliX sphx-glr-backref-type-py-attribute"><span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="o">.</span><span class="n">matrix</span></a><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">z_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">z_term</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">x_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">x_term</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">full_matrix</span> <span class="o">+=</span> <span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_term</span> <span class="o">+</span> <span class="n">x_term</span>
+
+    <span class="k">return</span> <span class="n">full_matrix</span>
+
+
+<span class="c1"># Prints a visual representation of the Hamiltonian matrix</span>
+<span class="n">ham_matrix</span> <span class="o">=</span> <span class="n">create_hamiltonian_matrix</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">,</span> <span class="n">ising_graph</span><span class="p">,</span> <span class="n">target_weights</span><span class="p">,</span> <span class="n">target_bias</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">ham_matrix</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="tutorial qgrnn" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_qgrnn_002.png" />
+</div>
+<div class="section" id="preparing-quantum-data">
+<h3>Preparing Quantum Data<a class="headerlink" href="#preparing-quantum-data" title="Permalink to this headline">¶</a></h3>
+<p>The collection of quantum data needed to run the QGRNN has two components:
+(i) copies of a low-energy state, and (ii) a collection of time-evolved states, each of which are
+simply the low-energy state evolved to different times.
+The following is a low-energy state of the target Hamiltonian:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">low_energy_state</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.054661080280306085</span> <span class="o">+</span> <span class="mf">0.016713907320174026</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.12290003656489545</span> <span class="o">-</span> <span class="mf">0.03758500591109822</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.3649337966440005</span> <span class="o">-</span> <span class="mf">0.11158863596657455</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.8205175732627094</span> <span class="o">+</span> <span class="mf">0.25093231967092877</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.010369790825776609</span> <span class="o">-</span> <span class="mf">0.0031706387262686003</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.02331544978544721</span> <span class="o">+</span> <span class="mf">0.007129899300113728</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.06923183949694546</span> <span class="o">+</span> <span class="mf">0.0211684344103713</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.15566094863283836</span> <span class="o">-</span> <span class="mf">0.04760201916285508</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.014520590919500158</span> <span class="o">-</span> <span class="mf">0.004441887836078486</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.032648113364535575</span> <span class="o">+</span> <span class="mf">0.009988590222879195</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.09694382811137187</span> <span class="o">+</span> <span class="mf">0.02965579457620536</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.21796861485652747</span> <span class="o">-</span> <span class="mf">0.06668776658411019</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.0027547112135013247</span> <span class="o">+</span> <span class="mf">0.0008426289322652901</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.006193695872468649</span> <span class="o">-</span> <span class="mf">0.0018948418969390599</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.018391279795405405</span> <span class="o">-</span> <span class="mf">0.005625722994009138</span><span class="n">j</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">0.041350974715649635</span> <span class="o">+</span> <span class="mf">0.012650711602265649</span><span class="n">j</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>This state can be obtained by using a decoupled version of the
+<a class="reference internal" href="tutorial_vqe.html"><span class="doc">Variational Quantum Eigensolver</span></a> algorithm (VQE).
+Essentially, we choose a
+VQE ansatz such that the circuit cannot learn the exact ground state,
+but it can get fairly close. Another way to arrive at the same result is
+to perform VQE with a reasonable ansatz, but to terminate the algorithm
+before it converges to the ground state. If we used the exact ground state
+<span class="math notranslate nohighlight">\(|\psi_0\rangle\)</span>, the time-dependence would be trivial and the
+data would not provide enough information about the Hamiltonian parameters.</p>
+<p>We can verify that this is a low-energy
+state by numerically finding the lowest eigenvalue of the Hamiltonian
+and comparing it to the energy expectation of this low-energy state:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">low_energy_state</span><span class="p">,</span> <span class="p">(</span><span class="n">ham_matrix</span> <span class="o">@</span> <span class="n">low_energy_state</span><span class="p">))</span>
+<span class="n">energy_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Energy Expectation: </span><span class="si">{</span><span class="n">energy_exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">ground_state_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">ham_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ground State Energy: </span><span class="si">{</span><span class="n">ground_state_energy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Energy Expectation: -7.244508985189116
+Ground State Energy: -7.330689661291242
+</pre></div>
+</div>
+<p>We have in fact found a low-energy, non-ground state,
+as the energy expectation is slightly greater than the energy of the true ground
+state. This, however, is only half of the information we need. We also require
+a collection of time-evolved, low-energy states.
+Evolving the low-energy state forward in time is fairly straightforward: all we
+have to do is multiply the initial state by a time-evolution unitary. This operation
+can be defined as a custom gate in PennyLane:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">state_evolve</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">qubits</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+
+    <span class="n">U</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">hamiltonian</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitUnitary.html#pennylane.QubitUnitary" title="pennylane.QubitUnitary" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QubitUnitary</span></a><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We don’t actually generate time-evolved quantum data quite yet,
+but we now have all the pieces required for its preparation.</p>
+</div>
+<div class="section" id="learning-the-hamiltonian">
+<h3>Learning the Hamiltonian<a class="headerlink" href="#learning-the-hamiltonian" title="Permalink to this headline">¶</a></h3>
+<p>With the quantum data defined, we are able to construct the QGRNN and
+learn the target Hamiltonian.
+Each of the exponentiated
+Hamiltonians in the QGRNN ansatz,
+<span class="math notranslate nohighlight">\(\hat{H}^{j}_{\text{Ising}}(\boldsymbol\mu)\)</span>, are the
+<span class="math notranslate nohighlight">\(ZZ\)</span>, <span class="math notranslate nohighlight">\(Z\)</span>, and <span class="math notranslate nohighlight">\(X\)</span> terms from the Ising
+Hamiltonian. This gives:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">qgrnn_layer</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">qubits</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">trotter_step</span><span class="p">):</span>
+
+    <span class="c1"># Applies a layer of RZZ gates (based on a graph)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.MultiRZ.html#pennylane.MultiRZ" title="pennylane.MultiRZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">MultiRZ</span></a><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">trotter_step</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># Applies a layer of RZ gates</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RZ.html#pennylane.RZ" title="pennylane.RZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RZ</span></a><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">bias</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">trotter_step</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubit</span><span class="p">)</span>
+
+    <span class="c1"># Applies a layer of RX gates</span>
+    <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">qubits</span><span class="p">:</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.RX.html#pennylane.RX" title="pennylane.RX" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">RX</span></a><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">trotter_step</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="n">qubit</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As was mentioned in the first section, the QGRNN has two
+registers. In one register, some piece of quantum data
+<span class="math notranslate nohighlight">\(|\psi(t)\rangle\)</span> is prepared and in the other we have
+<span class="math notranslate nohighlight">\(U_{H}(\boldsymbol\mu, \ \Delta) |\psi_0\rangle\)</span>. We need a
+way to measure the similarity between these states.
+This can be done by using the fidelity, which is
+simply the modulus squared of the inner product between the states,
+<span class="math notranslate nohighlight">\(| \langle \psi(t) | U_{H}(\Delta, \ \boldsymbol\mu) |\psi_0\rangle |^2\)</span>.
+To calculate this value, we use a <a class="reference external" href="https://en.wikipedia.org/wiki/Swap_test">SWAP
+test</a> between the registers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">swap_test</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">register1</span><span class="p">,</span> <span class="n">register2</span><span class="p">):</span>
+
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">reg1_qubit</span><span class="p">,</span> <span class="n">reg2_qubit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">register1</span><span class="p">,</span> <span class="n">register2</span><span class="p">):</span>
+        <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.CSWAP.html#pennylane.CSWAP" title="pennylane.CSWAP" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">CSWAP</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">reg1_qubit</span><span class="p">,</span> <span class="n">reg2_qubit</span><span class="p">))</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.Hadamard.html#pennylane.Hadamard" title="pennylane.Hadamard" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">Hadamard</span></a><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="n">control</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After performing this procedure, the value returned from a measurement of the circuit is
+<span class="math notranslate nohighlight">\(\langle Z \rangle\)</span>, with respect to the <code class="docutils literal notranslate"><span class="pre">control</span></code> qubit.
+The probability of measuring the <span class="math notranslate nohighlight">\(|0\rangle\)</span> state
+in this control qubit is related to both the fidelity
+between registers and <span class="math notranslate nohighlight">\(\langle Z \rangle\)</span>. Thus, with a bit of algebra,
+we find that <span class="math notranslate nohighlight">\(\langle Z \rangle\)</span> is equal to the fidelity.</p>
+<p>Before creating the full QGRNN and the cost function, we
+define a few more fixed values. Among these is a “guessed”
+interaction graph, which we set to be a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Complete_graph">complete graph</a>. This choice is
+motivated by the fact that any target interaction graph will be a subgraph
+of this initial guess. Part of the idea behind the QGRNN is that
+we don’t know the interaction graph, and it has to be learned. In this case, the graph
+is learned <em>automatically</em> as the target parameters are optimized. The
+<span class="math notranslate nohighlight">\(\boldsymbol\mu\)</span> parameters that correspond to edges that don’t exist in
+the target graph will simply approach <span class="math notranslate nohighlight">\(0\)</span>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Defines some fixed values</span>
+
+<span class="n">reg1</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">))</span>  <span class="c1"># First qubit register</span>
+<span class="n">reg2</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qubit_number</span><span class="p">))</span>  <span class="c1"># Second qubit register</span>
+
+<span class="n">control</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qubit_number</span>  <span class="c1"># Index of control qubit</span>
+<span class="n">trotter_step</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1"># Trotter step size</span>
+
+<span class="c1"># Defines the interaction graph for the new qubit system</span>
+
+<span class="n">new_ising_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">complete_graph</span><span class="p">(</span><span class="n">reg2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Edges: </span><span class="si">{</span><span class="n">new_ising_graph</span><span class="o">.</span><span class="n">edges</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">new_ising_graph</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="tutorial qgrnn" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_qgrnn_003.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Edges: [(4, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 7)]
+</pre></div>
+</div>
+<p>With this done, we implement the QGRNN circuit for some given time value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">qgrnn</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="c1"># Prepares the low energy state in the two registers</span>
+    <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitStateVector.html#pennylane.QubitStateVector" title="pennylane.QubitStateVector" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QubitStateVector</span></a><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">low_energy_state</span><span class="p">,</span> <span class="n">low_energy_state</span><span class="p">),</span> <span class="n">wires</span><span class="o">=</span><span class="n">reg1</span> <span class="o">+</span> <span class="n">reg2</span><span class="p">)</span>
+
+    <span class="c1"># Evolves the first qubit register with the time-evolution circuit to</span>
+    <span class="c1"># prepare a piece of quantum data</span>
+    <span class="n">state_evolve</span><span class="p">(</span><span class="n">ham_matrix</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+    <span class="c1"># Applies the QGRNN layers to the second qubit register</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">time</span> <span class="o">/</span> <span class="n">trotter_step</span>  <span class="c1"># P = t/Delta</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">depth</span><span class="p">)):</span>
+        <span class="n">qgrnn_layer</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="n">reg2</span><span class="p">,</span> <span class="n">new_ising_graph</span><span class="p">,</span> <span class="n">trotter_step</span><span class="p">)</span>
+
+    <span class="c1"># Applies the SWAP test between the registers</span>
+    <span class="n">swap_test</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">reg1</span><span class="p">,</span> <span class="n">reg2</span><span class="p">)</span>
+
+    <span class="c1"># Returns the results of the SWAP test</span>
+    <span class="k">return</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.expval.html#pennylane.expval" title="pennylane.expval" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">expval</span></a><span class="p">(</span><a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliZ.html#pennylane.PauliZ" title="pennylane.PauliZ" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span></a><span class="p">(</span><span class="n">control</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We have the full QGRNN circuit, but we still need to define a cost function.
+We know that
+<span class="math notranslate nohighlight">\(| \langle \psi(t) | U_{H}(\boldsymbol\mu, \ \Delta) |\psi_0\rangle |^2\)</span>
+approaches <span class="math notranslate nohighlight">\(1\)</span> as the states become more similar and approaches
+<span class="math notranslate nohighlight">\(0\)</span> as the states become orthogonal. Thus, we choose
+to minimize the quantity
+<span class="math notranslate nohighlight">\(-| \langle \psi(t) | U_{H}(\boldsymbol\mu, \ \Delta) |\psi_0\rangle |^2\)</span>.
+Since we are interested in calculating this value for many different
+pieces of quantum data, the final cost function is the average
+negative fidelity* between registers:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L}(\boldsymbol\mu, \ \Delta) \ = \ - \frac{1}{N} \displaystyle\sum_{i \ = \ 1}^{N} |
+\langle \psi(t_i) | \ U_{H}(\boldsymbol\mu, \ \Delta) \ |\psi_0\rangle |^2,\]</div>
+<p>where we use <span class="math notranslate nohighlight">\(N\)</span> pieces of quantum data.</p>
+<p>Before creating the cost function, we must define a few more fixed
+variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># The number of pieces of quantum data that are used for each step</span>
+<span class="n">max_time</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># The maximum value of time that can be used for quantum data</span>
+</pre></div>
+</div>
+<p>We then define the negative fidelity cost function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cost_function</span><span class="p">(</span><span class="n">weight_params</span><span class="p">,</span> <span class="n">bias_params</span><span class="p">):</span>
+
+    <span class="c1"># Randomly samples times at which the QGRNN runs</span>
+    <span class="n">times_sampled</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="n">max_time</span>
+
+    <span class="c1"># Cycles through each of the sampled times and calculates the cost</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">times_sampled</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qgrnn_qnode</span></a><span class="p">(</span><span class="n">weight_params</span><span class="p">,</span> <span class="n">bias_params</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">total_cost</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">total_cost</span> <span class="o">/</span> <span class="n">N</span>
+</pre></div>
+</div>
+<p>Next we set up for optimization.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Defines the new device</span>
+<span class="n">qgrnn_dev</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.device.html#pennylane.device" title="pennylane.device" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-function"><span class="n">qml</span><span class="o">.</span><span class="n">device</span></a><span class="p">(</span><span class="s2">&quot;default.qubit&quot;</span><span class="p">,</span> <span class="n">wires</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">qubit_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Defines the new QNode</span>
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">qgrnn_qnode</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QNode.html#pennylane.QNode" title="pennylane.QNode" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">QNode</span></a><span class="p">(</span><span class="n">qgrnn</span><span class="p">,</span> <span class="n">qgrnn_dev</span><span class="p">)</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">300</span>
+
+<a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AdamOptimizer.html#pennylane.AdamOptimizer" title="pennylane.AdamOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">optimizer</span></a> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AdamOptimizer.html#pennylane.AdamOptimizer" title="pennylane.AdamOptimizer" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-class"><span class="n">qml</span><span class="o">.</span><span class="n">AdamOptimizer</span></a><span class="p">(</span><span class="n">stepsize</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">weights</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">new_ising_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">qubit_number</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+
+<span class="n">initial_weights</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+<span class="n">initial_bias</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">bias</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All that remains is executing the optimization loop.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">),</span> <span class="n">cost</span> <span class="o">=</span> <a href="https://pennylane.readthedocs.io/en/stable/code/api/pennylane.AdamOptimizer.html#pennylane.AdamOptimizer.step_and_cost" title="pennylane.AdamOptimizer.step_and_cost" class="sphx-glr-backref-module-pennylane sphx-glr-backref-type-py-method"><span class="n">optimizer</span><span class="o">.</span><span class="n">step_and_cost</span></a><span class="p">(</span><span class="n">cost_function</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+
+    <span class="c1"># Prints the value of the cost function</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cost at Step </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cost</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Weights at Step </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">weights</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bias at Step </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">bias</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Cost at Step 0: -0.9803638573791903
+Weights at Step 0: [-0.22604317  0.4388776   0.85859736  0.69736712  0.09417674 -0.02437703]
+Bias at Step 0: [-0.23885902 -0.21393414  0.12811164  0.45038514]
+---------------------------------------------
+Cost at Step 5: -0.9806500098112143
+Weights at Step 5: [-1.29827824  1.52426565  1.81163837  1.86438612  1.04288314 -0.98516982]
+Bias at Step 5: [-1.27134815 -1.36193505  1.31543373  1.32653424]
+---------------------------------------------
+Cost at Step 10: -0.9648857984236836
+Weights at Step 10: [-1.41068173  1.67469055  1.64410873  2.23403518  0.87027277 -0.84569027]
+Bias at Step 10: [-1.28108438 -1.67672193  1.74541519  0.99186816]
+---------------------------------------------
+Cost at Step 15: -0.9909075076678547
+Weights at Step 15: [-0.99423966  1.31509032  0.97714182  2.16814495  0.20032301 -0.2265963 ]
+Bias at Step 15: [-0.74022191 -1.53032257  1.76965387  0.16183654]
+---------------------------------------------
+Cost at Step 20: -0.9966008204823483
+Weights at Step 20: [-0.46419217  0.84550568  0.43286203  1.9380202  -0.348272    0.25976054]
+Bias at Step 20: [-0.12768221 -1.22298499  1.62611891 -0.4553839 ]
+---------------------------------------------
+Cost at Step 25: -0.9926133497439016
+Weights at Step 25: [-0.09015325  0.52906304  0.38274877  1.70919239 -0.41967469  0.26112821]
+Bias at Step 25: [ 0.2326128  -0.93936924  1.45717265 -0.4540624 ]
+---------------------------------------------
+Cost at Step 30: -0.9984946331046771
+Weights at Step 30: [ 0.0123472   0.47133081  0.7428572   1.56943045 -0.11998299 -0.09999201]
+Bias at Step 30: [ 0.22093363 -0.77889245  1.33551884 -0.01237726]
+---------------------------------------------
+Cost at Step 35: -0.9987664875905384
+Weights at Step 35: [-0.04974879  0.55838325  1.09528857  1.50649468  0.13247182 -0.39189813]
+Bias at Step 35: [ 0.01173716 -0.72349491  1.25413089  0.33198678]
+---------------------------------------------
+Cost at Step 40: -0.9976572253882187
+Weights at Step 40: [-0.14927     0.66157373  1.19794921  1.48297288  0.10734093 -0.3831593 ]
+Bias at Step 40: [-0.21739349 -0.72790187  1.18290627  0.29425225]
+---------------------------------------------
+Cost at Step 45: -0.9996712273475133
+Weights at Step 45: [-0.20674402  0.70360037  1.0807707   1.48455205 -0.12668579 -0.15106377]
+Bias at Step 45: [-0.35389918 -0.76974032  1.11755141 -0.02878183]
+---------------------------------------------
+Cost at Step 50: -0.9995584075846882
+Weights at Step 50: [-0.21856857  0.69313289  0.9951204   1.51327524 -0.27695939 -0.00304774]
+Bias at Step 50: [-0.39501335 -0.83717604  1.08135172 -0.25421503]
+---------------------------------------------
+Cost at Step 55: -0.9993417338158986
+Weights at Step 55: [-0.19958537  0.65456745  1.0540154   1.56588539 -0.22806521 -0.06304728]
+Bias at Step 55: [-0.37502663 -0.92029696  1.08093403 -0.2300362 ]
+---------------------------------------------
+Cost at Step 60: -0.9997702657469877
+Weights at Step 60: [-0.15016116  0.59649054  1.17917889  1.61891613 -0.0895     -0.22355593]
+Bias at Step 60: [-0.3186739  -0.99107611  1.09766839 -0.08892556]
+---------------------------------------------
+Cost at Step 65: -0.9996436456556425
+Weights at Step 65: [-0.08220889  0.53561352  1.22392446  1.64470734 -0.04968037 -0.29147776]
+Bias at Step 65: [-0.26354431 -1.02050635  1.10560821 -0.06357961]
+---------------------------------------------
+Cost at Step 70: -0.9997829725978745
+Weights at Step 70: [-0.02812171  0.50207641  1.18712749  1.64861258 -0.12278163 -0.24907531]
+Bias at Step 70: [-0.25578322 -1.01899708  1.10378897 -0.1755329 ]
+---------------------------------------------
+Cost at Step 75: -0.9998161136786834
+Weights at Step 75: [-0.01479171  0.51567978  1.17552912  1.65394365 -0.18664303 -0.21758165]
+Bias at Step 75: [-0.32014432 -1.01791815  1.10519351 -0.27848449]
+---------------------------------------------
+Cost at Step 80: -0.9998843655288554
+Weights at Step 80: [-0.01884375  0.54281647  1.22344387  1.66582127 -0.17956552 -0.25497115]
+Bias at Step 80: [-0.40362773 -1.02780124  1.10836139 -0.29496652]
+---------------------------------------------
+Cost at Step 85: -0.9999098350330781
+Weights at Step 85: [-0.00379234  0.54313665  1.2733362   1.67338414 -0.15161841 -0.30903377]
+Bias at Step 85: [-0.45061752 -1.03818189  1.10130953 -0.28564262]
+---------------------------------------------
+Cost at Step 90: -0.9999044415579312
+Weights at Step 90: [ 0.04088165  0.50692558  1.28240681  1.67288196 -0.15109114 -0.33205828]
+Bias at Step 90: [-0.4519275  -1.04504232  1.07941985 -0.3132239 ]
+---------------------------------------------
+Cost at Step 95: -0.999906122283825
+Weights at Step 95: [ 0.08554249  0.46656083  1.26840277  1.6755038  -0.16748469 -0.33495651]
+Bias at Step 95: [-0.45081552 -1.0592657   1.05546404 -0.36819017]
+---------------------------------------------
+Cost at Step 100: -0.9999067038489896
+Weights at Step 100: [ 0.10504756  0.45151576  1.27495676  1.68957857 -0.16364088 -0.35685113]
+Bias at Step 100: [-0.48320092 -1.0860277   1.04231719 -0.40281373]
+---------------------------------------------
+Cost at Step 105: -0.9999258608983023
+Weights at Step 105: [ 0.11286395  0.45096054  1.29489123  1.70583499 -0.14822871 -0.39062082]
+Bias at Step 105: [-0.53290732 -1.11214824  1.03558616 -0.42231884]
+---------------------------------------------
+Cost at Step 110: -0.9999159642471993
+Weights at Step 110: [ 0.13106534  0.44316269  1.30188589  1.7135758  -0.14449277 -0.41395624]
+Bias at Step 110: [-0.57365278 -1.12589957  1.02588522 -0.45380079]
+---------------------------------------------
+Cost at Step 115: -0.9999295051359973
+Weights at Step 115: [ 0.16456919  0.42229382  1.29615959  1.71331202 -0.14936482 -0.43044986]
+Bias at Step 115: [-0.60049609 -1.12909729  1.01159669 -0.4958413 ]
+---------------------------------------------
+Cost at Step 120: -0.9999329105144759
+Weights at Step 120: [ 0.19394551  0.40471337  1.2991934   1.71575281 -0.1428606  -0.45732438]
+Bias at Step 120: [-0.63053342 -1.13507053  1.00043562 -0.52433156]
+---------------------------------------------
+Cost at Step 125: -0.9999672151181849
+Weights at Step 125: [ 0.21407342  0.39421863  1.30670262  1.72320127 -0.13102448 -0.48725764]
+Bias at Step 125: [-0.6687698  -1.14749235  0.99304941 -0.54780452]
+---------------------------------------------
+Cost at Step 130: -0.9999498639111295
+Weights at Step 130: [ 0.23251895  0.38323767  1.30565485  1.73043603 -0.12634796 -0.50754102]
+Bias at Step 130: [-0.70519062 -1.16065043  0.9853521  -0.57984279]
+---------------------------------------------
+Cost at Step 135: -0.9999460668283625
+Weights at Step 135: [ 0.25315     0.36897848  1.30157699  1.73591416 -0.12368359 -0.52479079]
+Bias at Step 135: [-0.73738032 -1.17210895  0.97628525 -0.6137189 ]
+---------------------------------------------
+Cost at Step 140: -0.9999760263168521
+Weights at Step 140: [ 0.27319219  0.35494171  1.30465117  1.74054957 -0.11422205 -0.5482196 ]
+Bias at Step 140: [-0.76767167 -1.18178289  0.96794962 -0.63664615]
+---------------------------------------------
+Cost at Step 145: -0.9999620825798218
+Weights at Step 145: [ 0.29291312  0.34115888  1.30743903  1.7441703  -0.10602196 -0.56989588]
+Bias at Step 145: [-0.79755643 -1.18957764  0.96017139 -0.65982932]
+---------------------------------------------
+Cost at Step 150: -0.9999528162713988
+Weights at Step 150: [ 0.31193841  0.32791071  1.30767856  1.747724   -0.10220887 -0.58675715]
+Bias at Step 150: [-0.8277568  -1.19660646  0.9533145  -0.68795875]
+---------------------------------------------
+Cost at Step 155: -0.9999676206975212
+Weights at Step 155: [ 0.32929841  0.31576924  1.3101255   1.75246696 -0.0974324  -0.60396184]
+Bias at Step 155: [-0.85776514 -1.2043529   0.94822294 -0.71402521]
+---------------------------------------------
+Cost at Step 160: -0.9999688897065233
+Weights at Step 160: [ 0.34617048  0.30341272  1.31549083  1.75789129 -0.09127326 -0.62192276]
+Bias at Step 160: [-0.88499311 -1.21222407  0.94414483 -0.73671672]
+---------------------------------------------
+Cost at Step 165: -0.9999678828349426
+Weights at Step 165: [ 0.36424544  0.28904681  1.3183802   1.76299152 -0.08653562 -0.6379972 ]
+Bias at Step 165: [-0.91076279 -1.21990516  0.93990101 -0.76174131]
+---------------------------------------------
+Cost at Step 170: -0.9999718518505567
+Weights at Step 170: [ 0.38058818  0.27530965  1.31811484  1.76729325 -0.08126922 -0.65326086]
+Bias at Step 170: [-0.93762726 -1.22741419  0.93605274 -0.78587399]
+---------------------------------------------
+Cost at Step 175: -0.9999699928840567
+Weights at Step 175: [ 0.39531011  0.26293084  1.32005541  1.7712584  -0.0738556  -0.67032688]
+Bias at Step 175: [-0.96623738 -1.23426398  0.9328937  -0.80654326]
+---------------------------------------------
+Cost at Step 180: -0.9999810640341683
+Weights at Step 180: [ 0.41111346  0.24939364  1.32150139  1.7744836  -0.06804758 -0.68598269]
+Bias at Step 180: [-0.99446201 -1.23978732  0.92974762 -0.82904396]
+---------------------------------------------
+Cost at Step 185: -0.9999732059499763
+Weights at Step 185: [ 0.42663809  0.23569253  1.323561    1.77787964 -0.06331664 -0.7001218 ]
+Bias at Step 185: [-1.02027229 -1.24495257  0.9273182  -0.8511393 ]
+---------------------------------------------
+Cost at Step 190: -0.9999904686011625
+Weights at Step 190: [ 0.4407972   0.22274166  1.32741124  1.78217538 -0.0581927  -0.71407865]
+Bias at Step 190: [-1.04467037 -1.2507425   0.92600868 -0.87121712]
+---------------------------------------------
+Cost at Step 195: -0.999982883107813
+Weights at Step 195: [ 0.45318723  0.21066667  1.32928285  1.78607162 -0.05386645 -0.72584502]
+Bias at Step 195: [-1.06684646 -1.25630331  0.92524928 -0.88990376]
+---------------------------------------------
+Cost at Step 200: -0.9999814691774114
+Weights at Step 200: [ 0.46483484  0.19879592  1.33066437  1.78942676 -0.04940039 -0.73713324]
+Bias at Step 200: [-1.08841247 -1.26129482  0.92474857 -0.90725602]
+---------------------------------------------
+Cost at Step 205: -0.9999831444629906
+Weights at Step 205: [ 0.47584426  0.18719266  1.33154192  1.79202379 -0.04462708 -0.74822003]
+Bias at Step 205: [-1.10977785 -1.265427    0.92453063 -0.92310712]
+---------------------------------------------
+Cost at Step 210: -0.9999790517608406
+Weights at Step 210: [ 0.48584547  0.17597834  1.33028455  1.79378517 -0.03978138 -0.75852048]
+Bias at Step 210: [-1.13101187 -1.26898531  0.92482346 -0.93780681]
+---------------------------------------------
+Cost at Step 215: -0.999984711195014
+Weights at Step 215: [ 0.4946749   0.16562713  1.32915967  1.79528287 -0.03462316 -0.76851533]
+Bias at Step 215: [-1.15132516 -1.27221485  0.92584491 -0.9503349 ]
+---------------------------------------------
+Cost at Step 220: -0.9999855424488904
+Weights at Step 220: [ 0.50303178  0.15574802  1.32886423  1.79677025 -0.03058318 -0.77711746]
+Bias at Step 220: [-1.16955409 -1.27502675  0.92729975 -0.96212831]
+---------------------------------------------
+Cost at Step 225: -0.9999863772257214
+Weights at Step 225: [ 0.51097377  0.14603986  1.32919454  1.79836519 -0.02733105 -0.78463519]
+Bias at Step 225: [-1.18628365 -1.27783948  0.92913454 -0.97340009]
+---------------------------------------------
+Cost at Step 230: -0.9999898484097555
+Weights at Step 230: [ 0.51836647  0.13626055  1.32967368  1.80000495 -0.02394918 -0.79187192]
+Bias at Step 230: [-1.20276401 -1.28103879  0.93145415 -0.98384786]
+---------------------------------------------
+Cost at Step 235: -0.9999890657624451
+Weights at Step 235: [ 0.52564729  0.12600301  1.32958604  1.80138672 -0.02082854 -0.79856878]
+Bias at Step 235: [-1.2195148  -1.28431275  0.93422156 -0.9943289 ]
+---------------------------------------------
+Cost at Step 240: -0.9999882976226051
+Weights at Step 240: [ 0.53229253  0.11610906  1.32908336  1.80229993 -0.01749836 -0.80503539]
+Bias at Step 240: [-1.23599684 -1.28731013  0.93747248 -1.00346756]
+---------------------------------------------
+Cost at Step 245: -0.9999882440932369
+Weights at Step 245: [ 0.53847247  0.10723924  1.33070351  1.80329887 -0.01467023 -0.81108244]
+Bias at Step 245: [-1.25069646 -1.28978222  0.94081211 -1.01123413]
+---------------------------------------------
+Cost at Step 250: -0.9999868214455342
+Weights at Step 250: [ 0.54460039  0.0980518   1.33056073  1.80410968 -0.01354454 -0.81496581]
+Bias at Step 250: [-1.26394352 -1.29235223  0.94434983 -1.02022419]
+---------------------------------------------
+Cost at Step 255: -0.9999884214814982
+Weights at Step 255: [ 0.54943379  0.08996909  1.33186446  1.8051759  -0.01056943 -0.82027142]
+Bias at Step 255: [-1.27708148 -1.29545081  0.94840617 -1.02592635]
+---------------------------------------------
+Cost at Step 260: -0.9999905893984565
+Weights at Step 260: [ 0.55392271  0.08211047  1.33002746  1.8051647  -0.00912692 -0.82330494]
+Bias at Step 260: [-1.28877696 -1.29778044  0.9520992  -1.03219995]
+---------------------------------------------
+Cost at Step 265: -0.9999894660037792
+Weights at Step 265: [ 0.55772452  0.07551996  1.33104998  1.80525639 -0.00672651 -0.82745976]
+Bias at Step 265: [-1.29986939 -1.29978116  0.95585094 -1.03589225]
+---------------------------------------------
+Cost at Step 270: -0.9999873354125403
+Weights at Step 270: [ 0.56170933  0.06903136  1.33175345  1.80537894 -0.00624539 -0.82966868]
+Bias at Step 270: [-1.30907139 -1.30160912  0.9593855  -1.04092885]
+---------------------------------------------
+Cost at Step 275: -0.9999910126657187
+Weights at Step 275: [ 0.56476346  0.06288961  1.33121415  1.80555827 -0.00483336 -0.83207027]
+Bias at Step 275: [-1.3181107  -1.30426179  0.96340533 -1.04444787]
+---------------------------------------------
+Cost at Step 280: -0.9999911807478905
+Weights at Step 280: [ 0.56790545  0.05710628  1.33293783  1.80572737 -0.00337721 -0.83486294]
+Bias at Step 280: [-1.32665878 -1.30655911  0.96725682 -1.04712595]
+---------------------------------------------
+Cost at Step 285: -0.9999870533227304
+Weights at Step 285: [ 0.57142315  0.05115447  1.33329561  1.80547158 -0.00412561 -0.83538511]
+Bias at Step 285: [-1.33391608 -1.30836527  0.97068764 -1.05192006]
+---------------------------------------------
+Cost at Step 290: -0.9999918533581702
+Weights at Step 290: [ 0.57314839  0.04641148  1.33277082  1.80515273 -0.00185471 -0.83794182]
+Bias at Step 290: [-1.3420092  -1.3110848   0.97494496 -1.05274072]
+---------------------------------------------
+Cost at Step 295: -0.9999907581161834
+Weights at Step 295: [ 5.75810409e-01  4.17373794e-02  1.33385607e+00  1.80469466e+00
+ -1.37560830e-03 -8.39439431e-01]
+Bias at Step 295: [-1.34861394 -1.31269908  0.97854738 -1.05489467]
+---------------------------------------------
+</pre></div>
+</div>
+<p>With the learned parameters, we construct a visual representation
+of the Hamiltonian to which they correspond and compare it to the
+target Hamiltonian, and the initial guessed Hamiltonian:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">new_ham_matrix</span> <span class="o">=</span> <span class="n">create_hamiltonian_matrix</span><span class="p">(</span>
+    <span class="n">qubit_number</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">complete_graph</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">),</span> <span class="n">weights</span><span class="p">,</span> <span class="n">bias</span>
+<span class="p">)</span>
+
+<span class="n">init_ham</span> <span class="o">=</span> <span class="n">create_hamiltonian_matrix</span><span class="p">(</span>
+    <span class="n">qubit_number</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">complete_graph</span><span class="p">(</span><span class="n">qubit_number</span><span class="p">),</span> <span class="n">initial_weights</span><span class="p">,</span> <span class="n">initial_bias</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">ham_matrix</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Target&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.13</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">init_ham</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Initial&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.13</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">new_ham_matrix</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;hot&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Learned&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.13</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="Target, Initial, Learned" class="sphx-glr-single-img" src="../_images/sphx_glr_tutorial_qgrnn_004.png" />
+<p>These images look very similar, indicating that the QGRNN has done a good job
+learning the target Hamiltonian.</p>
+<p>We can also look
+at the exact values of the target and learned parameters.
+Recall how the target
+interaction graph has <span class="math notranslate nohighlight">\(4\)</span> edges while the complete graph has <span class="math notranslate nohighlight">\(6\)</span>.
+Thus, as the QGRNN converges to the optimal solution, the weights corresponding to
+edges <span class="math notranslate nohighlight">\((1, 3)\)</span> and <span class="math notranslate nohighlight">\((2, 0)\)</span> in the complete graph should go to <span class="math notranslate nohighlight">\(0\)</span>, as
+this indicates that they have no effect, and effectively do not exist in the learned
+Hamiltonian.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># We first pick out the weights of edges (1, 3) and (2, 0)</span>
+<span class="c1"># and then remove them from the list of target parameters</span>
+
+<span class="n">weights_noedge</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">weights_edge</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">new_ising_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">qubit_number</span><span class="p">,</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">qubit_number</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ising_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+        <span class="n">weights_edge</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">weights_noedge</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Then, we print all of the weights:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Target parameters     Learned parameters&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weights&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">41</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ii_target</span><span class="p">,</span> <span class="n">ii_learned</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target_weights</span><span class="p">,</span> <span class="n">weights_edge</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ii_target</span> <span class="si">:</span><span class="s2"> &lt;20</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">ii_learned</span> <span class="si">:</span><span class="s2"> &gt;20</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Bias&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">41</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ii_target</span><span class="p">,</span> <span class="n">ii_learned</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target_bias</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ii_target</span> <span class="si">:</span><span class="s2"> &lt;20</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="n">ii_learned</span> <span class="si">:</span><span class="s2"> &gt;20</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Non-Existing Edge Parameters: </span><span class="si">{</span><span class="p">[</span><span class="n">val</span><span class="o">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">weights_noedge</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Target parameters     Learned parameters
+Weights
+-----------------------------------------
+0.56                |  0.5782895244479023
+1.24                |  1.3350283296762835
+1.67                |  1.8044804399858487
+-0.79               |  -0.839549739503953
+
+Bias
+-----------------------------------------
+-1.44               | -1.3529586931946362
+-1.43               | -1.3138918025602149
+1.18                |  0.9811173767093422
+-0.93               | -1.0579331212003387
+
+Non-Existing Edge Parameters: [0.03795849267891518, -0.0022991817976616685]
+</pre></div>
+</div>
+<p>The weights of edges <span class="math notranslate nohighlight">\((1, 3)\)</span> and <span class="math notranslate nohighlight">\((2, 0)\)</span>
+are very close to <span class="math notranslate nohighlight">\(0\)</span>, indicating we have learned the cycle graph
+from the complete graph. In addition, the remaining learned weights
+are fairly close to those of the target Hamiltonian.
+Thus, the QGRNN is functioning properly, and has learned the target
+Ising Hamiltonian to a high
+degree of accuracy!</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Verdon, G., McCourt, T., Luzhnica, E., Singh, V., Leichenauer, S., &amp;
+Hidary, J. (2019). Quantum Graph Neural Networks. arXiv preprint
+<a class="reference external" href="https://arxiv.org/abs/1909.12264">arXiv:1909.12264</a>.</li>
+</ol>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 2 minutes  46.320 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-demos-tutorial-qgrnn-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<a class="reference download internal" download="" href="../_downloads/74e0dbecf2b2abf11ce6897cb8a60d30/tutorial_qgrnn.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">tutorial_qgrnn.py</span></code></a></div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<a class="reference download internal" download="" href="../_downloads/058bd2641c8a61a67af474e8d4352fbd/tutorial_qgrnn.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">tutorial_qgrnn.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+              <div id="bottom-dl" class="xanadu-call-to-action-links">
+                <div id="tutorial-type">demos/tutorial_qgrnn</div>
+                <div class="download-python-link">
+                  <i class="fab fa-python"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Python script</div>
+                </div>
+                <div class="download-notebook-link">
+                  <i class="fas fa-download"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">Download Notebook</div>
+                </div>
+                <div class="github-view-link">
+                  <i class="fab fa-github"></i>&nbsp;
+                  <div class="call-to-action-desktop-view">View on GitHub</div>
+                </div>
+              </div>
+            </div>
+          </div>
+              <div class="comment-container nano has-scrollbar">
+  <div class="nano-content">
+    
+    <div id="comments">
+      <h3>Contents</h3>
+      <ul>
+<li><a class="reference internal" href="#">The Quantum Graph Recurrent Neural Network</a><ul>
+<li><a class="reference internal" href="#the-idea">The Idea</a><ul>
+<li><a class="reference internal" href="#using-the-qgrnn">Using the QGRNN</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#learning-an-ising-model-with-the-qgrnn">Learning an Ising Model with the QGRNN</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#preparing-quantum-data">Preparing Quantum Data</a></li>
+<li><a class="reference internal" href="#learning-the-hamiltonian">Learning the Hamiltonian</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="xanadu-call-to-action-links">
+      <h3>Downloads</h3>
+      <div id="tutorial-type">demos/tutorial_qgrnn</div>
+      <div class="download-python-link">
+        <i class="fab fa-python"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Python script</div>
+      </div>
+      <div class="download-notebook-link">
+        <i class="fas fa-download"></i>&nbsp;
+        <div class="call-to-action-desktop-view">Download Notebook</div>
+      </div>
+      <div class="github-view-link">
+        <i class="fab fa-github"></i>&nbsp;
+        <div class="call-to-action-desktop-view">View on GitHub</div>
+      </div>
+      <div id="related-tutorials" class="mt-4">
+      <h3> Related tutorials</h3>
+      </div>
+    </div>
+  </div>
+</div>
+            
+
+          <div class="up-button">
+            
+              
+                <a href="../demos_qml.html"><i class="fas fa-angle-double-left"></i></a>
+              
+            
+          </div>
+
+          <div class="clearfix"></div>
+        </div>
+
+
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="learning2learn.html" title="Learning to learn with quantum neural networks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="quantum_neural_net.html" title="Function fitting with a photonic quantum neural network"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PennyLane  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../demonstrations.html" >Demos</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../demos_qml.html" >Quantum machine learning</a> &#187;</li> 
+      </ul>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/js/mdb.min.js"></script>
+    <!-- Nanoscroller -->
+    <script type="text/javascript" src="../_static/js/nanoscroller.min.js"></script>
+    <script type="text/javascript">
+        $('a.reference.external').each(function(){
+          var link = $(this).attr("href");
+          var hash = link.split('#')[1];
+          var page = link.split('#')[0].split('/').slice(-1)[0].replace(".html", "");
+          if (hash == page) {
+            $(this).attr('href', link.split('#')[0]);
+          }
+        });
+        $(".document > .section").removeClass("section");
+        var tocContainer = document.querySelector('.comment-container');
+        tocContainer.style.height = '85vh';
+        $(".nano").nanoScroller();
+    </script>
+    <!-- lightslider -->
+    <script src="../_static/js/lightslider.min.js"></script>
+
+    <script type="text/javascript">
+      $(window).scroll(function(){
+          var windowHeight = window.innerHeight;
+          var footer = document.querySelector('.page-footer');
+          var footerPosition = footer.getBoundingClientRect();
+          var tocContainer = document.querySelector('.comment-container');
+
+          // Check if the footer is visible
+          if (footerPosition.top < windowHeight && footerPosition.bottom >= 0) {
+              // We want the height of the TOC to be the height of the main content minus how much of the footer is visible.
+              tocContainer.style.height = 'calc(85vh - 45px - ' + (windowHeight - footerPosition.top) + 'px)'
+          } else {
+            // When the user scrolls back to the top of the page after scrolling to the bottom of the page,
+            // We want to reset the TOC container back to it's original height
+            if (tocContainer.style.height !== '85vh') tocContainer.style.height = '85vh';
+          }
+      });
+      $(document).ready(function () {
+          $(".css-transitions-only-after-page-load").each(function (index, element) {
+              setTimeout(function () { $(element).removeClass("css-transitions-only-after-page-load") }, 10);
+          });
+      });
+    </script>
+
+    <script type="text/javascript">
+    var downloadNote = $(".sphx-glr-download-link-note.admonition.note");
+    if (downloadNote.length >= 1) {
+      var tutorialUrlArray = $("#tutorial-type").text().split('/');
+
+      if (tutorialUrlArray[0] == "demos") {
+        tutorialUrlArray[0] = "demonstrations";
+      }
+
+      var githubLink = "https://github.com/" + "XanaduAI/qml" + "/blob/master/" + tutorialUrlArray.join("/") + ".py",
+          pythonLink = $(".sphx-glr-download .reference.download")[0].href,
+          notebookLink = $(".sphx-glr-download .reference.download")[1].href,
+          notebookDownloadPath = notebookLink.split('_downloads')[1].split('/').pop();
+
+      $(".download-python-link").wrap("<a href=" + pythonLink + " data-behavior='call-to-action-event' data-response='Download Python script' download target='_blank'/>");
+      $(".download-notebook-link").wrap("<a href=" + notebookLink + " data-behavior='call-to-action-event' data-response='Download Notebook' download target='_blank'/>");
+      $(".github-view-link").wrap("<a href=" + githubLink + " data-behavior='call-to-action-event' data-response='View on Github' target='_blank'/>");
+      $("#right-column").addClass("page-shadow");
+    } else {
+      $(".xanadu-call-to-action-links").hide();
+      $("#bottom-dl").attr('style','display: none !important');
+    }
+    </script>
+
+    <script type="text/javascript">
+      function makeUL(urls, text) {
+          var list = document.createElement('ul');
+
+          for (var i = 0; i < urls.length; i++) {
+              var item = document.createElement('li');
+              var a = document.createElement('a');
+              var linkText = document.createTextNode(text[i]);
+              a.appendChild(linkText);
+              a.href = urls[i];
+              item.appendChild(a);
+              list.appendChild(item);
+          }
+          return list;
+      }
+
+      if (typeof related_tutorials !== 'undefined') {
+          document.getElementById('related-tutorials').appendChild(makeUL(related_tutorials, related_tutorials_titles));
+          $("#related-tutorials ul li a").append(' <i class="fas fa-angle-double-right" style="font-size: smaller;"></i>')
+          $("#related-tutorials").show();
+      }
+    </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#featured-demos").lightSlider({
+                item: 3,
+                autoWidth: false,
+                slideMove: 1, // slidemove will be 1 if loop is true
+                slideMargin: 0,
+                auto: true,
+                loop: true,
+                controls: true,
+                pause: 5000,
+                pager: false,
+                prevHtml: "<i class='fas fa-chevron-left black-text' style='font-size: xx-large;'></i>",
+                nextHtml: "<i class='fas fa-chevron-right black-text' style='font-size: xx-large;'></i>",
+                responsive : [
+                    {
+                        breakpoint:1400,
+                        settings: {
+                            item:2,
+                            slideMove:1,
+                            slideMargin:0,
+                          }
+                    },
+                    {
+                        breakpoint:768,
+                        settings: {
+                            item:1,
+                            slideMove:1,
+                            slideMargin:6,
+                          }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+  <footer class="page-footer text-md-left pt-4">
+  
+    <hr class="pb-0 mb-0">
+    <div class="container-fluid">
+      <div class="row   justify-content-md-center">
+        <div class="col-md-3">
+          <h5 class=" mb-1 footer-heading">Xanadu</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <p class="">Located in the heart of downtown Toronto, we've brought together exceptional minds from around the world to build quantum computers that are useful and available to people everywhere.</p>
+        </div>
+
+    <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">PennyLane</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://pennylane.ai/">Home page</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/pennylane">GitHub</a></li>
+            <li><a class="" href="https://pennylane.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://discuss.pennylane.ai/">Discussion forum</a></li>
+            <li><a class="" href="https://twitter.com/pennylaneai/">Twitter</a></li>
+          </ul>
+        </div>
+		<div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">Strawberry Fields</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://strawberryfields.ai/">Interactive</a></li>
+            <li><a class="" href="https://github.com/XanaduAI/strawberryfields">GitHub</a></li>
+            <li><a class="" href="https://strawberryfields.readthedocs.io/">Documentation</a></li>
+            <li><a class="" href="https://u.strawberryfields.ai/slack/">Slack channel</a></li>
+          </ul>
+        </div>
+
+
+        <div class="col-md-2 col-4">
+          <h5 class=" mb-1 footer-heading">About</h5>
+          <hr width=100px class="d-inline-block mt-0 mb-1 Deep-purple accent-4">
+          <ul class="list-unstyled">
+            <li><a class="" href="https://www.xanadu.ai/">Home</a></li>
+            <li><a class="" href="https://www.xanadu.ai/hardware/">Hardware</a></li>
+            <li><a class="" href="https://www.xanadu.ai/software/">Software</a></li>
+            <li><a class="" href="https://www.xanadu.ai/research">Research</a></li>
+            <li><a class="" href="https://medium.com/XanaduAI">Blog</a></li>
+            <li><a class="" href="https://www.xanadu.ai/about/">About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- <hr class="pb-0 mb-0"> -->
+
+    <!--Social buttons-->
+    <div class="social-section text-center">
+        <ul class="list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a class="btn-fb" href="https://www.facebook.com/Xanadu-1312050742230493/"><i class="fab fa-facebook-f"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-tw" href="https://twitter.com/xanaduai"><i class="fab fa-twitter"> </i></a></li>
+            <li class="list-inline-item"><a class="" href="https://medium.com/xanaduai"><i class="fab fa-medium-m"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-li" href="https://www.linkedin.com/company/xanaduai/"><i class="fab fa-linkedin-in"> </i></a></li>
+            <li class="list-inline-item"><a class="btn-git" href="https://github.com/XanaduAI"><i class="fab fa-github"> </i></a></li>
+        </ul>
+        <a href="https://xanadu.us17.list-manage.com/subscribe?u=725f07a1d1a4337416c3129fd&id=294b062630" style="font-size: initial;">Stay updated with our newsletter</a>
+    </div>
+    <!--/.Social buttons-->
+
+    <!--Copyright-->
+    <div class="footer-copyright py-3 mt-0 text-center">
+        <div class="container-fluid">
+            © Copyright 2019 | Xanadu | All rights reserved
+            <br>
+             TensorFlow, the TensorFlow logo and any related marks are trademarks of Google Inc. 
+        </div>
+    </div>
+  </footer>
+  </body>
+</html>
