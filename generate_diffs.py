@@ -11,8 +11,6 @@ dev_url = 'http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/
 
 automatically_run = [f for f in files if f.startswith("tutorial_")]
 
-#automatically_run = ['tutorial_ensemble_multi_qpu.html']
-
 output_file = open('diffs.md','w')
 output_file.write(f'### Tutorials that differ: \n')
 
