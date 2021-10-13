@@ -84,8 +84,8 @@ def main():
             output_file.write(f'`{filename}`: \n\n')
             output_file.write('---\n\n')
 
-            write_file_diff(output_file, "Master", master_file_url, master_outputs, outputs_with_diffs):
-            write_file_diff(output_file, "Dev", dev_file_url, dev_outputs, outputs_with_diffs):
+            write_file_diff(output_file, "Master", master_file_url, master_outputs, outputs_with_diffs)
+            write_file_diff(output_file, "Dev", dev_file_url, dev_outputs, outputs_with_diffs)
 
             output_file.write('\n---\n\n')
 
