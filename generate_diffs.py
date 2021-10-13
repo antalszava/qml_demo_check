@@ -13,15 +13,14 @@ def parse_demo_outputs(filename):
     outputs = []
     for d in parser.data:
         if d != 'Out:':
-            continue
 
-        if '\n' in d:
-            # If there are newlines in the string, then extract each line
-            # by splitting and only keep the non-empty ones
-            lines = [line for line in d.split("\n") if line != '']
-            outputs.extend(lines)
-        else:
-            outputs.append(d)
+            if '\n' in d:
+                # If there are newlines in the string, then extract each line
+                # by splitting and only keep the non-empty ones
+                lines = [line for line in d.split("\n") if line != '']
+                outputs.extend(lines)
+            else:
+                outputs.append(d)
     return outputs
 
 def main():
