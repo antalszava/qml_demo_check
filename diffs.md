@@ -8,6 +8,7 @@
 Training accuracy (ensemble): 0.824
  0 1 1 0 0 0 0 0 0 0 1 1 0 0 1 0 0 1 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 0 0 0
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_ensemble_multi_qpu.html):
 
 ```
@@ -26,6 +27,7 @@ Training accuracy (ensemble): 0.84
 ```
  5.09234513e-08 4.05827240e+00 2.74944154e+00 6.07360302e+00
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_qng.html):
 
 ```
@@ -43,6 +45,7 @@ Training accuracy (ensemble): 0.84
 ```
 [[0.45959941488399797, 0.9609527141073113], [0.2702996191454587, 0.7804239603322595]]
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qaoa_intro.html):
 
 ```
@@ -126,6 +129,7 @@ n = 19,  E = -7.88223734 H, t = 0.09 s
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_adaptive_circuits.html):
 
 <details> 
@@ -211,6 +215,7 @@ Speed up: 2.82
 Evaluation time: 286.73 s
 Evaluation time: 101.81 s
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_parallel.html):
 
 ```
@@ -234,6 +239,7 @@ Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
 Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
 Doubly stochastic gradient descent min energy =  -4.4990195930951575
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_doubly_stochastic.html):
 
 ```
@@ -262,6 +268,7 @@ Gradient computation (best of 3): 2.194458166100003 sec per loop
 /home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
 0.9358535378025419
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_backprop.html):
 
 ```
@@ -286,6 +293,7 @@ Backward pass (best of 3): 0.09051658039998074 sec per loop
 ```
  4202496/11490434 [=========>....................] - ETA: 0s
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quanvolution.html):
 
 ```
@@ -670,6 +678,7 @@ Step 98: cost = -7.883507674089132 shots_used = 237600
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_rosalin.html):
 
 <details> 
@@ -1172,6 +1181,7 @@ Training completed in 0m 24s
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_transfer_learning.html):
 
 <details> 
@@ -1353,6 +1363,7 @@ Step 40, Cost = -7.258987907014075
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_falqon.html):
 
 <details> 
@@ -3409,6 +3420,7 @@ Group 1 expectation values: [0.93755207 0.94996042 0.96302938 0.96118149]
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_measurement_optimize.html):
 
 <details> 
@@ -5419,6 +5431,7 @@ Number of required measurements after optimization: 523
 ```
 /opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/torch/autograd/__init__.py:149: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at  /pytorch/aten/src/ATen/native/Copy.cpp:240.)
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_state_preparation.html):
 
 ```
@@ -5446,6 +5459,7 @@ Number of required measurements after optimization: 523
 30/30 - 13s - loss: 0.1702 - accuracy: 0.8600 - val_loss: 0.1719 - val_accuracy: 0.8600
 30/30 - 13s - loss: 0.1538 - accuracy: 0.8600 - val_loss: 0.1862 - val_accuracy: 0.8400
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qnn_module_tf.html):
 
 ```
@@ -5500,6 +5514,7 @@ Final cost value: 1.044140829353779e-05
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_pasqal.html):
 
 <details> 
@@ -5576,6 +5591,7 @@ Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_QGAN.html):
 
 <details> 
@@ -5631,6 +5647,7 @@ Step: 25    Cost: 0.006192562764640602
 Step: 30    Cost: 6.427645677603198e-07
 Step: 34    Cost: 1.1072988376257744e-09
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_noisy_circuits.html):
 
 ```
@@ -9824,6 +9841,7 @@ Step: 34    Cost: 5.228404765345524e-10
  </code>
  </pre>
  </details>
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_chemistry.html):
 
 <details> 
@@ -14011,6 +14029,7 @@ Step: 34    Cost: 5.228404765345524e-10
 ```
 /opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/templates/embeddings/amplitude.py:137: UserWarning: The pad argument will be replaced by the pad_with option in future versions of PennyLane.
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_multiclass_classification.html):
 
 ```
@@ -14029,6 +14048,7 @@ Step: 34    Cost: 5.228404765345524e-10
 No jit time: 0.0098 seconds
 First run time: 0.0520 seconds
 ```
+
 [Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_jax_transformations.html):
 
 ```

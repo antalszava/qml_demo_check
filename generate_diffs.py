@@ -32,12 +32,12 @@ def write_file_diff(file_obj, branch, file_url, outputs, diff_indices):
         file_obj.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
         for idx in diff_indices:
             file_obj.write(f'{outputs[idx]}\n')
-        file_obj.write(f' </code>\n </pre>\n </details>\n')
+        file_obj.write(f' </code>\n </pre>\n </details>\n\n')
     else:
         file_obj.write(f'```\n')
         for idx in diff_indices:
             file_obj.write(f'{outputs[idx]}\n')
-        file_obj.write(f'```\n')
+        file_obj.write(f'```\n\n')
 
 
 def main():
@@ -87,7 +87,7 @@ def main():
             write_file_diff(output_file, "Master", master_file_url, master_outputs, outputs_with_diffs)
             write_file_diff(output_file, "Dev", dev_file_url, dev_outputs, outputs_with_diffs)
 
-            output_file.write('\n---\n\n')
+            output_file.write('---\n\n')
 
     if no_diffs:
         output_file.write(f'### No differences found between the tutorial outputs. 🎉\n')
