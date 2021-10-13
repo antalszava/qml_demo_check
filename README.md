@@ -6,10 +6,12 @@ rendered demonstrations from the QML repository.
 The file is structured as follows:
 
 * Name of the tutorial (e.g., `tutorial_ensemble_multi_qpu.html`)
-* `Master` header: contains a link pointing to the live version of the demo
-* `Master`: lines in the printed results where a difference was detected
-* `Dev` header: contains a link pointing to the version of the demo built using the `dev` branch
-* `Dev`: lines in the printed results where a difference was detected
+* `Master`:
+    * Contains a link pointing to the live version of the demo
+    * Outputs the lines in the printed results where a difference was detected
+* `Dev`:
+    * Contains a link pointing to the version of the demo built using the `dev` branch
+    * Outputs the lines in the printed results where a difference was detected
 
 Comparing the affected lines in the `master` and `dev` cases should help
 determine if there was a non-negligible change in the output of the specific
