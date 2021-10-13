@@ -23,6 +23,23 @@ def parse_demo_outputs(filename):
                 outputs.append(d)
     return outputs
 
+def write_file_diff(file_obj, branch, file_url, outputs, diff_indices):
+
+    file_obj.write(f'[{branch}]({file_url}):\n\n')
+    if len(diff_indices) > 20:
+
+        # Insert a dropdown option if too many outputs
+        file_obj.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
+        for idx in diff_indices:
+            file_obj.write(f'{outputs[idx]}\n')
+        file_obj.write(f' </code>\n </pre>\n </details>\n')
+    else:
+        file_obj.write(f'```\n')
+        for idx in diff_indices:
+            file_obj.write(f'{outputs[idx]}\n')
+        file_obj.write(f'```\n')
+
+
 def main():
     master_path = "./data/master/demos/"
     dev_path = "./data/dev/demos/"
@@ -34,8 +51,8 @@ def main():
     automatically_run = [f for f in files if f.startswith("tutorial_")]
 
     output_file = open('diffs.md','w')
-    output_file.write(f'### Tutorials that differ: \n')
 
+    no_diffs = True
     for filename in automatically_run:
         master_file = os.path.join(master_path, filename)
         master_outputs = parse_demo_outputs(master_file)
@@ -57,6 +74,8 @@ def main():
                     pass
 
         if outputs_with_diffs:
+            if no_diffs:
+                no_diffs = False
 
             file_html = filename.replace('.py', '.html')
             master_file_url = master_url + file_html
@@ -64,37 +83,15 @@ def main():
 
             output_file.write(f'`{filename}`: \n\n')
             output_file.write('---\n\n')
-            if len(outputs_with_diffs) > 20:
 
-                # Insert a dropdown option if too many outputs
-                output_file.write(f'[Master]({master_file_url}):\n\n')
-                output_file.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
-                for idx in outputs_with_diffs:
-                    output_file.write(f'{master_outputs[idx]}\n')
-                output_file.write(f' </code>\n </pre>\n </details>\n')
-            else:
-                output_file.write(f'[Master]({master_file_url}):\n\n')
-                output_file.write(f'```\n')
-                for idx in outputs_with_diffs:
-                    output_file.write(f'{master_outputs[idx]}\n')
-                output_file.write(f'```\n')
-
-            if len(outputs_with_diffs) > 20:
-
-                # Insert a dropdown option if too many outputs
-                output_file.write(f'\n[Dev]({dev_file_url}):\n\n')
-                output_file.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
-                for idx in outputs_with_diffs:
-                    output_file.write(f'{dev_outputs[idx]}\n')
-                output_file.write(f' </code>\n </pre>\n </details>\n')
-            else:
-                output_file.write(f'\n[Dev]({dev_file_url}):\n\n')
-                output_file.write(f'```\n')
-                for idx in outputs_with_diffs:
-                    output_file.write(f'{dev_outputs[idx]}\n')
-                output_file.write(f'```\n')
+            write_file_diff(output_file, "Master", master_file_url, master_outputs, outputs_with_diffs):
+            write_file_diff(output_file, "Dev", dev_file_url, dev_outputs, outputs_with_diffs):
 
             output_file.write('\n---\n\n')
+
+    if no_diffs:
+        output_file.write(f'### No differences found between the tutorial outputs. 🎉\n')
+
     return 0
 
 if __name__ == '__main__':
