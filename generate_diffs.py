@@ -1,4 +1,5 @@
 import os
+import sys
 import difflib
 from html_parser import DemoOutputParser
 
