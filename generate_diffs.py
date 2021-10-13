@@ -77,7 +77,7 @@ for filename in automatically_run:
             output_file.write(f'[Master]({master_file_url}):\n\n')
             output_file.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
             for idx in outputs_with_diffs:
-                output_file.write(f'{master_outputs[idx]} \n')
+                output_file.write(f'{master_outputs[idx]}\n')
             output_file.write(f' </code>\n </pre>\n </details>\n')
         else:
             output_file.write(f'[Master]({master_file_url}):\n\n')
@@ -92,7 +92,7 @@ for filename in automatically_run:
             output_file.write(f'\n[Dev]({dev_file_url}):\n\n')
             output_file.write(f'<details> \n <summary>\n More \n </summary>\n <pre>\n <code>\n')
             for idx in outputs_with_diffs:
-                output_file.write(f'{dev_outputs[idx]} \n')
+                output_file.write(f'{dev_outputs[idx]}\n')
             output_file.write(f' </code>\n </pre>\n </details>\n')
         else:
             output_file.write(f'\n[Dev]({dev_file_url}):\n\n')
