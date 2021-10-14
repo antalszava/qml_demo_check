@@ -20,7 +20,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: built-website-master
+        name: built-website-dev
         path: |
           /tmp/qml_demos.zip
 
