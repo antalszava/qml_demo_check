@@ -45,10 +45,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: master
-
-    - uses: actions/checkout@v2
-      with:
         ref: demo_checker
 
     - uses: actions/download-artifact@v2
@@ -86,9 +82,6 @@ jobs:
       run: |
         git config user.name "QML demo checker Bot"
         git config user.email "<>"
-        git checkout master
-        git checkout demo_checker
-        git merge master
 
         python ./generate_diffs.py
         git add diffs.md
