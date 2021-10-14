@@ -47,7 +47,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: master
+        ref: demo_checker
 
     - uses: actions/download-artifact@v2
       with:
