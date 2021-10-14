@@ -14,15 +14,14 @@ jobs:
       with:
         ref: master
 
-    - name: Build tutorials
-      run: |
-        zip -r /tmp/qml_demos_dev.zip data/dev/demos
+    - name: Display structure of downloaded files
+      run: ls -la
 
     - uses: actions/upload-artifact@v2
       with:
         name: built-website-dev
         path: |
-          /tmp/qml_demos_dev.zip
+          built-website-dev.zip
 
   build-master:
     runs-on: ubuntu-latest
@@ -31,15 +30,14 @@ jobs:
       with:
         ref: master
 
-    - name: Build tutorials
-      run: |
-        zip -r /tmp/qml_demos_master.zip data/master/demos
+    - name: Display structure of downloaded files
+      run: ls -la
 
     - uses: actions/upload-artifact@v2
       with:
         name: built-website-master
         path: |
-          /tmp/qml_demos_master.zip
+          built-website-master.zip
 
   check-diffs:
     runs-on: ubuntu-latest
@@ -56,24 +54,24 @@ jobs:
     - name: Display structure of downloaded files
       run: ls -la
 
+    - name: Create dev dir
+      run: mkdir /tmp/dev/
+
     - name: Unzip dev demos
-      run: unzip qml_demos_dev.zip -d /tmp/
+      run: unzip built-website-dev.zip -d /tmp/dev/
 
     - uses: actions/download-artifact@v2
       with:
         name: built-website-master
 
+    - name: Create master dir
+      run: mkdir /tmp/master/
+
     - name: Unzip master demos
-      run: unzip qml_demos_master.zip -d /tmp/
+      run: unzip built-website-master.zip -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: built-website-master
-        path: |
-          /tmp/qml_demos_master.zip
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -82,9 +80,11 @@ jobs:
 
     - name: Display structure of downloaded files
       run: |
-        python ./generate_diffs.py
         git config user.name "QML demo checker Bot"
         git config user.email "<>"
+        git merge master
+
+        python ./generate_diffs.py
         git add diffs.md
         git commit -m "Update diffs found"
         git push
