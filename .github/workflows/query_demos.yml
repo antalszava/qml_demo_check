@@ -83,6 +83,7 @@ jobs:
         git config user.name "QML demo checker Bot"
         git config user.email "<>"
 
+        pip install pytz
         python ./generate_diffs.py
         git add diffs.md
         git commit -m "Update diffs found"
