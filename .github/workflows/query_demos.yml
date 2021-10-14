@@ -80,9 +80,11 @@ jobs:
 
     - name: Display structure of downloaded files
       run: |
-        python ./generate_diffs.py
         git config user.name "QML demo checker Bot"
         git config user.email "<>"
+        git merge master
+
+        python ./generate_diffs.py
         git add diffs.md
         git commit -m "Update diffs found"
         git push
