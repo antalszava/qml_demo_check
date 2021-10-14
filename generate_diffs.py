@@ -1,7 +1,11 @@
 import os
 import sys
 import difflib
+
+import pytz
 from html_parser import DemoOutputParser
+
+TIMEZONE = pytz.timezone("America/Toronto")
 
 def parse_demo_outputs(filename):
     """Parse the outputs produced by a demonstration from the QML repository.
@@ -125,6 +129,12 @@ def main():
 
             file_html = filename.replace('.py', '.html')
 
+            update_time = pytz.utc.localize(datetime.utcnow())
+            update_time = update_time.astimezone(TIMEZONE)
+            update_time_str = update_time.strftime("%Y-%m-%d  %H:%M:%S")
+            output_file.write(f"Last update: {update_time_str} (All times shown in Eastern time)\n")
+
+            output_file.write(f"# List of differences in demonstration outputs\n\n")
             output_file.write(f'`{filename}`: \n\n')
             output_file.write('---\n\n')
 
