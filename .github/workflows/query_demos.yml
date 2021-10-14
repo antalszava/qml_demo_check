@@ -1,0 +1,25 @@
+name: Create issue on commit
+
+on:
+
+  push:
+  workflow_dispatch:
+
+jobs:
+  create_commit:
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Create issue using REST API
+        run: |
+          curl --request GET \
+          --url https://api.github.com/repos/PennyLaneAI/qml/actions/artifacts/67264806/zip \
+          --header 'authorization: Bearer ${{ secrets.SECRET_FOR_DEMOS }}' \
+          --header 'content-type: application/json' \
+          --fail \
+          > some.txt
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output.txt
+          path: |
+            some.txt
