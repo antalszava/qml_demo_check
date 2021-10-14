@@ -10,6 +10,10 @@ jobs:
   build-dev:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: master
+
     - name: Build tutorials
       run: |
         zip -r /tmp/qml_demos.zip data/dev/demos
