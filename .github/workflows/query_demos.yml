@@ -57,14 +57,14 @@ jobs:
       run: ls -la
 
     - name: Unzip dev demos
-      run: unzip qml_demos_dev.zip -d /tmp/data/dev/demos
+      run: unzip qml_demos_dev.zip -d /tmp/
 
     - uses: actions/download-artifact@v2
       with:
         name: built-website-master
 
     - name: Unzip master demos
-      run: unzip qml_demos_master.zip -d /tmp/data/master/demos
+      run: unzip qml_demos_master.zip -d /tmp/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
