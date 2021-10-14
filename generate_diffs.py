@@ -3,6 +3,7 @@ import sys
 import difflib
 
 import pytz
+import datetime
 from html_parser import DemoOutputParser
 
 TIMEZONE = pytz.timezone("America/Toronto")
