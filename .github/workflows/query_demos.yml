@@ -18,7 +18,7 @@ jobs:
       with:
         name: built-website-dev
         path: |
-          /qml_demos_dev.zip
+          /built-website-dev.zip
 
   build-master:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
       with:
         name: built-website-master
         path: |
-          /qml_demos_master.zip
+          /built-website-master.zip
 
   check-diffs:
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
       run: mkdir /tmp/dev/
 
     - name: Unzip dev demos
-      run: unzip qml_demos_dev.zip -d /tmp/dev/
+      run: unzip built-website-dev.zip -d /tmp/dev/
 
     - uses: actions/download-artifact@v2
       with:
@@ -62,16 +62,10 @@ jobs:
       run: mkdir /tmp/master/
 
     - name: Unzip master demos
-      run: unzip qml_demos_master.zip -d /tmp/master/
+      run: unzip built-website-master.zip -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: built-website-master
-        path: |
-          /tmp/qml_demos_master.zip
 
     - name: Set up Python
       uses: actions/setup-python@v2
