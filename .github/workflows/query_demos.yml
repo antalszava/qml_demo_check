@@ -16,7 +16,7 @@ jobs:
 
     - name: Build tutorials
       run: |
-        zip -r /tmp/qml_demos.zip data/dev/demos
+        zip -r /tmp/qml_demos_dev.zip data/dev/demos
 
     - uses: actions/upload-artifact@v2
       with:
@@ -33,7 +33,7 @@ jobs:
 
     - name: Build tutorials
       run: |
-        zip -r /tmp/qml_demos.zip data/master/demos
+        zip -r /tmp/qml_demos_master.zip data/master/demos
 
     - uses: actions/upload-artifact@v2
       with:
