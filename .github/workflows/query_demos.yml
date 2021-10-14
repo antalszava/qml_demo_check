@@ -53,6 +53,9 @@ jobs:
       with:
         name: built-website-dev
 
+    - name: Display structure of downloaded files
+      run: ls -la
+
     - name: Unzip dev demos
       run: unzip qml_demos_dev.zip -d /tmp/data/dev/demos
 
