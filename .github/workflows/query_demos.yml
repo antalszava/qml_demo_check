@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Build tutorials
       run: |
-        zip -r /tmp/qml_demos.zip data/dev
+        zip -r /tmp/qml_demos.zip data/dev/demos
 
     - uses: actions/upload-artifact@v2
       with:
