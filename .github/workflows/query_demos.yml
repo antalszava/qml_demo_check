@@ -14,11 +14,14 @@ jobs:
       with:
         ref: master
 
+    - name: Display structure of downloaded files
+      run: ls -la
+
     - uses: actions/upload-artifact@v2
       with:
         name: built-website-dev
         path: |
-          /built-website-dev.zip
+          built-website-dev.zip
 
   build-master:
     runs-on: ubuntu-latest
@@ -27,11 +30,14 @@ jobs:
       with:
         ref: master
 
+    - name: Display structure of downloaded files
+      run: ls -la
+
     - uses: actions/upload-artifact@v2
       with:
         name: built-website-master
         path: |
-          /built-website-master.zip
+          built-website-master.zip
 
   check-diffs:
     runs-on: ubuntu-latest
