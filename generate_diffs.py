@@ -95,6 +95,13 @@ def main():
 
     output_file = open('diffs.md','w')
 
+    update_time = pytz.utc.localize(datetime.utcnow())
+    update_time = update_time.astimezone(TIMEZONE)
+    update_time_str = update_time.strftime("%Y-%m-%d  %H:%M:%S")
+    output_file.write(f"Last update: {update_time_str} (All times shown in Eastern time)\n")
+
+    output_file.write(f"# List of differences in demonstration outputs\n\n")
+
     all_demos_match = True
     for filename in automatically_run:
         master_file = os.path.join(master_path, filename)
@@ -129,13 +136,6 @@ def main():
                 all_demos_match = False
 
             file_html = filename.replace('.py', '.html')
-
-            update_time = pytz.utc.localize(datetime.utcnow())
-            update_time = update_time.astimezone(TIMEZONE)
-            update_time_str = update_time.strftime("%Y-%m-%d  %H:%M:%S")
-            output_file.write(f"Last update: {update_time_str} (All times shown in Eastern time)\n")
-
-            output_file.write(f"# List of differences in demonstration outputs\n\n")
             output_file.write(f'`{filename}`: \n\n')
             output_file.write('---\n\n')
 
