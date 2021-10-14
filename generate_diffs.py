@@ -88,7 +88,7 @@ def main():
 
     automatically_run = [f for f in files if f.startswith("tutorial_")]
 
-    output_file = open('dev_master_diffs.md','w')
+    output_file = open('diffs.md','w')
 
     all_demos_match = True
     for filename in automatically_run:

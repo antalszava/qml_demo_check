@@ -81,10 +81,16 @@ jobs:
         python-version: 3.7
 
     - name: Display structure of downloaded files
-      run: python ./generate_diffs.py
+      run: |
+        python ./generate_diffs.py
+        git config user.name "QML demo checker Bot"
+        git config user.email "<>"
+        git add diffs.md
+        git commit -m "Update diffs found"
+        git push
 
     - uses: actions/upload-artifact@v2
       with:
         name: diffs
         path: |
-          dev_master_diffs.md
+          diffs.md
