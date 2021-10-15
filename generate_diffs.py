@@ -90,7 +90,7 @@ def main():
 
     # Get all the filenames
     master_files = os.listdir(master_path)
-    dev_files = os.listdir(master_path)
+    dev_files = os.listdir(dev_path)
 
     master_automatically_run = set([f for f in master_files if f.startswith("tutorial_")])
     dev_automatically_run = set([f for f in dev_files if f.startswith("tutorial_")])
