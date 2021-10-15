@@ -58,7 +58,7 @@ jobs:
       run: mkdir /tmp/dev/
 
     - name: Unzip dev demos
-      run: unzip built-website-dev.zip -d /tmp/dev/
+      run: unzip /home/runner/work/qml_demo_check/qml_demo_check/built-website-dev.zip -d /tmp/dev/
 
     - uses: actions/download-artifact@v2
       with:
@@ -68,7 +68,7 @@ jobs:
       run: mkdir /tmp/master/
 
     - name: Unzip master demos
-      run: unzip built-website-master.zip -d /tmp/master/
+      run: unzip /home/runner/work/qml_demo_check/qml_demo_check/built-website-master.zip -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
