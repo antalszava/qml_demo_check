@@ -64,7 +64,7 @@ jobs:
       working-directory: /tmp/dev/
 
     - name: Unzip dev demos
-      run: unzip /tmp/dev/built-website-dev -d /tmp/dev/
+      run: unzip /tmp/dev/dev -d /tmp/dev/
 
     - name: Create master dir
       run: mkdir /tmp/master/
@@ -75,7 +75,7 @@ jobs:
         path: /tmp/master/
 
     - name: Unzip master demos
-      run: unzip /tmp/dev/built-website-master -d /tmp/master/
+      run: unzip /tmp/dev/master -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
