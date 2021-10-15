@@ -50,6 +50,10 @@ jobs:
     - name: Create dev dir
       run: mkdir /tmp/dev/
 
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: /tmp/dev/
+
     - uses: actions/download-artifact@v2
       with:
         name: built-website-dev
