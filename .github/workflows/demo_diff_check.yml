@@ -1,4 +1,4 @@
-name: Create issue on commit
+name: Example demo checker
 
 on:
 
@@ -47,6 +47,7 @@ jobs:
       with:
         ref: demo_checker
 
+    # Dev files
     - name: Create dev dir
       run: mkdir /tmp/dev/
 
@@ -66,6 +67,11 @@ jobs:
     - name: Unzip dev demos
       run: unzip /tmp/dev/dev -d /tmp/dev/
 
+    - name: Display structure of downloaded files
+      run: ls -R
+      working-directory: /tmp/dev/
+
+    # Master files
     - name: Create master dir
       run: mkdir /tmp/master/
 
@@ -78,15 +84,12 @@ jobs:
         name: built-website-master
         path: /tmp/master/
 
-    - name: Display structure of downloaded files
-      run: ls -R
-      working-directory: /tmp/master/
-
     - name: Unzip master demos
       run: unzip /tmp/master/master -d /tmp/master/
 
     - name: Display structure of downloaded files
-      run: ls -la /tmp/
+      run: ls -R
+      working-directory: /tmp/master/
 
     - name: Set up Python
       uses: actions/setup-python@v2
