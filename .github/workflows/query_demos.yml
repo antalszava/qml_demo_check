@@ -47,28 +47,30 @@ jobs:
       with:
         ref: demo_checker
 
+    - name: Create dev dir
+      run: mkdir /tmp/dev/
+
     - uses: actions/download-artifact@v2
       with:
         name: built-website-dev
+        path: /tmp/dev/
 
     - name: Display structure of downloaded files
       run: ls -la
 
-    - name: Create dev dir
-      run: mkdir /tmp/dev/
-
     - name: Unzip dev demos
-      run: unzip /home/runner/work/qml_demo_check/qml_demo_check/built-website-dev -d /tmp/dev/
-
-    - uses: actions/download-artifact@v2
-      with:
-        name: built-website-master
+      run: unzip /tmp/dev/built-website-dev -d /tmp/dev/
 
     - name: Create master dir
       run: mkdir /tmp/master/
 
+    - uses: actions/download-artifact@v2
+      with:
+        name: built-website-master
+        path: /tmp/master/
+
     - name: Unzip master demos
-      run: unzip /home/runner/work/qml_demo_check/qml_demo_check/built-website-master -d /tmp/master/
+      run: unzip /tmp/dev/built-website-master -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
