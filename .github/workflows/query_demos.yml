@@ -83,7 +83,7 @@ jobs:
       working-directory: /tmp/master/
 
     - name: Unzip master demos
-      run: unzip /tmp/dev/master -d /tmp/master/
+      run: unzip /tmp/master/master -d /tmp/master/
 
     - name: Display structure of downloaded files
       run: ls -la /tmp/
