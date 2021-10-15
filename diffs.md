@@ -1,4 +1,4 @@
-Last update: 2021-10-14  16:10:11 (All times shown in Eastern time)
+Last update: 2021-10-14  16:13:18 (All times shown in Eastern time)
 # List of differences in demonstration outputs
 
 `tutorial_QGAN.html`: 
@@ -82,9 +82,6 @@ Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
  </details>
 
 ---
-
-Last update: 2021-10-14  16:10:11 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_vqe_qng.html`: 
 
@@ -190,9 +187,6 @@ Final circuit parameters =
 
 ---
 
-Last update: 2021-10-14  16:10:11 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_doubly_stochastic.html`: 
 
 ---
@@ -219,9 +213,6 @@ Doubly stochastic gradient descent min energy =  -4.4990195930951575
 
 ---
 
-Last update: 2021-10-14  16:10:11 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_vqe_parallel.html`: 
 
 ---
@@ -243,9 +234,6 @@ Evaluation time: 94.13 s
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_quantum_chemistry.html`: 
 
@@ -8781,9 +8769,6 @@ Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
 
 ---
 
-Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_falqon.html`: 
 
 ---
@@ -8894,9 +8879,6 @@ Step 40, Cost = -7.258987907014076
 
 ---
 
-Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_noisy_circuits.html`: 
 
 ---
@@ -8926,9 +8908,6 @@ Step: 34    Cost: 1.1072988376257744e-09
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_gbs.html`: 
 
@@ -8981,9 +8960,6 @@ Last update: 2021-10-14  16:10:12 (All times shown in Eastern time)
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_quanvolution.html`: 
 
@@ -9423,9 +9399,6 @@ Epoch 30/30
 
 ---
 
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_quantum_transfer_learning.html`: 
 
 ---
@@ -9686,9 +9659,6 @@ Training completed in 0m 27s
 
 ---
 
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_pasqal.html`: 
 
 ---
@@ -9761,9 +9731,6 @@ Final cost value: 1.044140829353779e-05
 
 ---
 
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_quantum_natural_gradient.html`: 
 
 ---
@@ -9788,9 +9755,6 @@ Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
 
 ---
 
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_ensemble_multi_qpu.html`: 
 
 ---
@@ -9814,9 +9778,6 @@ Counter({1: 37, 0: 3})
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_adaptive_circuits.html`: 
 
@@ -9966,9 +9927,6 @@ n = 19,  E = -7.88223734 H, t = 0.09 s
 
 ---
 
-Last update: 2021-10-14  16:10:13 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_general_parshift.html`: 
 
 ---
@@ -9992,9 +9950,6 @@ Second-order finite difference:    [ 0.26814   1.696853 -2.055918 -7.236953]
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_backprop.html`: 
 
@@ -10027,9 +9982,6 @@ Gradient computation (best of 3): 2.2336992747000295 sec per loop
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_rosalin.html`: 
 
@@ -10785,9 +10737,6 @@ Step 98: cost = -7.883507674089132 shots_used = 237600
 
 ---
 
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_jax_transformations.html`: 
 
 ---
@@ -10807,9 +10756,6 @@ First run time: 0.0528 seconds
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_multiclass_classification.html`: 
 
@@ -10837,9 +10783,6 @@ Iter:    86 | Cost: 0.0964097 | Acc train: 0.9553571 | Acc test: 0.9736842
 
 ---
 
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
-
 `tutorial_qaoa_intro.html`: 
 
 ---
@@ -10857,9 +10800,6 @@ Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
 ```
 
 ---
-
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_measurement_optimize.html`: 
 
@@ -15024,9 +14964,6 @@ Group 1 expectation values: [0.93755207 0.94996042 0.96302938 0.96118149]
  </details>
 
 ---
-
-Last update: 2021-10-14  16:10:14 (All times shown in Eastern time)
-# List of differences in demonstration outputs
 
 `tutorial_qnn_module_tf.html`: 
 
