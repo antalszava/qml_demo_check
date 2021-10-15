@@ -56,7 +56,8 @@ jobs:
         path: /tmp/dev/
 
     - name: Display structure of downloaded files
-      run: ls -la
+      run: ls -R
+      working-directory: /tmp/dev/
 
     - name: Unzip dev demos
       run: unzip /tmp/dev/built-website-dev -d /tmp/dev/
