@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        ref: demo_checker
+        ref: master
 
     # Dev files
     - name: Create dev dir
