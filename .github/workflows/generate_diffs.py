@@ -154,7 +154,7 @@ def main():
 
         # 3. Bump the differences
         for i, demo_name in enumerate(demos_with_diffs):
-            master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[filename]
+            master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[demo_name]
 
             demos_with_diffs.append(filename)
             file_html = filename.replace('.py', '.html')
