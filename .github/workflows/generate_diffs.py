@@ -146,7 +146,7 @@ def main():
         # contents
         output_file.write("# Table of contents\n\n")
         for i, demo_name in enumerate(demos_with_diffs):
-            output_file.write(f'{i}. [{demo_name}](#demo{i})\n')
+            output_file.write(f'{i + 1}. [{demo_name}](#demo{i})\n')
 
         # 2. Note the number of all demos
         output_file.write(f"\n\nNumber of demos different/all demos: {len(demos_with_diffs)}/{len(automatically_run)}\n\n")
@@ -156,7 +156,7 @@ def main():
             master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[demo_name]
 
             file_html = demo_name.replace('.py', '.html')
-            output_file.write(f'## {demo_name} <a name="demo{i}"></a>\n\n')
+            output_file.write(f'## {i + 1}. {demo_name} <a name="demo{i}"></a>\n\n')
             output_file.write('---\n\n')
 
             # Write the Master version difference to file
