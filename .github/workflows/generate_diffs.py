@@ -117,7 +117,6 @@ def main():
         outputs_with_diffs = set()
         for out_idx, (a,b) in enumerate(zip(master_outputs, dev_outputs)):
 
-            demo_name = filename
             for i,s in enumerate(difflib.ndiff(a, b)):
 
                 # The output of difflib.ndiff can be one of three cases:
@@ -156,8 +155,7 @@ def main():
         for i, demo_name in enumerate(demos_with_diffs):
             master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[demo_name]
 
-            demos_with_diffs.append(filename)
-            file_html = filename.replace('.py', '.html')
+            file_html = demo_name.replace('.py', '.html')
             output_file.write(f'##{filename} <a name="demo{i}"></a>\n\n')
             output_file.write('---\n\n')
 
