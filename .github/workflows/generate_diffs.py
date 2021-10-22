@@ -99,14 +99,14 @@ def main():
 
     output_file = open('diffs.md','w')
 
+    # Write a time update
     update_time = pytz.utc.localize(datetime.utcnow())
     update_time = update_time.astimezone(TIMEZONE)
     update_time_str = update_time.strftime("%Y-%m-%d  %H:%M:%S")
     output_file.write(f"Last update: {update_time_str} (All times shown in Eastern time)\n")
 
-    output_file.write(f"# List of differences in demonstration outputs\n\n")
-
-    all_demos_match = True
+    demos_with_diffs = []
+    database_of_differences = {}
     for filename in automatically_run:
         master_file = os.path.join(master_path, filename)
         master_outputs = parse_demo_outputs(master_file)
@@ -135,10 +135,28 @@ def main():
 
         if outputs_with_diffs:
 
-            # Some demo outputs were different
-            if all_demos_match:
-                all_demos_match = False
+            demos_with_diffs.append(filename)
+            database_of_differences[filename] = (master_outputs, dev_outputs, outputs_with_diffs)
 
+    if not demos_with_diffs:
+        output_file.write(f'### No differences found between the tutorial outputs. 🎉\n')
+    else:
+        output_file.write("# List of differences in demonstration outputs\n\n")
+
+        # 1. Create a list of all the demos that are different in the table of
+        # contents
+        output_file.write("# Table of contents")
+        for i, demo_name in enumerate(demos_with_diffs):
+            output_file.write(f'{i}. [{demo_name}](#demo{i})\n')
+
+        # 2. Note the number of all demos
+        output_file.write(f"Number of demos different/all demos: {len(demos_with_diffs)}/{len(automatically_run)}")
+
+        # 3. Bump the differences
+        for demo_name in demos_with_diffs:
+            master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[filename]
+
+            demos_with_diffs.append(filename)
             file_html = filename.replace('.py', '.html')
             output_file.write(f'`{filename}`: \n\n')
             output_file.write('---\n\n')
@@ -152,9 +170,6 @@ def main():
             write_file_diff(output_file, "Dev", dev_file_url, dev_outputs, outputs_with_diffs)
 
             output_file.write('---\n\n')
-
-    if all_demos_match:
-        output_file.write(f'### No differences found between the tutorial outputs. 🎉\n')
 
     return 0
 
