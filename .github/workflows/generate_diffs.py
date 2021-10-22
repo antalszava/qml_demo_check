@@ -153,12 +153,12 @@ def main():
         output_file.write(f"Number of demos different/all demos: {len(demos_with_diffs)}/{len(automatically_run)}")
 
         # 3. Bump the differences
-        for demo_name in demos_with_diffs:
+        for i, demo_name in enumerate(demos_with_diffs):
             master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[filename]
 
             demos_with_diffs.append(filename)
             file_html = filename.replace('.py', '.html')
-            output_file.write(f'`{filename}`: \n\n')
+            output_file.write(f'##{filename} <a name="demo{i}"></a>\n\n')
             output_file.write('---\n\n')
 
             # Write the Master version difference to file
