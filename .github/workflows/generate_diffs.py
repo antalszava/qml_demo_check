@@ -156,7 +156,7 @@ def main():
             master_outputs, dev_outputs, outputs_with_diffs = database_of_differences[demo_name]
 
             file_html = demo_name.replace('.py', '.html')
-            output_file.write(f'## {filename} <a name="demo{i}"></a>\n\n')
+            output_file.write(f'## {demo_name} <a name="demo{i}"></a>\n\n')
             output_file.write('---\n\n')
 
             # Write the Master version difference to file
