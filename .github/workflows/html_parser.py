@@ -20,7 +20,7 @@ class DemoOutputParser(HTMLParser):
 
         super().__init__()
     
-    def handle_starttag(self, attrs):
+    def handle_starttag(self, tag, attrs):
         for attr in attrs:
             sphinx_script_output_tag = "sphx-glr-script-out"
             out = any(sphinx_script_output_tag in a for a in attr if a is not None)
