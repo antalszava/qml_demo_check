@@ -78,6 +78,22 @@ Demo: tutorial_noisy_circuit_optimization, image #: 02
 
 ---
 
+Demo: tutorial_trapped_ions, image #: 01 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_trapped_ions_001.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_trapped_ions_001.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_error_mitigation, image #: 02 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_error_mitigation_002.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_error_mitigation_002.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
 Demo: tutorial_quantum_analytic_descent, image #: 04 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_quantum_analytic_descent_004.png" alt="alt text" title="image Title" height="150"/> 
@@ -843,6 +859,14 @@ Demo: tutorial_chemical_reactions, image #: 02
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_chemical_reactions_002.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_chemical_reactions_002.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_error_mitigation, image #: 01 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_error_mitigation_001.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_error_mitigation_001.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
