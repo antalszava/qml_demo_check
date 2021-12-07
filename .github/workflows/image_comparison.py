@@ -1,5 +1,4 @@
 import os
-import sys
 import difflib
 
 import pytz
@@ -83,8 +82,8 @@ def main():
     differences found.
     """
     # need to unzip the demo files
-    master_path = "/master/tmp/qml_demos/demos/images"
-    dev_path = "/dev/tmp/qml_demos/demos/images"
+    master_path = "../../master/tmp/qml_demos/demos/images"
+    dev_path = "../../dev/tmp/qml_demos/demos/images"
 
     master_url = 'https://pennylane.ai/qml/demos/'
     dev_url = 'http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/'
@@ -96,9 +95,9 @@ def main():
     master_images = set([f for f in master_files if f.endswith(".png")])
     dev_images = set([f for f in dev_files if f.endswith(".png")])
 
-    all_images = master_automatically_run.union(dev_automatically_run)
+    all_images = master_images.union(dev_images)
 
-    output_file = open('image_comparison.md','w')
+    output_file = open('../../image_comparison.md','w')
 
     # Write a time update
     update_time = pytz.utc.localize(datetime.utcnow())
@@ -116,4 +115,4 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()
