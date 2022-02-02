@@ -190,6 +190,14 @@ Demo: tutorial_coherent_vqls, image #: 02
 
 ---
 
+Demo: tutorial_local_cost_functions, image #: 10 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_010.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_010.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
 Demo: tutorial_pasqal, image #: 01 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_pasqal_001.png" alt="alt text" title="image Title" height="150"/> 
@@ -214,14 +222,6 @@ Demo: tutorial_doubly_stochastic, image #: 03
 
 ---
 
-Demo: tutorial_ensemble_multi_qpu, image #: 03 
-
-<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_003.png" alt="alt text" title="image Title" height="150"/> 
-
-<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_003.png" alt="alt text" title="image Title" height="150"/>
-
----
-
 Demo: tutorial_haar_measure, image #: 02 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_haar_measure_002.png" alt="alt text" title="image Title" height="150"/> 
@@ -235,6 +235,14 @@ Demo: tutorial_general_parshift, image #: 04
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_general_parshift_004.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_general_parshift_004.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_local_cost_functions, image #: 06 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_006.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_006.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
@@ -622,27 +630,11 @@ Demo: tutorial_measurement_optimize, image #: 03
 
 ---
 
-Demo: tutorial_ensemble_multi_qpu, image #: 04 
-
-<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_004.png" alt="alt text" title="image Title" height="150"/> 
-
-<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_004.png" alt="alt text" title="image Title" height="150"/>
-
----
-
 Demo: tutorial_falqon, image #: 03 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_falqon_003.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_falqon_003.png" alt="alt text" title="image Title" height="150"/>
-
----
-
-Demo: tutorial_ensemble_multi_qpu, image #: 02 
-
-<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_002.png" alt="alt text" title="image Title" height="150"/> 
-
-<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_002.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
@@ -678,27 +670,11 @@ Demo: tutorial_doubly_stochastic, image #: 02
 
 ---
 
-Demo: tutorial_ensemble_multi_qpu, image #: 01 
-
-<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_001.png" alt="alt text" title="image Title" height="150"/> 
-
-<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_ensemble_multi_qpu_001.png" alt="alt text" title="image Title" height="150"/>
-
----
-
 Demo: tutorial_vqe, image #: 01 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_vqe_001.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_vqe_001.png" alt="alt text" title="image Title" height="150"/>
-
----
-
-Demo: tutorial_vqe_parallel, image #: 01 
-
-<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_vqe_parallel_001.png" alt="alt text" title="image Title" height="150"/> 
-
-<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_vqe_parallel_001.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
@@ -790,6 +766,22 @@ Demo: tutorial_local_cost_functions, image #: 04
 
 ---
 
+Demo: tutorial_local_cost_functions, image #: 07 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_007.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_007.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_local_cost_functions, image #: 09 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_009.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_009.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
 Demo: tutorial_vqt, image #: 03 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_vqt_003.png" alt="alt text" title="image Title" height="150"/> 
@@ -830,6 +822,14 @@ Demo: tutorial_vqls, image #: 01
 
 ---
 
+Demo: tutorial_local_cost_functions, image #: 08 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_008.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_008.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
 Demo: tutorial_qgrnn, image #: 01 
 
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_qgrnn_001.png" alt="alt text" title="image Title" height="150"/> 
@@ -843,6 +843,14 @@ Demo: tutorial_classical_shadows, image #: 01
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_classical_shadows_001.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_classical_shadows_001.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_backprop, image #: 03 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_backprop_003.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_backprop_003.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
@@ -883,6 +891,14 @@ Demo: tutorial_quantum_metrology, image #: 01
 <img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_quantum_metrology_001.png" alt="alt text" title="image Title" height="150"/> 
 
 <img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_quantum_metrology_001.png" alt="alt text" title="image Title" height="150"/>
+
+---
+
+Demo: tutorial_local_cost_functions, image #: 05 
+
+<img src="https://pennylane.ai/qml/_images/sphx_glr_tutorial_local_cost_functions_005.png" alt="alt text" title="image Title" height="150"/> 
+
+<img src="http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/_images/sphx_glr_tutorial_local_cost_functions_005.png" alt="alt text" title="image Title" height="150"/>
 
 ---
 
