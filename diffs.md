@@ -1,1761 +1,35 @@
-Last update: 2022-02-01  20:18:13 (All times shown in Eastern time)
+Last update: 2022-03-07  14:54:26 (All times shown in Eastern time)
 # List of differences in demonstration outputs
 
 # Table of contents
 
-1. [tutorial_general_parshift.html](#demo0)
-2. [tutorial_pasqal.html](#demo1)
-3. [tutorial_QGAN.html](#demo2)
-4. [tutorial_doubly_stochastic.html](#demo3)
-5. [tutorial_quanvolution.html](#demo4)
-6. [tutorial_backprop.html](#demo5)
-7. [tutorial_jax_transformations.html](#demo6)
-8. [tutorial_qaoa_intro.html](#demo7)
-9. [tutorial_quantum_transfer_learning.html](#demo8)
-10. [tutorial_rosalin.html](#demo9)
-11. [tutorial_gbs.html](#demo10)
-12. [tutorial_quantum_chemistry.html](#demo11)
-13. [tutorial_quantum_natural_gradient.html](#demo12)
+1. [tutorial_gbs.html](#demo0)
+2. [tutorial_adaptive_circuits.html](#demo1)
+3. [tutorial_jax_transformations.html](#demo2)
+4. [tutorial_vqe_parallel.html](#demo3)
+5. [tutorial_qnn_module_tf.html](#demo4)
+6. [tutorial_quantum_chemistry.html](#demo5)
+7. [tutorial_falqon.html](#demo6)
+8. [tutorial_doubly_stochastic.html](#demo7)
+9. [tutorial_backprop.html](#demo8)
+10. [tutorial_qaoa_intro.html](#demo9)
+11. [tutorial_QGAN.html](#demo10)
+12. [tutorial_rosalin.html](#demo11)
+13. [tutorial_general_parshift.html](#demo12)
 14. [tutorial_measurement_optimize.html](#demo13)
 15. [tutorial_ensemble_multi_qpu.html](#demo14)
-16. [tutorial_falqon.html](#demo15)
-17. [tutorial_vqe_parallel.html](#demo16)
-18. [tutorial_vqe_qng.html](#demo17)
-19. [tutorial_adaptive_circuits.html](#demo18)
-20. [tutorial_qnn_module_tf.html](#demo19)
+16. [tutorial_noisy_circuits.html](#demo15)
+17. [tutorial_pasqal.html](#demo16)
+18. [tutorial_quanvolution.html](#demo17)
+19. [tutorial_vqe_qng.html](#demo18)
+20. [tutorial_quantum_natural_gradient.html](#demo19)
 21. [tutorial_multiclass_classification.html](#demo20)
-22. [tutorial_noisy_circuits.html](#demo21)
+22. [tutorial_quantum_transfer_learning.html](#demo21)
 
 
 Number of demos different/all demos: 22/54
 
-## 1. tutorial_general_parshift.html <a name="demo0"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_general_parshift.html):
-
-```
-For 2 qubits the spectrum is [-2.0, -1.0, 0.0, 1.0, 2.0].
-For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0].
-For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0].
-Second-order finite difference:    [ 0.26814   1.696854 -2.055918 -7.236953]
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_general_parshift.html):
-
-```
-For 2 qubits the spectrum is [-2.0, -1.0, 0, 1.0, 2.0].
-For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0].
-For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0, 5.0].
-Second-order finite difference:    [ 0.26814   1.696853 -2.055918 -7.236953]
-```
-
----
-
-## 2. tutorial_pasqal.html <a name="demo1"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_pasqal.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost=0.0001672286566463592
-Step 5: cost=0.9979047620889769
-Step 10: cost=0.6109142342375409
-Step 15: cost=0.9989467692733883
-Step 20: cost=0.006048046345186867
-Step 25: cost=0.8941419709966564
-Step 30: cost=0.6746950251504293
-Step 35: cost=7.001036075480078e-07
-Step 40: cost=0.6766725857506097
-Step 45: cost=0.3557129296721806
-Step 50: cost=0.02749132423642614
-Step 55: cost=0.09109423901502911
-Step 60: cost=0.3024013456684429
-Step 65: cost=0.01987428630678778
-Step 70: cost=0.007314119488719198
-Step 75: cost=0.0005591169242113734
-Step 80: cost=0.00048827164327969966
-Step 85: cost=6.396804707814799e-07
-Step 90: cost=5.587668130241363e-05
-Step 95: cost=7.117522822325351e-07
-Final cost value: 1.230815538836673e-05
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_pasqal.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost=0.00016714805870154947
-Step 5: cost=0.996033675363325
-Step 10: cost=0.6155194682134244
-Step 15: cost=0.999094333759448
-Step 20: cost=0.005043049850429249
-Step 25: cost=0.8981007649191639
-Step 30: cost=0.6573246599021019
-Step 35: cost=8.465054293083085e-07
-Step 40: cost=0.6788142780522586
-Step 45: cost=0.3556685123234262
-Step 50: cost=0.026910206671360015
-Step 55: cost=0.08898491577262835
-Step 60: cost=0.31026489878494545
-Step 65: cost=0.02024610375919167
-Step 70: cost=0.007934105929226831
-Step 75: cost=0.0005895204131158849
-Step 80: cost=0.0005427646474345238
-Step 85: cost=8.379720526363599e-07
-Step 90: cost=5.347187868043335e-05
-Step 95: cost=8.521633398927975e-07
-Final cost value: 1.044140829353779e-05
- </code>
- </pre>
- </details>
-
----
-
-## 3. tutorial_QGAN.html <a name="demo2"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_QGAN.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost = -0.05727687478065491
-Step 5: cost = -0.26348111033439636
-Step 10: cost = -0.4273917004466057
-Step 15: cost = -0.47261590510606766
-Step 20: cost = -0.48406896367669106
-Step 25: cost = -0.48946382384747267
-Step 30: cost = -0.49281889386475086
-Step 35: cost = -0.4949494309257716
-Step 40: cost = -0.49627021909691393
-Step 45: cost = -0.49707187968306243
-Prob(real classified as real):  0.9985871425596997
-Prob(fake classified as real):  0.5011128038167953
-Step 0: cost = -0.5833386033773422
-Step 5: cost = -0.8915732949972153
-Step 10: cost = -0.9784244522452354
-Step 15: cost = -0.9946483590174466
-Step 20: cost = -0.9984995491686277
-Step 25: cost = -0.9995636216044659
-Step 30: cost = -0.9998718172573717
-Step 35: cost = -0.9999619696027366
-Step 40: cost = -0.9999888275397097
-Step 45: cost = -0.999996672290763
-Prob(fake classified as real):  0.99999862746688
-Discriminator cost:  0.0014114849071802382
-Real Bloch vector: [-0.2169418   0.45048445 -0.86602525]
-Generator Bloch vector: [-0.2840465   0.41893208 -0.86244407]
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_QGAN.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost = -0.05727699398994446
-Step 5: cost = -0.26348118484020233
-Step 10: cost = -0.4273917078971863
-Step 15: cost = -0.47261589020490646
-Step 20: cost = -0.48406901210546494
-Step 25: cost = -0.4894639030098915
-Step 30: cost = -0.49281900376081467
-Step 35: cost = -0.4949493855237961
-Step 40: cost = -0.49627020210027695
-Step 45: cost = -0.49707192927598953
-Prob(real classified as real):  0.9985870718955994
-Prob(fake classified as real):  0.5011127963662148
-Step 0: cost = -0.583338625729084
-Step 5: cost = -0.8915732204914093
-Step 10: cost = -0.9784243106842041
-Step 15: cost = -0.9946482479572296
-Step 20: cost = -0.9984994232654572
-Step 25: cost = -0.9995635747909546
-Step 30: cost = -0.9998717308044434
-Step 35: cost = -0.9999619424343109
-Step 40: cost = -0.9999886155128479
-Step 45: cost = -0.9999965727329254
-Prob(fake classified as real):  0.9999985992908478
-Discriminator cost:  0.001411527395248413
-Real Bloch vector: [-0.21694186  0.45048442 -0.86602521]
-Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
- </code>
- </pre>
- </details>
-
----
-
-## 4. tutorial_doubly_stochastic.html <a name="demo3"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_doubly_stochastic.html):
-
-```
-Vanilla gradient descent min energy =  -4.605247234069292
-Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
-Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
-Doubly stochastic gradient descent min energy =  -4.4990195930951575
-Adaptive QSGD min energy =  -4.592548741613157
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_doubly_stochastic.html):
-
-```
-/home/runner/work/qml/qml/demonstrations/tutorial_doubly_stochastic.py:158: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-Vanilla gradient descent min energy =  -4.605247234069292
-Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
-Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
-Doubly stochastic gradient descent min energy =  -4.4990195930951575
-```
-
----
-
-## 5. tutorial_quanvolution.html <a name="demo4"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_quanvolution.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
- 1056768/11490434 [=>............................] - ETA: 0s
- 8273920/11490434 [====================>.........] - ETA: 0s
-11493376/11490434 [==============================] - 0s 0us/step
-Quantum pre-processing of train images:
-1/50
-2/50
-3/50
-4/50
-5/50
-6/50
-7/50
-8/50
-9/50
-10/50
-11/50
-12/50
-13/50
-14/50
-15/50
-16/50
-17/50
-18/50
-19/50
-20/50
-21/50
-22/50
-23/50
-24/50
-25/50
-26/50
-27/50
-28/50
-29/50
-30/50
-31/50
-32/50
-33/50
-34/50
-35/50
-36/50
-37/50
-38/50
-39/50
-40/50
-41/50
-42/50
-43/50
-44/50
-45/50
-46/50
-47/50
-48/50
-49/50
-50/50
-Quantum pre-processing of test images:
-1/30
-2/30
-3/30
-4/30
-5/30
-6/30
-7/30
-8/30
-9/30
-10/30
-11/30
-12/30
-13/30
-14/30
-15/30
-16/30
-17/30
-18/30
-19/30
-20/30
-21/30
-22/30
-23/30
-24/30
-25/30
-26/30
-27/30
-28/30
-29/30
-30/30
-Epoch 1/30
-13/13 - 0s - loss: 3.0160 - accuracy: 0.1000 - val_loss: 2.0646 - val_accuracy: 0.2000
-Epoch 2/30
-13/13 - 0s - loss: 2.2510 - accuracy: 0.1800 - val_loss: 1.9801 - val_accuracy: 0.3333
-Epoch 3/30
-13/13 - 0s - loss: 1.7851 - accuracy: 0.4000 - val_loss: 1.8177 - val_accuracy: 0.2667
-Epoch 4/30
-13/13 - 0s - loss: 1.3652 - accuracy: 0.5400 - val_loss: 1.6107 - val_accuracy: 0.4667
-Epoch 5/30
-13/13 - 0s - loss: 1.1317 - accuracy: 0.7800 - val_loss: 1.4723 - val_accuracy: 0.6000
-Epoch 6/30
-13/13 - 0s - loss: 0.9360 - accuracy: 0.8600 - val_loss: 1.4686 - val_accuracy: 0.5333
-Epoch 7/30
-13/13 - 0s - loss: 0.7383 - accuracy: 0.9400 - val_loss: 1.3536 - val_accuracy: 0.5667
-Epoch 8/30
-13/13 - 0s - loss: 0.5846 - accuracy: 0.9800 - val_loss: 1.2785 - val_accuracy: 0.6667
-Epoch 9/30
-13/13 - 0s - loss: 0.4987 - accuracy: 0.9800 - val_loss: 1.2253 - val_accuracy: 0.6333
-Epoch 10/30
-13/13 - 0s - loss: 0.3921 - accuracy: 1.0000 - val_loss: 1.2655 - val_accuracy: 0.6333
-Epoch 11/30
-13/13 - 0s - loss: 0.3617 - accuracy: 1.0000 - val_loss: 1.1555 - val_accuracy: 0.7000
-Epoch 12/30
-13/13 - 0s - loss: 0.3078 - accuracy: 1.0000 - val_loss: 1.2107 - val_accuracy: 0.6667
-Epoch 13/30
-13/13 - 0s - loss: 0.2618 - accuracy: 1.0000 - val_loss: 1.1166 - val_accuracy: 0.7333
-Epoch 14/30
-13/13 - 0s - loss: 0.2463 - accuracy: 1.0000 - val_loss: 1.0624 - val_accuracy: 0.7000
-Epoch 15/30
-13/13 - 0s - loss: 0.2033 - accuracy: 1.0000 - val_loss: 1.0904 - val_accuracy: 0.7333
-Epoch 16/30
-13/13 - 0s - loss: 0.1799 - accuracy: 1.0000 - val_loss: 1.0865 - val_accuracy: 0.7333
-Epoch 17/30
-13/13 - 0s - loss: 0.1682 - accuracy: 1.0000 - val_loss: 1.0385 - val_accuracy: 0.7333
-Epoch 18/30
-13/13 - 0s - loss: 0.1484 - accuracy: 1.0000 - val_loss: 1.0676 - val_accuracy: 0.7000
-Epoch 19/30
-13/13 - 0s - loss: 0.1349 - accuracy: 1.0000 - val_loss: 1.0447 - val_accuracy: 0.7000
-Epoch 20/30
-13/13 - 0s - loss: 0.1255 - accuracy: 1.0000 - val_loss: 0.9935 - val_accuracy: 0.7333
-Epoch 21/30
-13/13 - 0s - loss: 0.1135 - accuracy: 1.0000 - val_loss: 1.0451 - val_accuracy: 0.7333
-Epoch 22/30
-13/13 - 0s - loss: 0.1041 - accuracy: 1.0000 - val_loss: 1.0142 - val_accuracy: 0.7333
-Epoch 23/30
-13/13 - 0s - loss: 0.0983 - accuracy: 1.0000 - val_loss: 0.9893 - val_accuracy: 0.7333
-Epoch 24/30
-13/13 - 0s - loss: 0.0913 - accuracy: 1.0000 - val_loss: 0.9807 - val_accuracy: 0.7000
-Epoch 25/30
-13/13 - 0s - loss: 0.0868 - accuracy: 1.0000 - val_loss: 0.9715 - val_accuracy: 0.7333
-Epoch 26/30
-13/13 - 0s - loss: 0.0788 - accuracy: 1.0000 - val_loss: 0.9850 - val_accuracy: 0.7333
-Epoch 27/30
-13/13 - 0s - loss: 0.0749 - accuracy: 1.0000 - val_loss: 0.9750 - val_accuracy: 0.7333
-Epoch 28/30
-13/13 - 0s - loss: 0.0730 - accuracy: 1.0000 - val_loss: 0.9570 - val_accuracy: 0.7667
-Epoch 29/30
-13/13 - 0s - loss: 0.0681 - accuracy: 1.0000 - val_loss: 0.9895 - val_accuracy: 0.7333
-Epoch 30/30
-13/13 - 0s - loss: 0.0635 - accuracy: 1.0000 - val_loss: 0.9560 - val_accuracy: 0.7333
-Epoch 1/30
-13/13 - 0s - loss: 2.3619 - accuracy: 0.1400 - val_loss: 2.0567 - val_accuracy: 0.3667
-Epoch 2/30
-13/13 - 0s - loss: 1.9696 - accuracy: 0.4200 - val_loss: 1.9381 - val_accuracy: 0.4667
-Epoch 3/30
-13/13 - 0s - loss: 1.6671 - accuracy: 0.6400 - val_loss: 1.8300 - val_accuracy: 0.4333
-Epoch 4/30
-13/13 - 0s - loss: 1.4340 - accuracy: 0.7400 - val_loss: 1.7113 - val_accuracy: 0.4333
-Epoch 5/30
-13/13 - 0s - loss: 1.2342 - accuracy: 0.7600 - val_loss: 1.6044 - val_accuracy: 0.5000
-Epoch 6/30
-13/13 - 0s - loss: 1.0721 - accuracy: 0.8600 - val_loss: 1.5232 - val_accuracy: 0.5333
-Epoch 7/30
-13/13 - 0s - loss: 0.9348 - accuracy: 0.9000 - val_loss: 1.4596 - val_accuracy: 0.5667
-Epoch 8/30
-13/13 - 0s - loss: 0.8178 - accuracy: 0.9200 - val_loss: 1.3921 - val_accuracy: 0.6000
-Epoch 9/30
-13/13 - 0s - loss: 0.7223 - accuracy: 0.9400 - val_loss: 1.3404 - val_accuracy: 0.6333
-Epoch 10/30
-13/13 - 0s - loss: 0.6404 - accuracy: 0.9600 - val_loss: 1.3065 - val_accuracy: 0.6667
-Epoch 11/30
-13/13 - 0s - loss: 0.5772 - accuracy: 1.0000 - val_loss: 1.2644 - val_accuracy: 0.6333
-Epoch 12/30
-13/13 - 0s - loss: 0.5199 - accuracy: 1.0000 - val_loss: 1.2558 - val_accuracy: 0.6667
-Epoch 13/30
-13/13 - 0s - loss: 0.4695 - accuracy: 1.0000 - val_loss: 1.2258 - val_accuracy: 0.6667
-Epoch 14/30
-13/13 - 0s - loss: 0.4238 - accuracy: 1.0000 - val_loss: 1.1897 - val_accuracy: 0.6667
-Epoch 15/30
-13/13 - 0s - loss: 0.3848 - accuracy: 1.0000 - val_loss: 1.1651 - val_accuracy: 0.6667
-Epoch 16/30
-13/13 - 0s - loss: 0.3525 - accuracy: 1.0000 - val_loss: 1.1503 - val_accuracy: 0.7333
-Epoch 17/30
-13/13 - 0s - loss: 0.3245 - accuracy: 1.0000 - val_loss: 1.1374 - val_accuracy: 0.7000
-Epoch 18/30
-13/13 - 0s - loss: 0.2992 - accuracy: 1.0000 - val_loss: 1.1174 - val_accuracy: 0.6667
-Epoch 19/30
-13/13 - 0s - loss: 0.2745 - accuracy: 1.0000 - val_loss: 1.1119 - val_accuracy: 0.6667
-Epoch 20/30
-13/13 - 0s - loss: 0.2551 - accuracy: 1.0000 - val_loss: 1.0903 - val_accuracy: 0.7000
-Epoch 21/30
-13/13 - 0s - loss: 0.2370 - accuracy: 1.0000 - val_loss: 1.0877 - val_accuracy: 0.6667
-Epoch 22/30
-13/13 - 0s - loss: 0.2199 - accuracy: 1.0000 - val_loss: 1.0776 - val_accuracy: 0.6667
-Epoch 23/30
-13/13 - 0s - loss: 0.2050 - accuracy: 1.0000 - val_loss: 1.0675 - val_accuracy: 0.7000
-Epoch 24/30
-13/13 - 0s - loss: 0.1919 - accuracy: 1.0000 - val_loss: 1.0592 - val_accuracy: 0.7000
-Epoch 25/30
-13/13 - 0s - loss: 0.1812 - accuracy: 1.0000 - val_loss: 1.0554 - val_accuracy: 0.6667
-Epoch 26/30
-13/13 - 0s - loss: 0.1691 - accuracy: 1.0000 - val_loss: 1.0477 - val_accuracy: 0.7000
-Epoch 27/30
-13/13 - 0s - loss: 0.1599 - accuracy: 1.0000 - val_loss: 1.0377 - val_accuracy: 0.7000
-Epoch 28/30
-13/13 - 0s - loss: 0.1515 - accuracy: 1.0000 - val_loss: 1.0341 - val_accuracy: 0.6667
-Epoch 29/30
-13/13 - 0s - loss: 0.1426 - accuracy: 1.0000 - val_loss: 1.0291 - val_accuracy: 0.7000
-Epoch 30/30
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quanvolution.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
- 3915776/11490434 [=========>....................] - ETA: 0s
-11493376/11490434 [==============================] - 0s 0us/step
-Quantum pre-processing of train images:
-1/50
-2/50
-3/50
-4/50
-5/50
-6/50
-7/50
-8/50
-9/50
-10/50
-11/50
-12/50
-13/50
-14/50
-15/50
-16/50
-17/50
-18/50
-19/50
-20/50
-21/50
-22/50
-23/50
-24/50
-25/50
-26/50
-27/50
-28/50
-29/50
-30/50
-31/50
-32/50
-33/50
-34/50
-35/50
-36/50
-37/50
-38/50
-39/50
-40/50
-41/50
-42/50
-43/50
-44/50
-45/50
-46/50
-47/50
-48/50
-49/50
-50/50
-Quantum pre-processing of test images:
-1/30
-2/30
-3/30
-4/30
-5/30
-6/30
-7/30
-8/30
-9/30
-10/30
-11/30
-12/30
-13/30
-14/30
-15/30
-16/30
-17/30
-18/30
-19/30
-20/30
-21/30
-22/30
-23/30
-24/30
-25/30
-26/30
-27/30
-28/30
-29/30
-30/30
-Epoch 1/30
-13/13 - 0s - loss: 3.0160 - accuracy: 0.1000 - val_loss: 2.0646 - val_accuracy: 0.2000
-Epoch 2/30
-13/13 - 0s - loss: 2.2510 - accuracy: 0.1800 - val_loss: 1.9801 - val_accuracy: 0.3333
-Epoch 3/30
-13/13 - 0s - loss: 1.7851 - accuracy: 0.4000 - val_loss: 1.8177 - val_accuracy: 0.2667
-Epoch 4/30
-13/13 - 0s - loss: 1.3652 - accuracy: 0.5400 - val_loss: 1.6107 - val_accuracy: 0.4667
-Epoch 5/30
-13/13 - 0s - loss: 1.1317 - accuracy: 0.7800 - val_loss: 1.4723 - val_accuracy: 0.6000
-Epoch 6/30
-13/13 - 0s - loss: 0.9360 - accuracy: 0.8600 - val_loss: 1.4686 - val_accuracy: 0.5333
-Epoch 7/30
-13/13 - 0s - loss: 0.7383 - accuracy: 0.9400 - val_loss: 1.3536 - val_accuracy: 0.5667
-Epoch 8/30
-13/13 - 0s - loss: 0.5846 - accuracy: 0.9800 - val_loss: 1.2785 - val_accuracy: 0.6667
-Epoch 9/30
-13/13 - 0s - loss: 0.4987 - accuracy: 0.9800 - val_loss: 1.2253 - val_accuracy: 0.6333
-Epoch 10/30
-13/13 - 0s - loss: 0.3921 - accuracy: 1.0000 - val_loss: 1.2655 - val_accuracy: 0.6333
-Epoch 11/30
-13/13 - 0s - loss: 0.3617 - accuracy: 1.0000 - val_loss: 1.1555 - val_accuracy: 0.7000
-Epoch 12/30
-13/13 - 0s - loss: 0.3078 - accuracy: 1.0000 - val_loss: 1.2107 - val_accuracy: 0.6667
-Epoch 13/30
-13/13 - 0s - loss: 0.2618 - accuracy: 1.0000 - val_loss: 1.1166 - val_accuracy: 0.7333
-Epoch 14/30
-13/13 - 0s - loss: 0.2463 - accuracy: 1.0000 - val_loss: 1.0624 - val_accuracy: 0.7000
-Epoch 15/30
-13/13 - 0s - loss: 0.2033 - accuracy: 1.0000 - val_loss: 1.0904 - val_accuracy: 0.7333
-Epoch 16/30
-13/13 - 0s - loss: 0.1799 - accuracy: 1.0000 - val_loss: 1.0865 - val_accuracy: 0.7333
-Epoch 17/30
-13/13 - 0s - loss: 0.1682 - accuracy: 1.0000 - val_loss: 1.0385 - val_accuracy: 0.7333
-Epoch 18/30
-13/13 - 0s - loss: 0.1484 - accuracy: 1.0000 - val_loss: 1.0676 - val_accuracy: 0.7000
-Epoch 19/30
-13/13 - 0s - loss: 0.1349 - accuracy: 1.0000 - val_loss: 1.0447 - val_accuracy: 0.7000
-Epoch 20/30
-13/13 - 0s - loss: 0.1255 - accuracy: 1.0000 - val_loss: 0.9935 - val_accuracy: 0.7333
-Epoch 21/30
-13/13 - 0s - loss: 0.1135 - accuracy: 1.0000 - val_loss: 1.0451 - val_accuracy: 0.7333
-Epoch 22/30
-13/13 - 0s - loss: 0.1041 - accuracy: 1.0000 - val_loss: 1.0142 - val_accuracy: 0.7333
-Epoch 23/30
-13/13 - 0s - loss: 0.0983 - accuracy: 1.0000 - val_loss: 0.9893 - val_accuracy: 0.7333
-Epoch 24/30
-13/13 - 0s - loss: 0.0913 - accuracy: 1.0000 - val_loss: 0.9807 - val_accuracy: 0.7000
-Epoch 25/30
-13/13 - 0s - loss: 0.0868 - accuracy: 1.0000 - val_loss: 0.9715 - val_accuracy: 0.7333
-Epoch 26/30
-13/13 - 0s - loss: 0.0788 - accuracy: 1.0000 - val_loss: 0.9850 - val_accuracy: 0.7333
-Epoch 27/30
-13/13 - 0s - loss: 0.0749 - accuracy: 1.0000 - val_loss: 0.9750 - val_accuracy: 0.7333
-Epoch 28/30
-13/13 - 0s - loss: 0.0730 - accuracy: 1.0000 - val_loss: 0.9570 - val_accuracy: 0.7667
-Epoch 29/30
-13/13 - 0s - loss: 0.0681 - accuracy: 1.0000 - val_loss: 0.9895 - val_accuracy: 0.7333
-Epoch 30/30
-13/13 - 0s - loss: 0.0635 - accuracy: 1.0000 - val_loss: 0.9560 - val_accuracy: 0.7333
-Epoch 1/30
-13/13 - 0s - loss: 2.3619 - accuracy: 0.1400 - val_loss: 2.0567 - val_accuracy: 0.3667
-Epoch 2/30
-13/13 - 0s - loss: 1.9696 - accuracy: 0.4200 - val_loss: 1.9381 - val_accuracy: 0.4667
-Epoch 3/30
-13/13 - 0s - loss: 1.6671 - accuracy: 0.6400 - val_loss: 1.8300 - val_accuracy: 0.4333
-Epoch 4/30
-13/13 - 0s - loss: 1.4340 - accuracy: 0.7400 - val_loss: 1.7113 - val_accuracy: 0.4333
-Epoch 5/30
-13/13 - 0s - loss: 1.2342 - accuracy: 0.7600 - val_loss: 1.6044 - val_accuracy: 0.5000
-Epoch 6/30
-13/13 - 0s - loss: 1.0721 - accuracy: 0.8600 - val_loss: 1.5232 - val_accuracy: 0.5333
-Epoch 7/30
-13/13 - 0s - loss: 0.9348 - accuracy: 0.9000 - val_loss: 1.4596 - val_accuracy: 0.5667
-Epoch 8/30
-13/13 - 0s - loss: 0.8178 - accuracy: 0.9200 - val_loss: 1.3921 - val_accuracy: 0.6000
-Epoch 9/30
-13/13 - 0s - loss: 0.7223 - accuracy: 0.9400 - val_loss: 1.3404 - val_accuracy: 0.6333
-Epoch 10/30
-13/13 - 0s - loss: 0.6404 - accuracy: 0.9600 - val_loss: 1.3065 - val_accuracy: 0.6667
-Epoch 11/30
-13/13 - 0s - loss: 0.5772 - accuracy: 1.0000 - val_loss: 1.2644 - val_accuracy: 0.6333
-Epoch 12/30
-13/13 - 0s - loss: 0.5199 - accuracy: 1.0000 - val_loss: 1.2558 - val_accuracy: 0.6667
-Epoch 13/30
-13/13 - 0s - loss: 0.4695 - accuracy: 1.0000 - val_loss: 1.2258 - val_accuracy: 0.6667
-Epoch 14/30
-13/13 - 0s - loss: 0.4238 - accuracy: 1.0000 - val_loss: 1.1897 - val_accuracy: 0.6667
-Epoch 15/30
-13/13 - 0s - loss: 0.3848 - accuracy: 1.0000 - val_loss: 1.1651 - val_accuracy: 0.6667
-Epoch 16/30
-13/13 - 0s - loss: 0.3525 - accuracy: 1.0000 - val_loss: 1.1503 - val_accuracy: 0.7333
-Epoch 17/30
-13/13 - 0s - loss: 0.3245 - accuracy: 1.0000 - val_loss: 1.1374 - val_accuracy: 0.7000
-Epoch 18/30
-13/13 - 0s - loss: 0.2992 - accuracy: 1.0000 - val_loss: 1.1174 - val_accuracy: 0.6667
-Epoch 19/30
-13/13 - 0s - loss: 0.2745 - accuracy: 1.0000 - val_loss: 1.1119 - val_accuracy: 0.6667
-Epoch 20/30
-13/13 - 0s - loss: 0.2551 - accuracy: 1.0000 - val_loss: 1.0903 - val_accuracy: 0.7000
-Epoch 21/30
-13/13 - 0s - loss: 0.2370 - accuracy: 1.0000 - val_loss: 1.0877 - val_accuracy: 0.6667
-Epoch 22/30
-13/13 - 0s - loss: 0.2199 - accuracy: 1.0000 - val_loss: 1.0776 - val_accuracy: 0.6667
-Epoch 23/30
-13/13 - 0s - loss: 0.2050 - accuracy: 1.0000 - val_loss: 1.0675 - val_accuracy: 0.7000
-Epoch 24/30
-13/13 - 0s - loss: 0.1919 - accuracy: 1.0000 - val_loss: 1.0592 - val_accuracy: 0.7000
-Epoch 25/30
-13/13 - 0s - loss: 0.1812 - accuracy: 1.0000 - val_loss: 1.0554 - val_accuracy: 0.6667
-Epoch 26/30
-13/13 - 0s - loss: 0.1691 - accuracy: 1.0000 - val_loss: 1.0477 - val_accuracy: 0.7000
-Epoch 27/30
-13/13 - 0s - loss: 0.1599 - accuracy: 1.0000 - val_loss: 1.0377 - val_accuracy: 0.7000
-Epoch 28/30
-13/13 - 0s - loss: 0.1515 - accuracy: 1.0000 - val_loss: 1.0341 - val_accuracy: 0.6667
-Epoch 29/30
-13/13 - 0s - loss: 0.1426 - accuracy: 1.0000 - val_loss: 1.0291 - val_accuracy: 0.7000
-Epoch 30/30
-13/13 - 0s - loss: 0.1344 - accuracy: 1.0000 - val_loss: 1.0264 - val_accuracy: 0.7000
- </code>
- </pre>
- </details>
-
----
-
-## 6. tutorial_backprop.html <a name="demo5"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_backprop.html):
-
-```
-180
-0.8947771876917632
-Forward pass (best of 3): 0.008421205499962526 sec per loop
-Gradient computation (best of 3): 3.249689813399982 sec per loop
-3.031633979986509
-0.9358535378025419
-Forward pass (best of 3): 0.06279191759995228 sec per loop
-Backward pass (best of 3): 0.12324959990000935 sec per loop
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_backprop.html):
-
-```
-/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:173: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-180
-0.8947771876917632
-Forward pass (best of 3): 0.0059497190000001865 sec per loop
-Gradient computation (best of 3): 2.2336992747000295 sec per loop
-2.141898840000067
-/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-0.9358535378025419
-```
-
----
-
-## 7. tutorial_jax_transformations.html <a name="demo6"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_jax_transformations.html):
-
-```
-No jit time: 0.0125 seconds
-First run time: 0.0617 seconds
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_jax_transformations.html):
-
-```
-No jit time: 0.0096 seconds
-First run time: 0.0528 seconds
-```
-
----
-
-## 8. tutorial_qaoa_intro.html <a name="demo7"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_qaoa_intro.html):
-
-```
-[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.855528453707565]]
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qaoa_intro.html):
-
-```
-[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.8555284537075651]]
-```
-
----
-
-## 9. tutorial_quantum_transfer_learning.html <a name="demo8"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-  0%|          | 224k/44.7M [00:00<00:20, 2.23MB/s]
-  3%|3         | 1.44M/44.7M [00:00<00:05, 8.36MB/s]
- 12%|#1        | 5.31M/44.7M [00:00<00:01, 23.0MB/s]
- 21%|##        | 9.18M/44.7M [00:00<00:01, 29.9MB/s]
- 34%|###4      | 15.4M/44.7M [00:00<00:00, 42.4MB/s]
- 43%|####3     | 19.4M/44.7M [00:00<00:00, 40.5MB/s]
- 53%|#####3    | 23.8M/44.7M [00:00<00:00, 42.1MB/s]
- 71%|#######1  | 31.8M/44.7M [00:00<00:00, 54.9MB/s]
- 88%|########8 | 39.5M/44.7M [00:00<00:00, 62.9MB/s]
-100%|##########| 44.7M/44.7M [00:00<00:00, 46.8MB/s]
-Training started:
-Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.4626
-Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.4727
-Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.4232
-Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.4490
-Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.4340
-Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.4508
-Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.4421
-Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.4568
-Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.4577
-Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.4552
-Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.4390
-Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.4403
-Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.4436
-Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.4458
-Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.4426
-Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.4343
-Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.4366
-Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.4471
-Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.4568
-Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.4426
-Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.4262
-Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.4400
-Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.4327
-Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.4135
-Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.4126
-Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.4185
-Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.4177
-Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.4291
-Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.4322
-Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.4175
-Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.4324
-Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.4243
-Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.4374
-Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.4194
-Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.4023
-Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.4265
-Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.4302
-Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.4274
-Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.4239
-Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.4197
-Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.4418
-Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.4135
-Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.4476
-Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.4256
-Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.4456
-Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.4235
-Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.4247
-Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.4205
-Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.4350
-Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.4214
-Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.4111
-Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.4217
-Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.4168
-Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.4459
-Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.4257
-Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.4404
-Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.4234
-Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.4138
-Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.4119
-Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.4144
-Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.4361
-Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
-Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.3435
-Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.3967
-Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.3526
-Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.3537
-Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.3680
-Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.3601
-Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.3758
-Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.3546
-Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.3474
-Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.3489
-Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.3444
-Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.3566
-Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.3396
-Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.3447
-Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.3584
-Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.3468
-Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.3605
-Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.3695
-Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.3431
-Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.3586
-Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.3451
-Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.3520
-Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.3548
-Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.3577
-Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.3562
-Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.3332
-Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.3630
-Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.3619
-Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.3651
-Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.3429
-Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.3518
-Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.3513
-Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.3525
-Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.3361
-Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.3544
-Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.3479
-Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.3338
-Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.3633
-Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0975
-Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
-Training completed in 0m 43s
-Best test loss: 0.6432 | Best test accuracy: 0.6536
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_transfer_learning.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-  6%|6         | 2.88M/44.7M [00:00<00:01, 27.4MB/s]
- 17%|#7        | 7.60M/44.7M [00:00<00:00, 39.9MB/s]
- 26%|##5       | 11.5M/44.7M [00:00<00:00, 39.9MB/s]
- 34%|###4      | 15.3M/44.7M [00:00<00:00, 38.5MB/s]
- 43%|####2     | 19.0M/44.7M [00:00<00:00, 38.5MB/s]
- 54%|#####4    | 24.2M/44.7M [00:00<00:00, 43.5MB/s]
- 65%|######4   | 29.0M/44.7M [00:00<00:00, 45.8MB/s]
- 75%|#######4  | 33.4M/44.7M [00:00<00:00, 44.9MB/s]
- 85%|########5 | 38.0M/44.7M [00:00<00:00, 45.7MB/s]
- 98%|#########7| 43.7M/44.7M [00:01<00:00, 49.9MB/s]
-100%|##########| 44.7M/44.7M [00:01<00:00, 44.7MB/s]
-Training started:
-Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.2939
-Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.2765
-Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.2697
-Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.2709
-Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.2671
-Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.2680
-Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.2706
-Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.2686
-Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.2671
-Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.2661
-Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.2706
-Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.2650
-Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.2656
-Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.2632
-Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.2641
-Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.2648
-Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.2672
-Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.2674
-Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.2642
-Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.2632
-Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.2646
-Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.2638
-Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.2685
-Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.2663
-Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.2691
-Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.2665
-Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.2676
-Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.2677
-Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.2664
-Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.2708
-Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.2677
-Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.2696
-Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.2686
-Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.2717
-Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.2720
-Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.2719
-Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.2688
-Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.2756
-Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.2769
-Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.2700
-Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.2695
-Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.2692
-Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.2708
-Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.2675
-Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.2700
-Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.2636
-Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.2667
-Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.2705
-Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.2715
-Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.2712
-Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.2687
-Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.2778
-Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.2717
-Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.2800
-Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.2848
-Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
-Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.2110
-Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.2021
-Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.2028
-Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.2037
-Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.2079
-Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.2040
-Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.2036
-Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.2049
-Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.2033
-Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.2052
-Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.2032
-Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.2023
-Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.1991
-Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.1969
-Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.2032
-Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.1988
-Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.1993
-Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.1988
-Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.2018
-Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.2031
-Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.2002
-Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.1985
-Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.1997
-Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.1996
-Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.1978
-Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.2033
-Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.2055
-Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.2073
-Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.2008
-Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.2065
-Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.2044
-Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.2000
-Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.2002
-Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.2019
-Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.1992
-Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0699
-Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
-Training completed in 0m 27s
- </code>
- </pre>
- </details>
-
----
-
-## 10. tutorial_rosalin.html <a name="demo9"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_rosalin.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
--0.8395887630997874
-Step 0: cost = -0.47971271815214855 shots used = 0
-Step 1: cost = -1.6879973520840041 shots used = 8000
-Step 2: cost = -2.437928256197112 shots used = 16000
-Step 3: cost = -2.9300968884147647 shots used = 24000
-Step 4: cost = -3.7779069617997116 shots used = 32000
-Step 5: cost = -3.8889841568955115 shots used = 40000
-Step 6: cost = -4.508059711766957 shots used = 48000
-Step 7: cost = -4.71114219758592 shots used = 56000
-Step 8: cost = -4.984457128293103 shots used = 64000
-Step 9: cost = -5.597084424095087 shots used = 72000
-Step 10: cost = -5.456976403687039 shots used = 80000
-Step 11: cost = -5.736752824027413 shots used = 88000
-Step 12: cost = -6.220317925041974 shots used = 96000
-Step 13: cost = -6.45162161927903 shots used = 104000
-Step 14: cost = -6.563539211112225 shots used = 112000
-Step 15: cost = -6.487339064303318 shots used = 120000
-Step 16: cost = -6.69261841162329 shots used = 128000
-Step 17: cost = -6.909230576241427 shots used = 136000
-Step 18: cost = -7.05156660241221 shots used = 144000
-Step 19: cost = -7.163688069859358 shots used = 152000
-Step 20: cost = -7.191791478058647 shots used = 160000
-Step 21: cost = -7.191694602776715 shots used = 168000
-Step 22: cost = -7.430122007574104 shots used = 176000
-Step 23: cost = -7.245621601209081 shots used = 184000
-Step 24: cost = -7.539044265851978 shots used = 192000
-Step 25: cost = -7.532847998808006 shots used = 200000
-Step 26: cost = -7.44257222073886 shots used = 208000
-Step 27: cost = -7.439951968648378 shots used = 216000
-Step 28: cost = -7.734568855081575 shots used = 224000
-Step 29: cost = -7.618221322585628 shots used = 232000
-Step 30: cost = -7.651544920606065 shots used = 240000
-Step 31: cost = -7.5069088885777155 shots used = 248000
-Step 32: cost = -7.780301321189146 shots used = 256000
-Step 33: cost = -7.4456447455856445 shots used = 264000
-Step 34: cost = -7.403560444278863 shots used = 272000
-Step 35: cost = -7.666718876831026 shots used = 280000
-Step 36: cost = -7.7178910518866415 shots used = 288000
-Step 37: cost = -7.375680885292107 shots used = 296000
-Step 38: cost = -7.665568049279896 shots used = 304000
-Step 39: cost = -7.568101693343673 shots used = 312000
-Step 40: cost = -7.524188200359864 shots used = 320000
-Step 41: cost = -7.525528734255245 shots used = 328000
-Step 42: cost = -7.57734861403185 shots used = 336000
-Step 43: cost = -7.76844833198197 shots used = 344000
-Step 44: cost = -7.797619087079373 shots used = 352000
-Step 45: cost = -7.879148884805528 shots used = 360000
-Step 46: cost = -7.744030492750696 shots used = 368000
-Step 47: cost = -7.6484739221198765 shots used = 376000
-Step 48: cost = -7.679623095926702 shots used = 384000
-Step 49: cost = -7.607476988501242 shots used = 392000
-Step 50: cost = -7.856041856821188 shots used = 400000
-Step 51: cost = -7.644473030321983 shots used = 408000
-Step 52: cost = -7.593159311741706 shots used = 416000
-Step 53: cost = -7.606939212888227 shots used = 424000
-Step 54: cost = -7.621128949485829 shots used = 432000
-Step 55: cost = -7.743568287057952 shots used = 440000
-Step 56: cost = -7.6325929460598525 shots used = 448000
-Step 57: cost = -7.718256562367575 shots used = 456000
-Step 58: cost = -7.861601938446393 shots used = 464000
-Step 59: cost = -7.666115854972354 shots used = 472000
-Step 60: cost = -7.644148944168839 shots used = 480000
-Step 61: cost = -7.771569192260795 shots used = 488000
-Step 62: cost = -7.776898446282362 shots used = 496000
-Step 63: cost = -7.711006891533269 shots used = 504000
-Step 64: cost = -7.748650044666392 shots used = 512000
-Step 65: cost = -7.690723991927554 shots used = 520000
-Step 66: cost = -7.694117031088106 shots used = 528000
-Step 67: cost = -7.793250125674997 shots used = 536000
-Step 68: cost = -7.926049735334674 shots used = 544000
-Step 69: cost = -7.686292326080605 shots used = 552000
-Step 70: cost = -7.745774212716911 shots used = 560000
-Step 71: cost = -7.625346751584894 shots used = 568000
-Step 72: cost = -7.846664469958039 shots used = 576000
-Step 73: cost = -7.860275655123486 shots used = 584000
-Step 74: cost = -7.593043619614097 shots used = 592000
-Step 75: cost = -7.7969799318129045 shots used = 600000
-Step 76: cost = -7.837545360539077 shots used = 608000
-Step 77: cost = -7.845253964960701 shots used = 616000
-Step 78: cost = -7.941652692590529 shots used = 624000
-Step 79: cost = -7.967099906804574 shots used = 632000
-Step 80: cost = -7.803163356121793 shots used = 640000
-Step 81: cost = -7.665600401510319 shots used = 648000
-Step 82: cost = -8.09158124610039 shots used = 656000
-Step 83: cost = -7.774883584668083 shots used = 664000
-Step 84: cost = -7.758175214036924 shots used = 672000
-Step 85: cost = -7.9169924228411865 shots used = 680000
-Step 86: cost = -7.670199051467696 shots used = 688000
-Step 87: cost = -8.085682024006845 shots used = 696000
-Step 88: cost = -7.8433919424579095 shots used = 704000
-Step 89: cost = -7.755236580472145 shots used = 712000
-Step 90: cost = -7.847624689390126 shots used = 720000
-Step 91: cost = -8.122239105086607 shots used = 728000
-Step 92: cost = -7.922374192271718 shots used = 736000
-Step 93: cost = -7.904676929818973 shots used = 744000
-Step 94: cost = -7.909417248833883 shots used = 752000
-Step 95: cost = -8.06033491620787 shots used = 760000
-Step 96: cost = -7.765636196903123 shots used = 768000
-Step 97: cost = -7.801666008865329 shots used = 776000
-Step 98: cost = -8.066513329432457 shots used = 784000
-Step 99: cost = -7.8942080196569675 shots used = 792000
-Step 0: cost = -0.38250000000000006 shots used = 0
-Step 1: cost = -1.7450000000000006 shots used = 8000
-Step 2: cost = -2.54875 shots used = 16000
-Step 3: cost = -2.91 shots used = 24000
-Step 4: cost = -3.4762500000000003 shots used = 32000
-Step 5: cost = -4.08875 shots used = 40000
-Step 6: cost = -4.586250000000001 shots used = 48000
-Step 7: cost = -4.805 shots used = 56000
-Step 8: cost = -4.925 shots used = 64000
-Step 9: cost = -5.385000000000001 shots used = 72000
-Step 10: cost = -5.4725 shots used = 80000
-Step 11: cost = -5.63875 shots used = 88000
-Step 12: cost = -5.796250000000001 shots used = 96000
-Step 13: cost = -6.308750000000001 shots used = 104000
-Step 14: cost = -6.2524999999999995 shots used = 112000
-Step 15: cost = -6.706249999999999 shots used = 120000
-Step 16: cost = -6.711250000000001 shots used = 128000
-Step 17: cost = -6.803749999999999 shots used = 136000
-Step 18: cost = -6.94375 shots used = 144000
-Step 19: cost = -7.2837499999999995 shots used = 152000
-Step 20: cost = -7.4 shots used = 160000
-Step 21: cost = -7.38375 shots used = 168000
-Step 22: cost = -7.40125 shots used = 176000
-Step 23: cost = -7.4775 shots used = 184000
-Step 24: cost = -7.58 shots used = 192000
-Step 25: cost = -7.623749999999999 shots used = 200000
-Step 26: cost = -7.49625 shots used = 208000
-Step 27: cost = -7.58375 shots used = 216000
-Step 28: cost = -7.6312500000000005 shots used = 224000
-Step 29: cost = -7.13375 shots used = 232000
-Step 30: cost = -7.47 shots used = 240000
-Step 31: cost = -7.6075 shots used = 248000
-Step 32: cost = -7.34875 shots used = 256000
-Step 33: cost = -7.6525 shots used = 264000
-Step 34: cost = -7.572500000000001 shots used = 272000
-Step 35: cost = -7.390000000000001 shots used = 280000
-Step 36: cost = -7.76375 shots used = 288000
-Step 37: cost = -7.49 shots used = 296000
-Step 38: cost = -7.61625 shots used = 304000
-Step 39: cost = -7.695 shots used = 312000
-Step 40: cost = -7.702499999999999 shots used = 320000
-Step 41: cost = -7.59625 shots used = 328000
-Step 42: cost = -7.733750000000001 shots used = 336000
-Step 43: cost = -7.6875 shots used = 344000
-Step 44: cost = -7.75875 shots used = 352000
-Step 45: cost = -7.796250000000001 shots used = 360000
-Step 46: cost = -7.7387500000000005 shots used = 368000
-Step 47: cost = -7.92375 shots used = 376000
-Step 48: cost = -7.6225 shots used = 384000
-Step 49: cost = -7.8425 shots used = 392000
-Step 50: cost = -7.74 shots used = 400000
-Step 51: cost = -7.661250000000001 shots used = 408000
-Step 52: cost = -7.786250000000001 shots used = 416000
-Step 53: cost = -7.78875 shots used = 424000
-Step 54: cost = -7.62375 shots used = 432000
-Step 55: cost = -7.9375 shots used = 440000
-Step 56: cost = -7.71625 shots used = 448000
-Step 57: cost = -7.72375 shots used = 456000
-Step 58: cost = -7.741250000000001 shots used = 464000
-Step 59: cost = -7.811249999999999 shots used = 472000
-Step 60: cost = -7.89 shots used = 480000
-Step 61: cost = -7.74 shots used = 488000
-Step 62: cost = -7.751250000000001 shots used = 496000
-Step 63: cost = -7.71875 shots used = 504000
-Step 64: cost = -7.695 shots used = 512000
-Step 65: cost = -7.7325 shots used = 520000
-Step 66: cost = -7.819999999999999 shots used = 528000
-Step 67: cost = -7.981249999999999 shots used = 536000
-Step 68: cost = -7.8 shots used = 544000
-Step 69: cost = -7.89 shots used = 552000
-Step 70: cost = -7.7125 shots used = 560000
-Step 71: cost = -7.993750000000001 shots used = 568000
-Step 72: cost = -7.772499999999999 shots used = 576000
-Step 73: cost = -8.01125 shots used = 584000
-Step 74: cost = -8.116249999999999 shots used = 592000
-Step 75: cost = -7.9662500000000005 shots used = 600000
-Step 76: cost = -7.7125 shots used = 608000
-Step 77: cost = -7.8925 shots used = 616000
-Step 78: cost = -7.967499999999999 shots used = 624000
-Step 79: cost = -7.91375 shots used = 632000
-Step 80: cost = -7.797499999999999 shots used = 640000
-Step 81: cost = -7.9975000000000005 shots used = 648000
-Step 82: cost = -7.99 shots used = 656000
-Step 83: cost = -7.7124999999999995 shots used = 664000
-Step 84: cost = -7.76875 shots used = 672000
-Step 85: cost = -7.62 shots used = 680000
-Step 86: cost = -7.822500000000001 shots used = 688000
-Step 87: cost = -7.74625 shots used = 696000
-Step 88: cost = -7.9137499999999985 shots used = 704000
-Step 89: cost = -7.86125 shots used = 712000
-Step 90: cost = -7.975 shots used = 720000
-Step 91: cost = -7.89375 shots used = 728000
-Step 92: cost = -8.1075 shots used = 736000
-Step 93: cost = -7.775 shots used = 744000
-Step 94: cost = -7.8999999999999995 shots used = 752000
-Step 95: cost = -7.85625 shots used = 760000
-Step 96: cost = -7.925000000000001 shots used = 768000
-Step 97: cost = -8.0 shots used = 776000
-Step 98: cost = -7.825000000000001 shots used = 784000
-Step 99: cost = -7.999999999999999 shots used = 792000
-Step 0: cost = -5.976611864639143, shots_used = 240
-Step 1: cost = -3.9696542358660727, shots_used = 288
-Step 2: cost = -4.960189727105254, shots_used = 360
-Step 3: cost = -4.580003760087767, shots_used = 456
-Step 4: cost = -2.230216749128693, shots_used = 552
-Step 5: cost = -3.6390262209635624, shots_used = 696
-Step 6: cost = -6.407579837465835, shots_used = 1050
-Step 7: cost = -7.4366536874312565, shots_used = 1578
-Step 8: cost = -7.259604321778904, shots_used = 2250
-Step 9: cost = -7.062132684694287, shots_used = 2970
-Step 10: cost = -7.5539381823528915, shots_used = 3738
-Step 11: cost = -7.530120251217975, shots_used = 4866
-Step 12: cost = -7.620064018172076, shots_used = 6474
-Step 13: cost = -7.749105026853709, shots_used = 8288
-Step 14: cost = -7.7584669100105454, shots_used = 10388
-Step 15: cost = -7.547668090788587, shots_used = 12404
-Step 16: cost = -7.802606000681813, shots_used = 14660
-Step 17: cost = -7.819375105495885, shots_used = 17180
-Step 18: cost = -7.813893056373781, shots_used = 19700
-Step 19: cost = -7.818976697763795, shots_used = 22796
-Step 20: cost = -7.847655565015213, shots_used = 26372
-Step 21: cost = -7.854512274045721, shots_used = 30810
-Step 22: cost = -7.855665819254089, shots_used = 35538
-Step 23: cost = -7.843276666680198, shots_used = 40770
-Step 24: cost = -7.82813895796069, shots_used = 45762
-Step 25: cost = -7.796501914990248, shots_used = 51162
-Step 26: cost = -7.871130124788932, shots_used = 56466
-Step 27: cost = -7.866190872563943, shots_used = 62010
-Step 28: cost = -7.780118268373553, shots_used = 68250
-Step 29: cost = -7.843565291223448, shots_used = 74946
-Step 30: cost = -7.840084824878835, shots_used = 81762
-Step 31: cost = -7.863430860462219, shots_used = 88962
-Step 32: cost = -7.863400771365601, shots_used = 96786
-Step 33: cost = -7.828392469226825, shots_used = 104730
-Step 34: cost = -7.845758777555817, shots_used = 114532
-Step 35: cost = -7.862280441095794, shots_used = 122908
-Step 36: cost = -7.866212335569502, shots_used = 131836
-Step 37: cost = -7.859430128177042, shots_used = 140500
-Step 38: cost = -7.856087432905534, shots_used = 150076
-Step 39: cost = -7.850323433779115, shots_used = 159676
-Step 40: cost = -7.834403598788763, shots_used = 170116
-Step 41: cost = -7.849769789802028, shots_used = 181300
-Step 42: cost = -7.86693841353118, shots_used = 192700
-Step 43: cost = -7.865653895759861, shots_used = 204460
-Step 44: cost = -7.853522061269157, shots_used = 217900
-Step 45: cost = -7.885272132729725, shots_used = 231748
-Step 46: cost = -7.88224395467864, shots_used = 245644
-Step 47: cost = -7.884376349618622, shots_used = 259852
-Step 48: cost = -7.8808911781003825, shots_used = 275164
-Step 49: cost = -7.881035167671664, shots_used = 292444
-Step 50: cost = -7.881931152903569, shots_used = 310300
-Step 51: cost = -7.873486288144938, shots_used = 329452
-Step 52: cost = -7.842973314288795, shots_used = 348532
-Step 53: cost = -7.87101794797729, shots_used = 368644
-Step 54: cost = -7.880857865087542, shots_used = 388828
-Step 55: cost = -7.884163217633474, shots_used = 409132
-Step 56: cost = -7.866452206380498, shots_used = 429076
-Step 57: cost = -7.876255345278057, shots_used = 451468
-Step 58: cost = -7.87369984074766, shots_used = 475348
-Step 59: cost = -7.890243502630163, shots_used = 501460
-2400
-Step 0: cost = -2.03376839972733 shots_used = 2400
-Step 1: cost = -3.0397515887713897 shots_used = 4800
-Step 2: cost = -3.8459175082365666 shots_used = 7200
-Step 3: cost = -4.505506895275778 shots_used = 9600
-Step 4: cost = -5.0488106623708084 shots_used = 12000
-Step 5: cost = -5.482162129547712 shots_used = 14400
-Step 6: cost = -5.83880726147689 shots_used = 16800
-Step 7: cost = -6.143933494222608 shots_used = 19200
-Step 8: cost = -6.412317130720796 shots_used = 21600
-Step 9: cost = -6.6534666682698 shots_used = 24000
-Step 10: cost = -6.86746547637287 shots_used = 26400
-Step 11: cost = -7.057043661341395 shots_used = 28800
-Step 12: cost = -7.219548494479429 shots_used = 31200
-Step 13: cost = -7.3445177518694456 shots_used = 33600
-Step 14: cost = -7.435753942420535 shots_used = 36000
-Step 15: cost = -7.497138548636965 shots_used = 38400
-Step 16: cost = -7.529946318655265 shots_used = 40800
-Step 17: cost = -7.537070813893377 shots_used = 43200
-Step 18: cost = -7.525225697166624 shots_used = 45600
-Step 19: cost = -7.5048251159723405 shots_used = 48000
-Step 20: cost = -7.481487171246212 shots_used = 50400
-Step 21: cost = -7.461106527571478 shots_used = 52800
-Step 22: cost = -7.4490325775024075 shots_used = 55200
-Step 23: cost = -7.444817343084735 shots_used = 57600
-Step 24: cost = -7.4494913586937574 shots_used = 60000
-Step 25: cost = -7.462969617594349 shots_used = 62400
-Step 26: cost = -7.484518392550573 shots_used = 64800
-Step 27: cost = -7.509533957688121 shots_used = 67200
-Step 28: cost = -7.535240804873656 shots_used = 69600
-Step 29: cost = -7.560642729685874 shots_used = 72000
-Step 30: cost = -7.586205677180162 shots_used = 74400
-Step 31: cost = -7.61260475402048 shots_used = 76800
-Step 32: cost = -7.637117815005769 shots_used = 79200
-Step 33: cost = -7.661716123608457 shots_used = 81600
-Step 34: cost = -7.6852319189727165 shots_used = 84000
-Step 35: cost = -7.708583289744081 shots_used = 86400
-Step 36: cost = -7.729551671925802 shots_used = 88800
-Step 37: cost = -7.7462558125604595 shots_used = 91200
-Step 38: cost = -7.758965992155235 shots_used = 93600
-Step 39: cost = -7.764889692835303 shots_used = 96000
-Step 40: cost = -7.770298814247658 shots_used = 98400
-Step 41: cost = -7.771938304013664 shots_used = 100800
-Step 42: cost = -7.771490419427766 shots_used = 103200
-Step 43: cost = -7.771665932203987 shots_used = 105600
-Step 44: cost = -7.771775966399097 shots_used = 108000
-Step 45: cost = -7.772019786144459 shots_used = 110400
-Step 46: cost = -7.774409408800273 shots_used = 112800
-Step 47: cost = -7.777544198411677 shots_used = 115200
-Step 48: cost = -7.78057842461007 shots_used = 117600
-Step 49: cost = -7.7865146226898805 shots_used = 120000
-Step 50: cost = -7.793839215454196 shots_used = 122400
-Step 51: cost = -7.802144039740554 shots_used = 124800
-Step 52: cost = -7.809859012081808 shots_used = 127200
-Step 53: cost = -7.818330164675909 shots_used = 129600
-Step 54: cost = -7.826930993976666 shots_used = 132000
-Step 55: cost = -7.834969848723968 shots_used = 134400
-Step 56: cost = -7.842454395123664 shots_used = 136800
-Step 57: cost = -7.849335152675151 shots_used = 139200
-Step 58: cost = -7.853951071633944 shots_used = 141600
-Step 59: cost = -7.858296868696565 shots_used = 144000
-Step 60: cost = -7.862867672169834 shots_used = 146400
-Step 61: cost = -7.865540080202736 shots_used = 148800
-Step 62: cost = -7.867577632485199 shots_used = 151200
-Step 63: cost = -7.869035010771334 shots_used = 153600
-Step 64: cost = -7.870496374034538 shots_used = 156000
-Step 65: cost = -7.871678720443278 shots_used = 158400
-Step 66: cost = -7.872542373444428 shots_used = 160800
-Step 67: cost = -7.873739299675017 shots_used = 163200
-Step 68: cost = -7.874314293738313 shots_used = 165600
-Step 69: cost = -7.875793149514538 shots_used = 168000
-Step 70: cost = -7.877051911492931 shots_used = 170400
-Step 71: cost = -7.878207264678217 shots_used = 172800
-Step 72: cost = -7.879198045006914 shots_used = 175200
-Step 73: cost = -7.880726987471535 shots_used = 177600
-Step 74: cost = -7.882055795432435 shots_used = 180000
-Step 75: cost = -7.88215282515028 shots_used = 182400
-Step 76: cost = -7.881947191378357 shots_used = 184800
-Step 77: cost = -7.881566349945106 shots_used = 187200
-Step 78: cost = -7.881659168988012 shots_used = 189600
-Step 79: cost = -7.881276797156975 shots_used = 192000
-Step 80: cost = -7.879976174007023 shots_used = 194400
-Step 81: cost = -7.878714918643873 shots_used = 196800
-Step 82: cost = -7.877964404670651 shots_used = 199200
-Step 83: cost = -7.8771022016203665 shots_used = 201600
-Step 84: cost = -7.875562772172711 shots_used = 204000
-Step 85: cost = -7.875602350174969 shots_used = 206400
-Step 86: cost = -7.877141380119034 shots_used = 208800
-Step 87: cost = -7.87925788505365 shots_used = 211200
-Step 88: cost = -7.881144761009377 shots_used = 213600
-Step 89: cost = -7.882250363744701 shots_used = 216000
-Step 90: cost = -7.881748113564451 shots_used = 218400
-Step 91: cost = -7.883533319932514 shots_used = 220800
-Step 92: cost = -7.884779159318079 shots_used = 223200
-Step 93: cost = -7.8868911005436555 shots_used = 225600
-Step 94: cost = -7.888524224480213 shots_used = 228000
-Step 95: cost = -7.888123287772768 shots_used = 230400
-Step 96: cost = -7.8867800801467896 shots_used = 232800
-Step 97: cost = -7.8853107450636415 shots_used = 235200
-Step 98: cost = -7.883507674089132 shots_used = 237600
-Step 99: cost = -7.881351067687096 shots_used = 240000
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_rosalin.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-/home/runner/work/qml/qml/demonstrations/tutorial_rosalin.py:217: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
--0.8395887630997874
-Step 0: cost = -0.47971271815214855 shots used = 0
-Step 1: cost = -1.6879973520840041 shots used = 8000
-Step 2: cost = -2.437928256197112 shots used = 16000
-Step 3: cost = -2.9300968884147647 shots used = 24000
-Step 4: cost = -3.7779069617997116 shots used = 32000
-Step 5: cost = -3.8889841568955115 shots used = 40000
-Step 6: cost = -4.508059711766957 shots used = 48000
-Step 7: cost = -4.71114219758592 shots used = 56000
-Step 8: cost = -4.984457128293103 shots used = 64000
-Step 9: cost = -5.597084424095087 shots used = 72000
-Step 10: cost = -5.456976403687039 shots used = 80000
-Step 11: cost = -5.736752824027413 shots used = 88000
-Step 12: cost = -6.220317925041974 shots used = 96000
-Step 13: cost = -6.45162161927903 shots used = 104000
-Step 14: cost = -6.563539211112225 shots used = 112000
-Step 15: cost = -6.487339064303318 shots used = 120000
-Step 16: cost = -6.69261841162329 shots used = 128000
-Step 17: cost = -6.909230576241427 shots used = 136000
-Step 18: cost = -7.05156660241221 shots used = 144000
-Step 19: cost = -7.163688069859358 shots used = 152000
-Step 20: cost = -7.191791478058647 shots used = 160000
-Step 21: cost = -7.191694602776715 shots used = 168000
-Step 22: cost = -7.430122007574104 shots used = 176000
-Step 23: cost = -7.245621601209081 shots used = 184000
-Step 24: cost = -7.539044265851978 shots used = 192000
-Step 25: cost = -7.532847998808006 shots used = 200000
-Step 26: cost = -7.44257222073886 shots used = 208000
-Step 27: cost = -7.439951968648378 shots used = 216000
-Step 28: cost = -7.734568855081575 shots used = 224000
-Step 29: cost = -7.618221322585628 shots used = 232000
-Step 30: cost = -7.651544920606065 shots used = 240000
-Step 31: cost = -7.5069088885777155 shots used = 248000
-Step 32: cost = -7.780301321189146 shots used = 256000
-Step 33: cost = -7.4456447455856445 shots used = 264000
-Step 34: cost = -7.403560444278863 shots used = 272000
-Step 35: cost = -7.666718876831026 shots used = 280000
-Step 36: cost = -7.7178910518866415 shots used = 288000
-Step 37: cost = -7.375680885292107 shots used = 296000
-Step 38: cost = -7.665568049279896 shots used = 304000
-Step 39: cost = -7.568101693343673 shots used = 312000
-Step 40: cost = -7.524188200359864 shots used = 320000
-Step 41: cost = -7.525528734255245 shots used = 328000
-Step 42: cost = -7.57734861403185 shots used = 336000
-Step 43: cost = -7.76844833198197 shots used = 344000
-Step 44: cost = -7.797619087079373 shots used = 352000
-Step 45: cost = -7.879148884805528 shots used = 360000
-Step 46: cost = -7.744030492750696 shots used = 368000
-Step 47: cost = -7.6484739221198765 shots used = 376000
-Step 48: cost = -7.679623095926702 shots used = 384000
-Step 49: cost = -7.607476988501242 shots used = 392000
-Step 50: cost = -7.856041856821188 shots used = 400000
-Step 51: cost = -7.644473030321983 shots used = 408000
-Step 52: cost = -7.593159311741706 shots used = 416000
-Step 53: cost = -7.606939212888227 shots used = 424000
-Step 54: cost = -7.621128949485829 shots used = 432000
-Step 55: cost = -7.743568287057952 shots used = 440000
-Step 56: cost = -7.6325929460598525 shots used = 448000
-Step 57: cost = -7.718256562367575 shots used = 456000
-Step 58: cost = -7.861601938446393 shots used = 464000
-Step 59: cost = -7.666115854972354 shots used = 472000
-Step 60: cost = -7.644148944168839 shots used = 480000
-Step 61: cost = -7.771569192260795 shots used = 488000
-Step 62: cost = -7.776898446282362 shots used = 496000
-Step 63: cost = -7.711006891533269 shots used = 504000
-Step 64: cost = -7.748650044666392 shots used = 512000
-Step 65: cost = -7.690723991927554 shots used = 520000
-Step 66: cost = -7.694117031088106 shots used = 528000
-Step 67: cost = -7.793250125674997 shots used = 536000
-Step 68: cost = -7.926049735334674 shots used = 544000
-Step 69: cost = -7.686292326080605 shots used = 552000
-Step 70: cost = -7.745774212716911 shots used = 560000
-Step 71: cost = -7.625346751584894 shots used = 568000
-Step 72: cost = -7.846664469958039 shots used = 576000
-Step 73: cost = -7.860275655123486 shots used = 584000
-Step 74: cost = -7.593043619614097 shots used = 592000
-Step 75: cost = -7.7969799318129045 shots used = 600000
-Step 76: cost = -7.837545360539077 shots used = 608000
-Step 77: cost = -7.845253964960701 shots used = 616000
-Step 78: cost = -7.941652692590529 shots used = 624000
-Step 79: cost = -7.967099906804574 shots used = 632000
-Step 80: cost = -7.803163356121793 shots used = 640000
-Step 81: cost = -7.665600401510319 shots used = 648000
-Step 82: cost = -8.09158124610039 shots used = 656000
-Step 83: cost = -7.774883584668083 shots used = 664000
-Step 84: cost = -7.758175214036924 shots used = 672000
-Step 85: cost = -7.9169924228411865 shots used = 680000
-Step 86: cost = -7.670199051467696 shots used = 688000
-Step 87: cost = -8.085682024006845 shots used = 696000
-Step 88: cost = -7.8433919424579095 shots used = 704000
-Step 89: cost = -7.755236580472145 shots used = 712000
-Step 90: cost = -7.847624689390126 shots used = 720000
-Step 91: cost = -8.122239105086607 shots used = 728000
-Step 92: cost = -7.922374192271718 shots used = 736000
-Step 93: cost = -7.904676929818973 shots used = 744000
-Step 94: cost = -7.909417248833883 shots used = 752000
-Step 95: cost = -8.06033491620787 shots used = 760000
-Step 96: cost = -7.765636196903123 shots used = 768000
-Step 97: cost = -7.801666008865329 shots used = 776000
-Step 98: cost = -8.066513329432457 shots used = 784000
-Step 99: cost = -7.8942080196569675 shots used = 792000
-Step 0: cost = -0.38250000000000006 shots used = 0
-Step 1: cost = -1.7450000000000006 shots used = 8000
-Step 2: cost = -2.54875 shots used = 16000
-Step 3: cost = -2.91 shots used = 24000
-Step 4: cost = -3.4762500000000003 shots used = 32000
-Step 5: cost = -4.08875 shots used = 40000
-Step 6: cost = -4.586250000000001 shots used = 48000
-Step 7: cost = -4.805 shots used = 56000
-Step 8: cost = -4.925 shots used = 64000
-Step 9: cost = -5.385000000000001 shots used = 72000
-Step 10: cost = -5.4725 shots used = 80000
-Step 11: cost = -5.63875 shots used = 88000
-Step 12: cost = -5.796250000000001 shots used = 96000
-Step 13: cost = -6.308750000000001 shots used = 104000
-Step 14: cost = -6.2524999999999995 shots used = 112000
-Step 15: cost = -6.706249999999999 shots used = 120000
-Step 16: cost = -6.711250000000001 shots used = 128000
-Step 17: cost = -6.803749999999999 shots used = 136000
-Step 18: cost = -6.94375 shots used = 144000
-Step 19: cost = -7.2837499999999995 shots used = 152000
-Step 20: cost = -7.4 shots used = 160000
-Step 21: cost = -7.38375 shots used = 168000
-Step 22: cost = -7.40125 shots used = 176000
-Step 23: cost = -7.4775 shots used = 184000
-Step 24: cost = -7.58 shots used = 192000
-Step 25: cost = -7.623749999999999 shots used = 200000
-Step 26: cost = -7.49625 shots used = 208000
-Step 27: cost = -7.58375 shots used = 216000
-Step 28: cost = -7.6312500000000005 shots used = 224000
-Step 29: cost = -7.13375 shots used = 232000
-Step 30: cost = -7.47 shots used = 240000
-Step 31: cost = -7.6075 shots used = 248000
-Step 32: cost = -7.34875 shots used = 256000
-Step 33: cost = -7.6525 shots used = 264000
-Step 34: cost = -7.572500000000001 shots used = 272000
-Step 35: cost = -7.390000000000001 shots used = 280000
-Step 36: cost = -7.76375 shots used = 288000
-Step 37: cost = -7.49 shots used = 296000
-Step 38: cost = -7.61625 shots used = 304000
-Step 39: cost = -7.695 shots used = 312000
-Step 40: cost = -7.702499999999999 shots used = 320000
-Step 41: cost = -7.59625 shots used = 328000
-Step 42: cost = -7.733750000000001 shots used = 336000
-Step 43: cost = -7.6875 shots used = 344000
-Step 44: cost = -7.75875 shots used = 352000
-Step 45: cost = -7.796250000000001 shots used = 360000
-Step 46: cost = -7.7387500000000005 shots used = 368000
-Step 47: cost = -7.92375 shots used = 376000
-Step 48: cost = -7.6225 shots used = 384000
-Step 49: cost = -7.8425 shots used = 392000
-Step 50: cost = -7.74 shots used = 400000
-Step 51: cost = -7.661250000000001 shots used = 408000
-Step 52: cost = -7.786250000000001 shots used = 416000
-Step 53: cost = -7.78875 shots used = 424000
-Step 54: cost = -7.62375 shots used = 432000
-Step 55: cost = -7.9375 shots used = 440000
-Step 56: cost = -7.71625 shots used = 448000
-Step 57: cost = -7.72375 shots used = 456000
-Step 58: cost = -7.741250000000001 shots used = 464000
-Step 59: cost = -7.811249999999999 shots used = 472000
-Step 60: cost = -7.89 shots used = 480000
-Step 61: cost = -7.74 shots used = 488000
-Step 62: cost = -7.751250000000001 shots used = 496000
-Step 63: cost = -7.71875 shots used = 504000
-Step 64: cost = -7.695 shots used = 512000
-Step 65: cost = -7.7325 shots used = 520000
-Step 66: cost = -7.819999999999999 shots used = 528000
-Step 67: cost = -7.981249999999999 shots used = 536000
-Step 68: cost = -7.8 shots used = 544000
-Step 69: cost = -7.89 shots used = 552000
-Step 70: cost = -7.7125 shots used = 560000
-Step 71: cost = -7.993750000000001 shots used = 568000
-Step 72: cost = -7.772499999999999 shots used = 576000
-Step 73: cost = -8.01125 shots used = 584000
-Step 74: cost = -8.116249999999999 shots used = 592000
-Step 75: cost = -7.9662500000000005 shots used = 600000
-Step 76: cost = -7.7125 shots used = 608000
-Step 77: cost = -7.8925 shots used = 616000
-Step 78: cost = -7.967499999999999 shots used = 624000
-Step 79: cost = -7.91375 shots used = 632000
-Step 80: cost = -7.797499999999999 shots used = 640000
-Step 81: cost = -7.9975000000000005 shots used = 648000
-Step 82: cost = -7.99 shots used = 656000
-Step 83: cost = -7.7124999999999995 shots used = 664000
-Step 84: cost = -7.76875 shots used = 672000
-Step 85: cost = -7.62 shots used = 680000
-Step 86: cost = -7.822500000000001 shots used = 688000
-Step 87: cost = -7.74625 shots used = 696000
-Step 88: cost = -7.9137499999999985 shots used = 704000
-Step 89: cost = -7.86125 shots used = 712000
-Step 90: cost = -7.975 shots used = 720000
-Step 91: cost = -7.89375 shots used = 728000
-Step 92: cost = -8.1075 shots used = 736000
-Step 93: cost = -7.775 shots used = 744000
-Step 94: cost = -7.8999999999999995 shots used = 752000
-Step 95: cost = -7.85625 shots used = 760000
-Step 96: cost = -7.925000000000001 shots used = 768000
-Step 97: cost = -8.0 shots used = 776000
-Step 98: cost = -7.825000000000001 shots used = 784000
-Step 99: cost = -7.999999999999999 shots used = 792000
-Step 0: cost = -5.976611864639143, shots_used = 240
-Step 1: cost = -3.9696542358660727, shots_used = 288
-Step 2: cost = -4.960189727105254, shots_used = 360
-Step 3: cost = -4.580003760087767, shots_used = 456
-Step 4: cost = -2.230216749128693, shots_used = 552
-Step 5: cost = -3.6390262209635624, shots_used = 696
-Step 6: cost = -6.407579837465835, shots_used = 1050
-Step 7: cost = -7.4366536874312565, shots_used = 1578
-Step 8: cost = -7.259604321778904, shots_used = 2250
-Step 9: cost = -7.062132684694287, shots_used = 2970
-Step 10: cost = -7.5539381823528915, shots_used = 3738
-Step 11: cost = -7.530120251217975, shots_used = 4866
-Step 12: cost = -7.620064018172076, shots_used = 6474
-Step 13: cost = -7.749105026853709, shots_used = 8288
-Step 14: cost = -7.7584669100105454, shots_used = 10388
-Step 15: cost = -7.547668090788587, shots_used = 12404
-Step 16: cost = -7.802606000681813, shots_used = 14660
-Step 17: cost = -7.819375105495885, shots_used = 17180
-Step 18: cost = -7.813893056373781, shots_used = 19700
-Step 19: cost = -7.818976697763795, shots_used = 22796
-Step 20: cost = -7.847655565015213, shots_used = 26372
-Step 21: cost = -7.854512274045721, shots_used = 30810
-Step 22: cost = -7.855665819254089, shots_used = 35538
-Step 23: cost = -7.843276666680198, shots_used = 40770
-Step 24: cost = -7.82813895796069, shots_used = 45762
-Step 25: cost = -7.796501914990248, shots_used = 51162
-Step 26: cost = -7.871130124788932, shots_used = 56466
-Step 27: cost = -7.866190872563943, shots_used = 62010
-Step 28: cost = -7.780118268373553, shots_used = 68250
-Step 29: cost = -7.843565291223448, shots_used = 74946
-Step 30: cost = -7.840084824878835, shots_used = 81762
-Step 31: cost = -7.863430860462219, shots_used = 88962
-Step 32: cost = -7.863400771365601, shots_used = 96786
-Step 33: cost = -7.828392469226825, shots_used = 104730
-Step 34: cost = -7.845758777555817, shots_used = 114532
-Step 35: cost = -7.862280441095794, shots_used = 122908
-Step 36: cost = -7.866212335569502, shots_used = 131836
-Step 37: cost = -7.859430128177042, shots_used = 140500
-Step 38: cost = -7.856087432905534, shots_used = 150076
-Step 39: cost = -7.850323433779115, shots_used = 159676
-Step 40: cost = -7.834403598788763, shots_used = 170116
-Step 41: cost = -7.849769789802028, shots_used = 181300
-Step 42: cost = -7.86693841353118, shots_used = 192700
-Step 43: cost = -7.865653895759861, shots_used = 204460
-Step 44: cost = -7.853522061269157, shots_used = 217900
-Step 45: cost = -7.885272132729725, shots_used = 231748
-Step 46: cost = -7.88224395467864, shots_used = 245644
-Step 47: cost = -7.884376349618622, shots_used = 259852
-Step 48: cost = -7.8808911781003825, shots_used = 275164
-Step 49: cost = -7.881035167671664, shots_used = 292444
-Step 50: cost = -7.881931152903569, shots_used = 310300
-Step 51: cost = -7.873486288144938, shots_used = 329452
-Step 52: cost = -7.842973314288795, shots_used = 348532
-Step 53: cost = -7.87101794797729, shots_used = 368644
-Step 54: cost = -7.880857865087542, shots_used = 388828
-Step 55: cost = -7.884163217633474, shots_used = 409132
-Step 56: cost = -7.866452206380498, shots_used = 429076
-Step 57: cost = -7.876255345278057, shots_used = 451468
-Step 58: cost = -7.87369984074766, shots_used = 475348
-Step 59: cost = -7.890243502630163, shots_used = 501460
-2400
-Step 0: cost = -2.03376839972733 shots_used = 2400
-Step 1: cost = -3.0397515887713897 shots_used = 4800
-Step 2: cost = -3.8459175082365666 shots_used = 7200
-Step 3: cost = -4.505506895275778 shots_used = 9600
-Step 4: cost = -5.0488106623708084 shots_used = 12000
-Step 5: cost = -5.482162129547712 shots_used = 14400
-Step 6: cost = -5.83880726147689 shots_used = 16800
-Step 7: cost = -6.143933494222608 shots_used = 19200
-Step 8: cost = -6.412317130720796 shots_used = 21600
-Step 9: cost = -6.6534666682698 shots_used = 24000
-Step 10: cost = -6.86746547637287 shots_used = 26400
-Step 11: cost = -7.057043661341395 shots_used = 28800
-Step 12: cost = -7.219548494479429 shots_used = 31200
-Step 13: cost = -7.3445177518694456 shots_used = 33600
-Step 14: cost = -7.435753942420535 shots_used = 36000
-Step 15: cost = -7.497138548636965 shots_used = 38400
-Step 16: cost = -7.529946318655265 shots_used = 40800
-Step 17: cost = -7.537070813893377 shots_used = 43200
-Step 18: cost = -7.525225697166624 shots_used = 45600
-Step 19: cost = -7.5048251159723405 shots_used = 48000
-Step 20: cost = -7.481487171246212 shots_used = 50400
-Step 21: cost = -7.461106527571478 shots_used = 52800
-Step 22: cost = -7.4490325775024075 shots_used = 55200
-Step 23: cost = -7.444817343084735 shots_used = 57600
-Step 24: cost = -7.4494913586937574 shots_used = 60000
-Step 25: cost = -7.462969617594349 shots_used = 62400
-Step 26: cost = -7.484518392550573 shots_used = 64800
-Step 27: cost = -7.509533957688121 shots_used = 67200
-Step 28: cost = -7.535240804873656 shots_used = 69600
-Step 29: cost = -7.560642729685874 shots_used = 72000
-Step 30: cost = -7.586205677180162 shots_used = 74400
-Step 31: cost = -7.61260475402048 shots_used = 76800
-Step 32: cost = -7.637117815005769 shots_used = 79200
-Step 33: cost = -7.661716123608457 shots_used = 81600
-Step 34: cost = -7.6852319189727165 shots_used = 84000
-Step 35: cost = -7.708583289744081 shots_used = 86400
-Step 36: cost = -7.729551671925802 shots_used = 88800
-Step 37: cost = -7.7462558125604595 shots_used = 91200
-Step 38: cost = -7.758965992155235 shots_used = 93600
-Step 39: cost = -7.764889692835303 shots_used = 96000
-Step 40: cost = -7.770298814247658 shots_used = 98400
-Step 41: cost = -7.771938304013664 shots_used = 100800
-Step 42: cost = -7.771490419427766 shots_used = 103200
-Step 43: cost = -7.771665932203987 shots_used = 105600
-Step 44: cost = -7.771775966399097 shots_used = 108000
-Step 45: cost = -7.772019786144459 shots_used = 110400
-Step 46: cost = -7.774409408800273 shots_used = 112800
-Step 47: cost = -7.777544198411677 shots_used = 115200
-Step 48: cost = -7.78057842461007 shots_used = 117600
-Step 49: cost = -7.7865146226898805 shots_used = 120000
-Step 50: cost = -7.793839215454196 shots_used = 122400
-Step 51: cost = -7.802144039740554 shots_used = 124800
-Step 52: cost = -7.809859012081808 shots_used = 127200
-Step 53: cost = -7.818330164675909 shots_used = 129600
-Step 54: cost = -7.826930993976666 shots_used = 132000
-Step 55: cost = -7.834969848723968 shots_used = 134400
-Step 56: cost = -7.842454395123664 shots_used = 136800
-Step 57: cost = -7.849335152675151 shots_used = 139200
-Step 58: cost = -7.853951071633944 shots_used = 141600
-Step 59: cost = -7.858296868696565 shots_used = 144000
-Step 60: cost = -7.862867672169834 shots_used = 146400
-Step 61: cost = -7.865540080202736 shots_used = 148800
-Step 62: cost = -7.867577632485199 shots_used = 151200
-Step 63: cost = -7.869035010771334 shots_used = 153600
-Step 64: cost = -7.870496374034538 shots_used = 156000
-Step 65: cost = -7.871678720443278 shots_used = 158400
-Step 66: cost = -7.872542373444428 shots_used = 160800
-Step 67: cost = -7.873739299675017 shots_used = 163200
-Step 68: cost = -7.874314293738313 shots_used = 165600
-Step 69: cost = -7.875793149514538 shots_used = 168000
-Step 70: cost = -7.877051911492931 shots_used = 170400
-Step 71: cost = -7.878207264678217 shots_used = 172800
-Step 72: cost = -7.879198045006914 shots_used = 175200
-Step 73: cost = -7.880726987471535 shots_used = 177600
-Step 74: cost = -7.882055795432435 shots_used = 180000
-Step 75: cost = -7.88215282515028 shots_used = 182400
-Step 76: cost = -7.881947191378357 shots_used = 184800
-Step 77: cost = -7.881566349945106 shots_used = 187200
-Step 78: cost = -7.881659168988012 shots_used = 189600
-Step 79: cost = -7.881276797156975 shots_used = 192000
-Step 80: cost = -7.879976174007023 shots_used = 194400
-Step 81: cost = -7.878714918643873 shots_used = 196800
-Step 82: cost = -7.877964404670651 shots_used = 199200
-Step 83: cost = -7.8771022016203665 shots_used = 201600
-Step 84: cost = -7.875562772172711 shots_used = 204000
-Step 85: cost = -7.875602350174969 shots_used = 206400
-Step 86: cost = -7.877141380119034 shots_used = 208800
-Step 87: cost = -7.87925788505365 shots_used = 211200
-Step 88: cost = -7.881144761009377 shots_used = 213600
-Step 89: cost = -7.882250363744701 shots_used = 216000
-Step 90: cost = -7.881748113564451 shots_used = 218400
-Step 91: cost = -7.883533319932514 shots_used = 220800
-Step 92: cost = -7.884779159318079 shots_used = 223200
-Step 93: cost = -7.8868911005436555 shots_used = 225600
-Step 94: cost = -7.888524224480213 shots_used = 228000
-Step 95: cost = -7.888123287772768 shots_used = 230400
-Step 96: cost = -7.8867800801467896 shots_used = 232800
-Step 97: cost = -7.8853107450636415 shots_used = 235200
-Step 98: cost = -7.883507674089132 shots_used = 237600
- </code>
- </pre>
- </details>
-
----
-
-## 11. tutorial_gbs.html <a name="demo10"></a>
+## 1. tutorial_gbs.html <a name="demo0"></a>
 
 ---
 
@@ -1807,7 +81,237 @@ Step 98: cost = -7.883507674089132 shots_used = 237600
 
 ---
 
-## 12. tutorial_quantum_chemistry.html <a name="demo11"></a>
+## 2. tutorial_adaptive_circuits.html <a name="demo1"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_adaptive_circuits.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Excitation : [0, 1, 2, 3], Gradient: -0.012782175157672729
+Excitation : [0, 1, 2, 5], Gradient: -1.219727444046192e-19
+Excitation : [0, 1, 2, 7], Gradient: 1.2197274440461927e-19
+Excitation : [0, 1, 2, 9], Gradient: 0.03426451170169312
+Excitation : [0, 1, 3, 4], Gradient: 9.486769009248161e-20
+Excitation : [0, 1, 3, 6], Gradient: 1.8973538018496328e-19
+Excitation : [0, 1, 3, 8], Gradient: -0.034264511701692896
+Excitation : [0, 1, 4, 5], Gradient: -0.02358152902067931
+Excitation : [0, 1, 5, 8], Gradient: 1.7618285302889495e-19
+Excitation : [0, 1, 6, 7], Gradient: -0.023581529020679316
+Excitation : [0, 1, 7, 8], Gradient: -1.2197274440461896e-19
+Excitation : [0, 1, 8, 9], Gradient: -0.12362273485598377
+Excitation : [0, 2], Gradient: -0.005062536239322769
+Excitation : [0, 4], Gradient: 9.846150643917213e-18
+Excitation : [0, 6], Gradient: -6.111754024320012e-20
+Excitation : [0, 8], Gradient: -0.0009448044625747746
+Excitation : [1, 3], Gradient: 0.00492661687699176
+Excitation : [1, 5], Gradient: 4.58393739042404e-19
+Excitation : [1, 7], Gradient: 2.0748028483987315e-18
+Excitation : [1, 9], Gradient: 0.0014535534854003965
+n = 0,  E = -7.86266587 H, t = 2.13 s
+n = 1,  E = -7.87094621 H, t = 2.67 s
+n = 2,  E = -7.87563100 H, t = 2.23 s
+n = 3,  E = -7.87829146 H, t = 2.67 s
+n = 4,  E = -7.87981705 H, t = 2.16 s
+n = 5,  E = -7.88070477 H, t = 2.69 s
+n = 6,  E = -7.88123143 H, t = 2.22 s
+n = 7,  E = -7.88155161 H, t = 2.65 s
+n = 9,  E = -7.88188237 H, t = 2.63 s
+n = 10,  E = -7.88197041 H, t = 2.70 s
+n = 11,  E = -7.88203267 H, t = 2.18 s
+n = 12,  E = -7.88207879 H, t = 2.73 s
+n = 13,  E = -7.88211452 H, t = 2.20 s
+n = 14,  E = -7.88214335 H, t = 2.62 s
+n = 15,  E = -7.88216743 H, t = 2.17 s
+n = 16,  E = -7.88218814 H, t = 2.69 s
+n = 17,  E = -7.88220634 H, t = 2.21 s
+n = 18,  E = -7.88222261 H, t = 2.82 s
+n = 19,  E = -7.88223734 H, t = 2.18 s
+n = 0,  E = -7.86266587 H, t = 0.13 s
+n = 1,  E = -7.87094621 H, t = 0.12 s
+n = 2,  E = -7.87563100 H, t = 0.12 s
+n = 3,  E = -7.87829146 H, t = 0.12 s
+n = 4,  E = -7.87981705 H, t = 0.12 s
+n = 5,  E = -7.88070477 H, t = 0.12 s
+n = 6,  E = -7.88123143 H, t = 0.12 s
+n = 7,  E = -7.88155161 H, t = 0.12 s
+n = 8,  E = -7.88175217 H, t = 0.14 s
+n = 9,  E = -7.88188237 H, t = 0.12 s
+n = 10,  E = -7.88197041 H, t = 0.12 s
+n = 11,  E = -7.88203267 H, t = 0.12 s
+n = 12,  E = -7.88207879 H, t = 0.13 s
+n = 13,  E = -7.88211452 H, t = 0.13 s
+n = 14,  E = -7.88214335 H, t = 0.13 s
+n = 15,  E = -7.88216743 H, t = 0.13 s
+n = 16,  E = -7.88218814 H, t = 0.13 s
+n = 17,  E = -7.88220634 H, t = 0.12 s
+n = 18,  E = -7.88222261 H, t = 0.12 s
+n = 19,  E = -7.88223734 H, t = 0.13 s
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_adaptive_circuits.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Excitation : [0, 1, 2, 3], Gradient: -0.012782175157669547
+Excitation : [0, 1, 2, 5], Gradient: -1.4230153513872238e-19
+Excitation : [0, 1, 2, 7], Gradient: 2.303929616531697e-19
+Excitation : [0, 1, 2, 9], Gradient: 0.034264511701689204
+Excitation : [0, 1, 3, 4], Gradient: 6.098637220230964e-20
+Excitation : [0, 1, 3, 6], Gradient: 4.0657581468206416e-20
+Excitation : [0, 1, 3, 8], Gradient: -0.03426451170168905
+Excitation : [0, 1, 4, 5], Gradient: -0.02358152902067854
+Excitation : [0, 1, 5, 8], Gradient: 1.4230153513872282e-19
+Excitation : [0, 1, 6, 7], Gradient: -0.023581529020678525
+Excitation : [0, 1, 7, 8], Gradient: 1.2197274440461954e-19
+Excitation : [0, 1, 8, 9], Gradient: -0.12362273485598566
+Excitation : [0, 2], Gradient: -0.005062536239326924
+Excitation : [0, 4], Gradient: -1.5093771830667583e-17
+Excitation : [0, 6], Gradient: -3.3988206614764893e-18
+Excitation : [0, 8], Gradient: -0.0009448044625765868
+Excitation : [1, 3], Gradient: 0.004926616876995651
+Excitation : [1, 5], Gradient: -2.900203988058343e-18
+Excitation : [1, 7], Gradient: -5.145790640403441e-19
+Excitation : [1, 9], Gradient: 0.0014535534854024951
+n = 0,  E = -7.86266587 H, t = 2.08 s
+n = 1,  E = -7.87094621 H, t = 2.12 s
+n = 2,  E = -7.87563100 H, t = 1.60 s
+n = 3,  E = -7.87829146 H, t = 2.12 s
+n = 4,  E = -7.87981705 H, t = 1.59 s
+n = 5,  E = -7.88070477 H, t = 2.09 s
+n = 6,  E = -7.88123143 H, t = 2.13 s
+n = 7,  E = -7.88155161 H, t = 1.59 s
+n = 9,  E = -7.88188237 H, t = 1.57 s
+n = 10,  E = -7.88197041 H, t = 2.10 s
+n = 11,  E = -7.88203267 H, t = 1.57 s
+n = 12,  E = -7.88207879 H, t = 2.08 s
+n = 13,  E = -7.88211452 H, t = 1.57 s
+n = 14,  E = -7.88214335 H, t = 2.06 s
+n = 15,  E = -7.88216743 H, t = 2.12 s
+n = 16,  E = -7.88218814 H, t = 1.59 s
+n = 17,  E = -7.88220634 H, t = 2.11 s
+n = 18,  E = -7.88222261 H, t = 1.59 s
+n = 19,  E = -7.88223734 H, t = 2.10 s
+n = 0,  E = -7.86266587 H, t = 0.09 s
+n = 1,  E = -7.87094621 H, t = 0.09 s
+n = 2,  E = -7.87563100 H, t = 0.09 s
+n = 3,  E = -7.87829146 H, t = 0.08 s
+n = 4,  E = -7.87981705 H, t = 0.09 s
+n = 5,  E = -7.88070477 H, t = 0.09 s
+n = 6,  E = -7.88123143 H, t = 0.09 s
+n = 7,  E = -7.88155161 H, t = 0.09 s
+n = 8,  E = -7.88175217 H, t = 0.09 s
+n = 9,  E = -7.88188237 H, t = 0.09 s
+n = 10,  E = -7.88197041 H, t = 0.09 s
+n = 11,  E = -7.88203267 H, t = 0.09 s
+n = 12,  E = -7.88207879 H, t = 0.09 s
+n = 13,  E = -7.88211452 H, t = 0.09 s
+n = 14,  E = -7.88214335 H, t = 0.09 s
+n = 15,  E = -7.88216743 H, t = 0.09 s
+n = 16,  E = -7.88218814 H, t = 0.09 s
+n = 17,  E = -7.88220634 H, t = 0.09 s
+n = 18,  E = -7.88222261 H, t = 0.09 s
+n = 19,  E = -7.88223734 H, t = 0.09 s
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 3. tutorial_jax_transformations.html <a name="demo2"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_jax_transformations.html):
+
+```
+No jit time: 0.0125 seconds
+First run time: 0.0617 seconds
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_jax_transformations.html):
+
+```
+No jit time: 0.0096 seconds
+First run time: 0.0528 seconds
+```
+
+---
+
+## 4. tutorial_vqe_parallel.html <a name="demo3"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html):
+
+```
+Speed up: 2.95
+Evaluation time: 335.20 s
+Evaluation time: 113.68 s
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_parallel.html):
+
+```
+Speed up: 2.96
+Evaluation time: 278.62 s
+Evaluation time: 94.13 s
+```
+
+---
+
+## 5. tutorial_qnn_module_tf.html <a name="demo4"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_qnn_module_tf.html):
+
+```
+30/30 - 11s - loss: 0.3931 - accuracy: 0.7067 - val_loss: 0.2683 - val_accuracy: 0.8600
+30/30 - 10s - loss: 0.2107 - accuracy: 0.8600 - val_loss: 0.1992 - val_accuracy: 0.8200
+30/30 - 11s - loss: 0.1670 - accuracy: 0.8800 - val_loss: 0.1854 - val_accuracy: 0.8600
+30/30 - 11s - loss: 0.1602 - accuracy: 0.8800 - val_loss: 0.1732 - val_accuracy: 0.8600
+30/30 - 11s - loss: 0.1514 - accuracy: 0.8800 - val_loss: 0.1692 - val_accuracy: 0.8600
+30/30 - 11s - loss: 0.1433 - accuracy: 0.8800 - val_loss: 0.1787 - val_accuracy: 0.8200
+30/30 - 21s - loss: 0.4068 - accuracy: 0.6600 - val_loss: 0.3008 - val_accuracy: 0.7400
+30/30 - 21s - loss: 0.2845 - accuracy: 0.7733 - val_loss: 0.2298 - val_accuracy: 0.8200
+30/30 - 21s - loss: 0.2180 - accuracy: 0.8067 - val_loss: 0.1976 - val_accuracy: 0.8200
+30/30 - 21s - loss: 0.1904 - accuracy: 0.8533 - val_loss: 0.1809 - val_accuracy: 0.8200
+30/30 - 21s - loss: 0.1702 - accuracy: 0.8600 - val_loss: 0.1719 - val_accuracy: 0.8600
+30/30 - 21s - loss: 0.1538 - accuracy: 0.8600 - val_loss: 0.1862 - val_accuracy: 0.8400
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qnn_module_tf.html):
+
+```
+30/30 - 6s - loss: 0.3931 - accuracy: 0.7067 - val_loss: 0.2683 - val_accuracy: 0.8600
+30/30 - 6s - loss: 0.2107 - accuracy: 0.8600 - val_loss: 0.1992 - val_accuracy: 0.8200
+30/30 - 7s - loss: 0.1670 - accuracy: 0.8800 - val_loss: 0.1854 - val_accuracy: 0.8600
+30/30 - 6s - loss: 0.1602 - accuracy: 0.8800 - val_loss: 0.1732 - val_accuracy: 0.8600
+30/30 - 6s - loss: 0.1514 - accuracy: 0.8800 - val_loss: 0.1692 - val_accuracy: 0.8600
+30/30 - 7s - loss: 0.1433 - accuracy: 0.8800 - val_loss: 0.1787 - val_accuracy: 0.8200
+30/30 - 13s - loss: 0.4068 - accuracy: 0.6600 - val_loss: 0.3008 - val_accuracy: 0.7400
+30/30 - 12s - loss: 0.2845 - accuracy: 0.7733 - val_loss: 0.2298 - val_accuracy: 0.8200
+30/30 - 13s - loss: 0.2180 - accuracy: 0.8067 - val_loss: 0.1976 - val_accuracy: 0.8200
+30/30 - 13s - loss: 0.1904 - accuracy: 0.8533 - val_loss: 0.1809 - val_accuracy: 0.8200
+30/30 - 13s - loss: 0.1702 - accuracy: 0.8600 - val_loss: 0.1719 - val_accuracy: 0.8600
+30/30 - 12s - loss: 0.1538 - accuracy: 0.8600 - val_loss: 0.1862 - val_accuracy: 0.8400
+```
+
+---
+
+## 6. tutorial_quantum_chemistry.html <a name="demo5"></a>
 
 ---
 
@@ -10341,26 +8845,1048 @@ Step 98: cost = -7.883507674089132 shots_used = 237600
 
 ---
 
-## 13. tutorial_quantum_natural_gradient.html <a name="demo12"></a>
+## 7. tutorial_falqon.html <a name="demo6"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_quantum_natural_gradient.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_falqon.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 1, Cost = -2.4265436197783425
+Step 2, Cost = -5.45183841811118
+Step 3, Cost = -5.058939064534102
+Step 4, Cost = 0.666377989107735
+Step 5, Cost = -3.961765919151042
+Step 6, Cost = -6.012336027057502
+Step 7, Cost = -6.383828240291059
+Step 8, Cost = -6.568581722318154
+Step 9, Cost = -6.652767426710378
+Step 10, Cost = -6.718062615729133
+Step 11, Cost = -6.7639477436093
+Step 12, Cost = -6.8048574666097235
+Step 13, Cost = -6.8394030587361705
+Step 14, Cost = -6.8714592635528415
+Step 15, Cost = -6.8997469754809675
+Step 16, Cost = -6.925884328592705
+Step 17, Cost = -6.9492295078855975
+Step 18, Cost = -6.97059412505724
+Step 19, Cost = -6.989907329921377
+Step 20, Cost = -7.007623105822664
+Step 21, Cost = -7.0239860498803415
+Step 22, Cost = -7.039304856521962
+Step 23, Cost = -7.053894937286077
+Step 24, Cost = -7.067988454154516
+Step 25, Cost = -7.081842534715257
+Step 26, Cost = -7.095617260802714
+Step 27, Cost = -7.109472588274413
+Step 28, Cost = -7.123480825409048
+Step 29, Cost = -7.137684426026884
+Step 30, Cost = -7.152041022693121
+Step 31, Cost = -7.166453310287251
+Step 32, Cost = -7.1807483416093705
+Step 33, Cost = -7.194694917926645
+Step 34, Cost = -7.208028603663313
+Step 35, Cost = -7.22045639587035
+Step 36, Cost = -7.231727330032172
+Step 37, Cost = -7.241565955502995
+Step 38, Cost = -7.249767410209228
+Step 39, Cost = -7.255782895664823
+Step 40, Cost = -7.258987907014075
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_falqon.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 1, Cost = -2.4265436197783448
+Step 2, Cost = -5.451838418111176
+Step 3, Cost = -5.05893906453409
+Step 4, Cost = 0.6663779891077449
+Step 5, Cost = -3.9617659191509746
+Step 6, Cost = -6.012336027057521
+Step 7, Cost = -6.383828240291071
+Step 8, Cost = -6.5685817223181155
+Step 9, Cost = -6.652767426710387
+Step 10, Cost = -6.718062615729132
+Step 11, Cost = -6.763947743609312
+Step 12, Cost = -6.80485746660975
+Step 13, Cost = -6.8394030587362
+Step 14, Cost = -6.871459263552881
+Step 15, Cost = -6.899746975480981
+Step 16, Cost = -6.925884328592719
+Step 17, Cost = -6.949229507885613
+Step 18, Cost = -6.970594125057218
+Step 19, Cost = -6.989907329921348
+Step 20, Cost = -7.007623105822645
+Step 21, Cost = -7.023986049880396
+Step 22, Cost = -7.03930485652197
+Step 23, Cost = -7.053894937286083
+Step 24, Cost = -7.067988454154528
+Step 25, Cost = -7.081842534715245
+Step 26, Cost = -7.095617260802699
+Step 27, Cost = -7.109472588274404
+Step 28, Cost = -7.123480825409055
+Step 29, Cost = -7.137684426026871
+Step 30, Cost = -7.152041022693112
+Step 31, Cost = -7.166453310287315
+Step 32, Cost = -7.1807483416093865
+Step 33, Cost = -7.194694917926691
+Step 34, Cost = -7.208028603663316
+Step 35, Cost = -7.22045639587038
+Step 36, Cost = -7.231727330032204
+Step 37, Cost = -7.241565955502979
+Step 38, Cost = -7.249767410209168
+Step 39, Cost = -7.255782895664824
+Step 40, Cost = -7.258987907014076
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 8. tutorial_doubly_stochastic.html <a name="demo7"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_doubly_stochastic.html):
 
 ```
-[[0.125      0.         0.         0.        ]
- [0.         0.1875     0.         0.        ]
- [0.         0.         0.24973433 0.        ]
- [0.         0.         0.         0.20293623]]
+Vanilla gradient descent min energy =  -4.605247234069292
+Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
+Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
+Doubly stochastic gradient descent min energy =  -4.4990195930951575
+Adaptive QSGD min energy =  -4.592548741613157
 ```
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_natural_gradient.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_doubly_stochastic.html):
 
 ```
-/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
-[[0.125      0.         0.         0.        ]
- [0.         0.1875     0.         0.        ]
- [0.         0.         0.24973433 0.        ]
+/home/runner/work/qml/qml/demonstrations/tutorial_doubly_stochastic.py:158: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+Vanilla gradient descent min energy =  -4.605247234069292
+Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
+Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
+Doubly stochastic gradient descent min energy =  -4.4990195930951575
+```
+
+---
+
+## 9. tutorial_backprop.html <a name="demo8"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_backprop.html):
+
+```
+180
+0.8947771876917632
+Forward pass (best of 3): 0.008421205499962526 sec per loop
+Gradient computation (best of 3): 3.249689813399982 sec per loop
+3.031633979986509
+0.9358535378025419
+Forward pass (best of 3): 0.06279191759995228 sec per loop
+Backward pass (best of 3): 0.12324959990000935 sec per loop
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_backprop.html):
+
+```
+/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:173: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+180
+0.8947771876917632
+Forward pass (best of 3): 0.0059497190000001865 sec per loop
+Gradient computation (best of 3): 2.2336992747000295 sec per loop
+2.141898840000067
+/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+0.9358535378025419
+```
+
+---
+
+## 10. tutorial_qaoa_intro.html <a name="demo9"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_qaoa_intro.html):
+
+```
+[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.855528453707565]]
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qaoa_intro.html):
+
+```
+[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.8555284537075651]]
+```
+
+---
+
+## 11. tutorial_QGAN.html <a name="demo10"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_QGAN.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 0: cost = -0.05727687478065491
+Step 5: cost = -0.26348111033439636
+Step 10: cost = -0.4273917004466057
+Step 15: cost = -0.47261590510606766
+Step 20: cost = -0.48406896367669106
+Step 25: cost = -0.48946382384747267
+Step 30: cost = -0.49281889386475086
+Step 35: cost = -0.4949494309257716
+Step 40: cost = -0.49627021909691393
+Step 45: cost = -0.49707187968306243
+Prob(real classified as real):  0.9985871425596997
+Prob(fake classified as real):  0.5011128038167953
+Step 0: cost = -0.5833386033773422
+Step 5: cost = -0.8915732949972153
+Step 10: cost = -0.9784244522452354
+Step 15: cost = -0.9946483590174466
+Step 20: cost = -0.9984995491686277
+Step 25: cost = -0.9995636216044659
+Step 30: cost = -0.9998718172573717
+Step 35: cost = -0.9999619696027366
+Step 40: cost = -0.9999888275397097
+Step 45: cost = -0.999996672290763
+Prob(fake classified as real):  0.99999862746688
+Discriminator cost:  0.0014114849071802382
+Real Bloch vector: [-0.2169418   0.45048445 -0.86602525]
+Generator Bloch vector: [-0.2840465   0.41893208 -0.86244407]
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_QGAN.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 0: cost = -0.05727699398994446
+Step 5: cost = -0.26348118484020233
+Step 10: cost = -0.4273917078971863
+Step 15: cost = -0.47261589020490646
+Step 20: cost = -0.48406901210546494
+Step 25: cost = -0.4894639030098915
+Step 30: cost = -0.49281900376081467
+Step 35: cost = -0.4949493855237961
+Step 40: cost = -0.49627020210027695
+Step 45: cost = -0.49707192927598953
+Prob(real classified as real):  0.9985870718955994
+Prob(fake classified as real):  0.5011127963662148
+Step 0: cost = -0.583338625729084
+Step 5: cost = -0.8915732204914093
+Step 10: cost = -0.9784243106842041
+Step 15: cost = -0.9946482479572296
+Step 20: cost = -0.9984994232654572
+Step 25: cost = -0.9995635747909546
+Step 30: cost = -0.9998717308044434
+Step 35: cost = -0.9999619424343109
+Step 40: cost = -0.9999886155128479
+Step 45: cost = -0.9999965727329254
+Prob(fake classified as real):  0.9999985992908478
+Discriminator cost:  0.001411527395248413
+Real Bloch vector: [-0.21694186  0.45048442 -0.86602521]
+Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 12. tutorial_rosalin.html <a name="demo11"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_rosalin.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+-0.8395887630997874
+Step 0: cost = -0.47971271815214855 shots used = 0
+Step 1: cost = -1.6879973520840041 shots used = 8000
+Step 2: cost = -2.437928256197112 shots used = 16000
+Step 3: cost = -2.9300968884147647 shots used = 24000
+Step 4: cost = -3.7779069617997116 shots used = 32000
+Step 5: cost = -3.8889841568955115 shots used = 40000
+Step 6: cost = -4.508059711766957 shots used = 48000
+Step 7: cost = -4.71114219758592 shots used = 56000
+Step 8: cost = -4.984457128293103 shots used = 64000
+Step 9: cost = -5.597084424095087 shots used = 72000
+Step 10: cost = -5.456976403687039 shots used = 80000
+Step 11: cost = -5.736752824027413 shots used = 88000
+Step 12: cost = -6.220317925041974 shots used = 96000
+Step 13: cost = -6.45162161927903 shots used = 104000
+Step 14: cost = -6.563539211112225 shots used = 112000
+Step 15: cost = -6.487339064303318 shots used = 120000
+Step 16: cost = -6.69261841162329 shots used = 128000
+Step 17: cost = -6.909230576241427 shots used = 136000
+Step 18: cost = -7.05156660241221 shots used = 144000
+Step 19: cost = -7.163688069859358 shots used = 152000
+Step 20: cost = -7.191791478058647 shots used = 160000
+Step 21: cost = -7.191694602776715 shots used = 168000
+Step 22: cost = -7.430122007574104 shots used = 176000
+Step 23: cost = -7.245621601209081 shots used = 184000
+Step 24: cost = -7.539044265851978 shots used = 192000
+Step 25: cost = -7.532847998808006 shots used = 200000
+Step 26: cost = -7.44257222073886 shots used = 208000
+Step 27: cost = -7.439951968648378 shots used = 216000
+Step 28: cost = -7.734568855081575 shots used = 224000
+Step 29: cost = -7.618221322585628 shots used = 232000
+Step 30: cost = -7.651544920606065 shots used = 240000
+Step 31: cost = -7.5069088885777155 shots used = 248000
+Step 32: cost = -7.780301321189146 shots used = 256000
+Step 33: cost = -7.4456447455856445 shots used = 264000
+Step 34: cost = -7.403560444278863 shots used = 272000
+Step 35: cost = -7.666718876831026 shots used = 280000
+Step 36: cost = -7.7178910518866415 shots used = 288000
+Step 37: cost = -7.375680885292107 shots used = 296000
+Step 38: cost = -7.665568049279896 shots used = 304000
+Step 39: cost = -7.568101693343673 shots used = 312000
+Step 40: cost = -7.524188200359864 shots used = 320000
+Step 41: cost = -7.525528734255245 shots used = 328000
+Step 42: cost = -7.57734861403185 shots used = 336000
+Step 43: cost = -7.76844833198197 shots used = 344000
+Step 44: cost = -7.797619087079373 shots used = 352000
+Step 45: cost = -7.879148884805528 shots used = 360000
+Step 46: cost = -7.744030492750696 shots used = 368000
+Step 47: cost = -7.6484739221198765 shots used = 376000
+Step 48: cost = -7.679623095926702 shots used = 384000
+Step 49: cost = -7.607476988501242 shots used = 392000
+Step 50: cost = -7.856041856821188 shots used = 400000
+Step 51: cost = -7.644473030321983 shots used = 408000
+Step 52: cost = -7.593159311741706 shots used = 416000
+Step 53: cost = -7.606939212888227 shots used = 424000
+Step 54: cost = -7.621128949485829 shots used = 432000
+Step 55: cost = -7.743568287057952 shots used = 440000
+Step 56: cost = -7.6325929460598525 shots used = 448000
+Step 57: cost = -7.718256562367575 shots used = 456000
+Step 58: cost = -7.861601938446393 shots used = 464000
+Step 59: cost = -7.666115854972354 shots used = 472000
+Step 60: cost = -7.644148944168839 shots used = 480000
+Step 61: cost = -7.771569192260795 shots used = 488000
+Step 62: cost = -7.776898446282362 shots used = 496000
+Step 63: cost = -7.711006891533269 shots used = 504000
+Step 64: cost = -7.748650044666392 shots used = 512000
+Step 65: cost = -7.690723991927554 shots used = 520000
+Step 66: cost = -7.694117031088106 shots used = 528000
+Step 67: cost = -7.793250125674997 shots used = 536000
+Step 68: cost = -7.926049735334674 shots used = 544000
+Step 69: cost = -7.686292326080605 shots used = 552000
+Step 70: cost = -7.745774212716911 shots used = 560000
+Step 71: cost = -7.625346751584894 shots used = 568000
+Step 72: cost = -7.846664469958039 shots used = 576000
+Step 73: cost = -7.860275655123486 shots used = 584000
+Step 74: cost = -7.593043619614097 shots used = 592000
+Step 75: cost = -7.7969799318129045 shots used = 600000
+Step 76: cost = -7.837545360539077 shots used = 608000
+Step 77: cost = -7.845253964960701 shots used = 616000
+Step 78: cost = -7.941652692590529 shots used = 624000
+Step 79: cost = -7.967099906804574 shots used = 632000
+Step 80: cost = -7.803163356121793 shots used = 640000
+Step 81: cost = -7.665600401510319 shots used = 648000
+Step 82: cost = -8.09158124610039 shots used = 656000
+Step 83: cost = -7.774883584668083 shots used = 664000
+Step 84: cost = -7.758175214036924 shots used = 672000
+Step 85: cost = -7.9169924228411865 shots used = 680000
+Step 86: cost = -7.670199051467696 shots used = 688000
+Step 87: cost = -8.085682024006845 shots used = 696000
+Step 88: cost = -7.8433919424579095 shots used = 704000
+Step 89: cost = -7.755236580472145 shots used = 712000
+Step 90: cost = -7.847624689390126 shots used = 720000
+Step 91: cost = -8.122239105086607 shots used = 728000
+Step 92: cost = -7.922374192271718 shots used = 736000
+Step 93: cost = -7.904676929818973 shots used = 744000
+Step 94: cost = -7.909417248833883 shots used = 752000
+Step 95: cost = -8.06033491620787 shots used = 760000
+Step 96: cost = -7.765636196903123 shots used = 768000
+Step 97: cost = -7.801666008865329 shots used = 776000
+Step 98: cost = -8.066513329432457 shots used = 784000
+Step 99: cost = -7.8942080196569675 shots used = 792000
+Step 0: cost = -0.38250000000000006 shots used = 0
+Step 1: cost = -1.7450000000000006 shots used = 8000
+Step 2: cost = -2.54875 shots used = 16000
+Step 3: cost = -2.91 shots used = 24000
+Step 4: cost = -3.4762500000000003 shots used = 32000
+Step 5: cost = -4.08875 shots used = 40000
+Step 6: cost = -4.586250000000001 shots used = 48000
+Step 7: cost = -4.805 shots used = 56000
+Step 8: cost = -4.925 shots used = 64000
+Step 9: cost = -5.385000000000001 shots used = 72000
+Step 10: cost = -5.4725 shots used = 80000
+Step 11: cost = -5.63875 shots used = 88000
+Step 12: cost = -5.796250000000001 shots used = 96000
+Step 13: cost = -6.308750000000001 shots used = 104000
+Step 14: cost = -6.2524999999999995 shots used = 112000
+Step 15: cost = -6.706249999999999 shots used = 120000
+Step 16: cost = -6.711250000000001 shots used = 128000
+Step 17: cost = -6.803749999999999 shots used = 136000
+Step 18: cost = -6.94375 shots used = 144000
+Step 19: cost = -7.2837499999999995 shots used = 152000
+Step 20: cost = -7.4 shots used = 160000
+Step 21: cost = -7.38375 shots used = 168000
+Step 22: cost = -7.40125 shots used = 176000
+Step 23: cost = -7.4775 shots used = 184000
+Step 24: cost = -7.58 shots used = 192000
+Step 25: cost = -7.623749999999999 shots used = 200000
+Step 26: cost = -7.49625 shots used = 208000
+Step 27: cost = -7.58375 shots used = 216000
+Step 28: cost = -7.6312500000000005 shots used = 224000
+Step 29: cost = -7.13375 shots used = 232000
+Step 30: cost = -7.47 shots used = 240000
+Step 31: cost = -7.6075 shots used = 248000
+Step 32: cost = -7.34875 shots used = 256000
+Step 33: cost = -7.6525 shots used = 264000
+Step 34: cost = -7.572500000000001 shots used = 272000
+Step 35: cost = -7.390000000000001 shots used = 280000
+Step 36: cost = -7.76375 shots used = 288000
+Step 37: cost = -7.49 shots used = 296000
+Step 38: cost = -7.61625 shots used = 304000
+Step 39: cost = -7.695 shots used = 312000
+Step 40: cost = -7.702499999999999 shots used = 320000
+Step 41: cost = -7.59625 shots used = 328000
+Step 42: cost = -7.733750000000001 shots used = 336000
+Step 43: cost = -7.6875 shots used = 344000
+Step 44: cost = -7.75875 shots used = 352000
+Step 45: cost = -7.796250000000001 shots used = 360000
+Step 46: cost = -7.7387500000000005 shots used = 368000
+Step 47: cost = -7.92375 shots used = 376000
+Step 48: cost = -7.6225 shots used = 384000
+Step 49: cost = -7.8425 shots used = 392000
+Step 50: cost = -7.74 shots used = 400000
+Step 51: cost = -7.661250000000001 shots used = 408000
+Step 52: cost = -7.786250000000001 shots used = 416000
+Step 53: cost = -7.78875 shots used = 424000
+Step 54: cost = -7.62375 shots used = 432000
+Step 55: cost = -7.9375 shots used = 440000
+Step 56: cost = -7.71625 shots used = 448000
+Step 57: cost = -7.72375 shots used = 456000
+Step 58: cost = -7.741250000000001 shots used = 464000
+Step 59: cost = -7.811249999999999 shots used = 472000
+Step 60: cost = -7.89 shots used = 480000
+Step 61: cost = -7.74 shots used = 488000
+Step 62: cost = -7.751250000000001 shots used = 496000
+Step 63: cost = -7.71875 shots used = 504000
+Step 64: cost = -7.695 shots used = 512000
+Step 65: cost = -7.7325 shots used = 520000
+Step 66: cost = -7.819999999999999 shots used = 528000
+Step 67: cost = -7.981249999999999 shots used = 536000
+Step 68: cost = -7.8 shots used = 544000
+Step 69: cost = -7.89 shots used = 552000
+Step 70: cost = -7.7125 shots used = 560000
+Step 71: cost = -7.993750000000001 shots used = 568000
+Step 72: cost = -7.772499999999999 shots used = 576000
+Step 73: cost = -8.01125 shots used = 584000
+Step 74: cost = -8.116249999999999 shots used = 592000
+Step 75: cost = -7.9662500000000005 shots used = 600000
+Step 76: cost = -7.7125 shots used = 608000
+Step 77: cost = -7.8925 shots used = 616000
+Step 78: cost = -7.967499999999999 shots used = 624000
+Step 79: cost = -7.91375 shots used = 632000
+Step 80: cost = -7.797499999999999 shots used = 640000
+Step 81: cost = -7.9975000000000005 shots used = 648000
+Step 82: cost = -7.99 shots used = 656000
+Step 83: cost = -7.7124999999999995 shots used = 664000
+Step 84: cost = -7.76875 shots used = 672000
+Step 85: cost = -7.62 shots used = 680000
+Step 86: cost = -7.822500000000001 shots used = 688000
+Step 87: cost = -7.74625 shots used = 696000
+Step 88: cost = -7.9137499999999985 shots used = 704000
+Step 89: cost = -7.86125 shots used = 712000
+Step 90: cost = -7.975 shots used = 720000
+Step 91: cost = -7.89375 shots used = 728000
+Step 92: cost = -8.1075 shots used = 736000
+Step 93: cost = -7.775 shots used = 744000
+Step 94: cost = -7.8999999999999995 shots used = 752000
+Step 95: cost = -7.85625 shots used = 760000
+Step 96: cost = -7.925000000000001 shots used = 768000
+Step 97: cost = -8.0 shots used = 776000
+Step 98: cost = -7.825000000000001 shots used = 784000
+Step 99: cost = -7.999999999999999 shots used = 792000
+Step 0: cost = -5.976611864639143, shots_used = 240
+Step 1: cost = -3.9696542358660727, shots_used = 288
+Step 2: cost = -4.960189727105254, shots_used = 360
+Step 3: cost = -4.580003760087767, shots_used = 456
+Step 4: cost = -2.230216749128693, shots_used = 552
+Step 5: cost = -3.6390262209635624, shots_used = 696
+Step 6: cost = -6.407579837465835, shots_used = 1050
+Step 7: cost = -7.4366536874312565, shots_used = 1578
+Step 8: cost = -7.259604321778904, shots_used = 2250
+Step 9: cost = -7.062132684694287, shots_used = 2970
+Step 10: cost = -7.5539381823528915, shots_used = 3738
+Step 11: cost = -7.530120251217975, shots_used = 4866
+Step 12: cost = -7.620064018172076, shots_used = 6474
+Step 13: cost = -7.749105026853709, shots_used = 8288
+Step 14: cost = -7.7584669100105454, shots_used = 10388
+Step 15: cost = -7.547668090788587, shots_used = 12404
+Step 16: cost = -7.802606000681813, shots_used = 14660
+Step 17: cost = -7.819375105495885, shots_used = 17180
+Step 18: cost = -7.813893056373781, shots_used = 19700
+Step 19: cost = -7.818976697763795, shots_used = 22796
+Step 20: cost = -7.847655565015213, shots_used = 26372
+Step 21: cost = -7.854512274045721, shots_used = 30810
+Step 22: cost = -7.855665819254089, shots_used = 35538
+Step 23: cost = -7.843276666680198, shots_used = 40770
+Step 24: cost = -7.82813895796069, shots_used = 45762
+Step 25: cost = -7.796501914990248, shots_used = 51162
+Step 26: cost = -7.871130124788932, shots_used = 56466
+Step 27: cost = -7.866190872563943, shots_used = 62010
+Step 28: cost = -7.780118268373553, shots_used = 68250
+Step 29: cost = -7.843565291223448, shots_used = 74946
+Step 30: cost = -7.840084824878835, shots_used = 81762
+Step 31: cost = -7.863430860462219, shots_used = 88962
+Step 32: cost = -7.863400771365601, shots_used = 96786
+Step 33: cost = -7.828392469226825, shots_used = 104730
+Step 34: cost = -7.845758777555817, shots_used = 114532
+Step 35: cost = -7.862280441095794, shots_used = 122908
+Step 36: cost = -7.866212335569502, shots_used = 131836
+Step 37: cost = -7.859430128177042, shots_used = 140500
+Step 38: cost = -7.856087432905534, shots_used = 150076
+Step 39: cost = -7.850323433779115, shots_used = 159676
+Step 40: cost = -7.834403598788763, shots_used = 170116
+Step 41: cost = -7.849769789802028, shots_used = 181300
+Step 42: cost = -7.86693841353118, shots_used = 192700
+Step 43: cost = -7.865653895759861, shots_used = 204460
+Step 44: cost = -7.853522061269157, shots_used = 217900
+Step 45: cost = -7.885272132729725, shots_used = 231748
+Step 46: cost = -7.88224395467864, shots_used = 245644
+Step 47: cost = -7.884376349618622, shots_used = 259852
+Step 48: cost = -7.8808911781003825, shots_used = 275164
+Step 49: cost = -7.881035167671664, shots_used = 292444
+Step 50: cost = -7.881931152903569, shots_used = 310300
+Step 51: cost = -7.873486288144938, shots_used = 329452
+Step 52: cost = -7.842973314288795, shots_used = 348532
+Step 53: cost = -7.87101794797729, shots_used = 368644
+Step 54: cost = -7.880857865087542, shots_used = 388828
+Step 55: cost = -7.884163217633474, shots_used = 409132
+Step 56: cost = -7.866452206380498, shots_used = 429076
+Step 57: cost = -7.876255345278057, shots_used = 451468
+Step 58: cost = -7.87369984074766, shots_used = 475348
+Step 59: cost = -7.890243502630163, shots_used = 501460
+2400
+Step 0: cost = -2.03376839972733 shots_used = 2400
+Step 1: cost = -3.0397515887713897 shots_used = 4800
+Step 2: cost = -3.8459175082365666 shots_used = 7200
+Step 3: cost = -4.505506895275778 shots_used = 9600
+Step 4: cost = -5.0488106623708084 shots_used = 12000
+Step 5: cost = -5.482162129547712 shots_used = 14400
+Step 6: cost = -5.83880726147689 shots_used = 16800
+Step 7: cost = -6.143933494222608 shots_used = 19200
+Step 8: cost = -6.412317130720796 shots_used = 21600
+Step 9: cost = -6.6534666682698 shots_used = 24000
+Step 10: cost = -6.86746547637287 shots_used = 26400
+Step 11: cost = -7.057043661341395 shots_used = 28800
+Step 12: cost = -7.219548494479429 shots_used = 31200
+Step 13: cost = -7.3445177518694456 shots_used = 33600
+Step 14: cost = -7.435753942420535 shots_used = 36000
+Step 15: cost = -7.497138548636965 shots_used = 38400
+Step 16: cost = -7.529946318655265 shots_used = 40800
+Step 17: cost = -7.537070813893377 shots_used = 43200
+Step 18: cost = -7.525225697166624 shots_used = 45600
+Step 19: cost = -7.5048251159723405 shots_used = 48000
+Step 20: cost = -7.481487171246212 shots_used = 50400
+Step 21: cost = -7.461106527571478 shots_used = 52800
+Step 22: cost = -7.4490325775024075 shots_used = 55200
+Step 23: cost = -7.444817343084735 shots_used = 57600
+Step 24: cost = -7.4494913586937574 shots_used = 60000
+Step 25: cost = -7.462969617594349 shots_used = 62400
+Step 26: cost = -7.484518392550573 shots_used = 64800
+Step 27: cost = -7.509533957688121 shots_used = 67200
+Step 28: cost = -7.535240804873656 shots_used = 69600
+Step 29: cost = -7.560642729685874 shots_used = 72000
+Step 30: cost = -7.586205677180162 shots_used = 74400
+Step 31: cost = -7.61260475402048 shots_used = 76800
+Step 32: cost = -7.637117815005769 shots_used = 79200
+Step 33: cost = -7.661716123608457 shots_used = 81600
+Step 34: cost = -7.6852319189727165 shots_used = 84000
+Step 35: cost = -7.708583289744081 shots_used = 86400
+Step 36: cost = -7.729551671925802 shots_used = 88800
+Step 37: cost = -7.7462558125604595 shots_used = 91200
+Step 38: cost = -7.758965992155235 shots_used = 93600
+Step 39: cost = -7.764889692835303 shots_used = 96000
+Step 40: cost = -7.770298814247658 shots_used = 98400
+Step 41: cost = -7.771938304013664 shots_used = 100800
+Step 42: cost = -7.771490419427766 shots_used = 103200
+Step 43: cost = -7.771665932203987 shots_used = 105600
+Step 44: cost = -7.771775966399097 shots_used = 108000
+Step 45: cost = -7.772019786144459 shots_used = 110400
+Step 46: cost = -7.774409408800273 shots_used = 112800
+Step 47: cost = -7.777544198411677 shots_used = 115200
+Step 48: cost = -7.78057842461007 shots_used = 117600
+Step 49: cost = -7.7865146226898805 shots_used = 120000
+Step 50: cost = -7.793839215454196 shots_used = 122400
+Step 51: cost = -7.802144039740554 shots_used = 124800
+Step 52: cost = -7.809859012081808 shots_used = 127200
+Step 53: cost = -7.818330164675909 shots_used = 129600
+Step 54: cost = -7.826930993976666 shots_used = 132000
+Step 55: cost = -7.834969848723968 shots_used = 134400
+Step 56: cost = -7.842454395123664 shots_used = 136800
+Step 57: cost = -7.849335152675151 shots_used = 139200
+Step 58: cost = -7.853951071633944 shots_used = 141600
+Step 59: cost = -7.858296868696565 shots_used = 144000
+Step 60: cost = -7.862867672169834 shots_used = 146400
+Step 61: cost = -7.865540080202736 shots_used = 148800
+Step 62: cost = -7.867577632485199 shots_used = 151200
+Step 63: cost = -7.869035010771334 shots_used = 153600
+Step 64: cost = -7.870496374034538 shots_used = 156000
+Step 65: cost = -7.871678720443278 shots_used = 158400
+Step 66: cost = -7.872542373444428 shots_used = 160800
+Step 67: cost = -7.873739299675017 shots_used = 163200
+Step 68: cost = -7.874314293738313 shots_used = 165600
+Step 69: cost = -7.875793149514538 shots_used = 168000
+Step 70: cost = -7.877051911492931 shots_used = 170400
+Step 71: cost = -7.878207264678217 shots_used = 172800
+Step 72: cost = -7.879198045006914 shots_used = 175200
+Step 73: cost = -7.880726987471535 shots_used = 177600
+Step 74: cost = -7.882055795432435 shots_used = 180000
+Step 75: cost = -7.88215282515028 shots_used = 182400
+Step 76: cost = -7.881947191378357 shots_used = 184800
+Step 77: cost = -7.881566349945106 shots_used = 187200
+Step 78: cost = -7.881659168988012 shots_used = 189600
+Step 79: cost = -7.881276797156975 shots_used = 192000
+Step 80: cost = -7.879976174007023 shots_used = 194400
+Step 81: cost = -7.878714918643873 shots_used = 196800
+Step 82: cost = -7.877964404670651 shots_used = 199200
+Step 83: cost = -7.8771022016203665 shots_used = 201600
+Step 84: cost = -7.875562772172711 shots_used = 204000
+Step 85: cost = -7.875602350174969 shots_used = 206400
+Step 86: cost = -7.877141380119034 shots_used = 208800
+Step 87: cost = -7.87925788505365 shots_used = 211200
+Step 88: cost = -7.881144761009377 shots_used = 213600
+Step 89: cost = -7.882250363744701 shots_used = 216000
+Step 90: cost = -7.881748113564451 shots_used = 218400
+Step 91: cost = -7.883533319932514 shots_used = 220800
+Step 92: cost = -7.884779159318079 shots_used = 223200
+Step 93: cost = -7.8868911005436555 shots_used = 225600
+Step 94: cost = -7.888524224480213 shots_used = 228000
+Step 95: cost = -7.888123287772768 shots_used = 230400
+Step 96: cost = -7.8867800801467896 shots_used = 232800
+Step 97: cost = -7.8853107450636415 shots_used = 235200
+Step 98: cost = -7.883507674089132 shots_used = 237600
+Step 99: cost = -7.881351067687096 shots_used = 240000
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_rosalin.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+/home/runner/work/qml/qml/demonstrations/tutorial_rosalin.py:217: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+-0.8395887630997874
+Step 0: cost = -0.47971271815214855 shots used = 0
+Step 1: cost = -1.6879973520840041 shots used = 8000
+Step 2: cost = -2.437928256197112 shots used = 16000
+Step 3: cost = -2.9300968884147647 shots used = 24000
+Step 4: cost = -3.7779069617997116 shots used = 32000
+Step 5: cost = -3.8889841568955115 shots used = 40000
+Step 6: cost = -4.508059711766957 shots used = 48000
+Step 7: cost = -4.71114219758592 shots used = 56000
+Step 8: cost = -4.984457128293103 shots used = 64000
+Step 9: cost = -5.597084424095087 shots used = 72000
+Step 10: cost = -5.456976403687039 shots used = 80000
+Step 11: cost = -5.736752824027413 shots used = 88000
+Step 12: cost = -6.220317925041974 shots used = 96000
+Step 13: cost = -6.45162161927903 shots used = 104000
+Step 14: cost = -6.563539211112225 shots used = 112000
+Step 15: cost = -6.487339064303318 shots used = 120000
+Step 16: cost = -6.69261841162329 shots used = 128000
+Step 17: cost = -6.909230576241427 shots used = 136000
+Step 18: cost = -7.05156660241221 shots used = 144000
+Step 19: cost = -7.163688069859358 shots used = 152000
+Step 20: cost = -7.191791478058647 shots used = 160000
+Step 21: cost = -7.191694602776715 shots used = 168000
+Step 22: cost = -7.430122007574104 shots used = 176000
+Step 23: cost = -7.245621601209081 shots used = 184000
+Step 24: cost = -7.539044265851978 shots used = 192000
+Step 25: cost = -7.532847998808006 shots used = 200000
+Step 26: cost = -7.44257222073886 shots used = 208000
+Step 27: cost = -7.439951968648378 shots used = 216000
+Step 28: cost = -7.734568855081575 shots used = 224000
+Step 29: cost = -7.618221322585628 shots used = 232000
+Step 30: cost = -7.651544920606065 shots used = 240000
+Step 31: cost = -7.5069088885777155 shots used = 248000
+Step 32: cost = -7.780301321189146 shots used = 256000
+Step 33: cost = -7.4456447455856445 shots used = 264000
+Step 34: cost = -7.403560444278863 shots used = 272000
+Step 35: cost = -7.666718876831026 shots used = 280000
+Step 36: cost = -7.7178910518866415 shots used = 288000
+Step 37: cost = -7.375680885292107 shots used = 296000
+Step 38: cost = -7.665568049279896 shots used = 304000
+Step 39: cost = -7.568101693343673 shots used = 312000
+Step 40: cost = -7.524188200359864 shots used = 320000
+Step 41: cost = -7.525528734255245 shots used = 328000
+Step 42: cost = -7.57734861403185 shots used = 336000
+Step 43: cost = -7.76844833198197 shots used = 344000
+Step 44: cost = -7.797619087079373 shots used = 352000
+Step 45: cost = -7.879148884805528 shots used = 360000
+Step 46: cost = -7.744030492750696 shots used = 368000
+Step 47: cost = -7.6484739221198765 shots used = 376000
+Step 48: cost = -7.679623095926702 shots used = 384000
+Step 49: cost = -7.607476988501242 shots used = 392000
+Step 50: cost = -7.856041856821188 shots used = 400000
+Step 51: cost = -7.644473030321983 shots used = 408000
+Step 52: cost = -7.593159311741706 shots used = 416000
+Step 53: cost = -7.606939212888227 shots used = 424000
+Step 54: cost = -7.621128949485829 shots used = 432000
+Step 55: cost = -7.743568287057952 shots used = 440000
+Step 56: cost = -7.6325929460598525 shots used = 448000
+Step 57: cost = -7.718256562367575 shots used = 456000
+Step 58: cost = -7.861601938446393 shots used = 464000
+Step 59: cost = -7.666115854972354 shots used = 472000
+Step 60: cost = -7.644148944168839 shots used = 480000
+Step 61: cost = -7.771569192260795 shots used = 488000
+Step 62: cost = -7.776898446282362 shots used = 496000
+Step 63: cost = -7.711006891533269 shots used = 504000
+Step 64: cost = -7.748650044666392 shots used = 512000
+Step 65: cost = -7.690723991927554 shots used = 520000
+Step 66: cost = -7.694117031088106 shots used = 528000
+Step 67: cost = -7.793250125674997 shots used = 536000
+Step 68: cost = -7.926049735334674 shots used = 544000
+Step 69: cost = -7.686292326080605 shots used = 552000
+Step 70: cost = -7.745774212716911 shots used = 560000
+Step 71: cost = -7.625346751584894 shots used = 568000
+Step 72: cost = -7.846664469958039 shots used = 576000
+Step 73: cost = -7.860275655123486 shots used = 584000
+Step 74: cost = -7.593043619614097 shots used = 592000
+Step 75: cost = -7.7969799318129045 shots used = 600000
+Step 76: cost = -7.837545360539077 shots used = 608000
+Step 77: cost = -7.845253964960701 shots used = 616000
+Step 78: cost = -7.941652692590529 shots used = 624000
+Step 79: cost = -7.967099906804574 shots used = 632000
+Step 80: cost = -7.803163356121793 shots used = 640000
+Step 81: cost = -7.665600401510319 shots used = 648000
+Step 82: cost = -8.09158124610039 shots used = 656000
+Step 83: cost = -7.774883584668083 shots used = 664000
+Step 84: cost = -7.758175214036924 shots used = 672000
+Step 85: cost = -7.9169924228411865 shots used = 680000
+Step 86: cost = -7.670199051467696 shots used = 688000
+Step 87: cost = -8.085682024006845 shots used = 696000
+Step 88: cost = -7.8433919424579095 shots used = 704000
+Step 89: cost = -7.755236580472145 shots used = 712000
+Step 90: cost = -7.847624689390126 shots used = 720000
+Step 91: cost = -8.122239105086607 shots used = 728000
+Step 92: cost = -7.922374192271718 shots used = 736000
+Step 93: cost = -7.904676929818973 shots used = 744000
+Step 94: cost = -7.909417248833883 shots used = 752000
+Step 95: cost = -8.06033491620787 shots used = 760000
+Step 96: cost = -7.765636196903123 shots used = 768000
+Step 97: cost = -7.801666008865329 shots used = 776000
+Step 98: cost = -8.066513329432457 shots used = 784000
+Step 99: cost = -7.8942080196569675 shots used = 792000
+Step 0: cost = -0.38250000000000006 shots used = 0
+Step 1: cost = -1.7450000000000006 shots used = 8000
+Step 2: cost = -2.54875 shots used = 16000
+Step 3: cost = -2.91 shots used = 24000
+Step 4: cost = -3.4762500000000003 shots used = 32000
+Step 5: cost = -4.08875 shots used = 40000
+Step 6: cost = -4.586250000000001 shots used = 48000
+Step 7: cost = -4.805 shots used = 56000
+Step 8: cost = -4.925 shots used = 64000
+Step 9: cost = -5.385000000000001 shots used = 72000
+Step 10: cost = -5.4725 shots used = 80000
+Step 11: cost = -5.63875 shots used = 88000
+Step 12: cost = -5.796250000000001 shots used = 96000
+Step 13: cost = -6.308750000000001 shots used = 104000
+Step 14: cost = -6.2524999999999995 shots used = 112000
+Step 15: cost = -6.706249999999999 shots used = 120000
+Step 16: cost = -6.711250000000001 shots used = 128000
+Step 17: cost = -6.803749999999999 shots used = 136000
+Step 18: cost = -6.94375 shots used = 144000
+Step 19: cost = -7.2837499999999995 shots used = 152000
+Step 20: cost = -7.4 shots used = 160000
+Step 21: cost = -7.38375 shots used = 168000
+Step 22: cost = -7.40125 shots used = 176000
+Step 23: cost = -7.4775 shots used = 184000
+Step 24: cost = -7.58 shots used = 192000
+Step 25: cost = -7.623749999999999 shots used = 200000
+Step 26: cost = -7.49625 shots used = 208000
+Step 27: cost = -7.58375 shots used = 216000
+Step 28: cost = -7.6312500000000005 shots used = 224000
+Step 29: cost = -7.13375 shots used = 232000
+Step 30: cost = -7.47 shots used = 240000
+Step 31: cost = -7.6075 shots used = 248000
+Step 32: cost = -7.34875 shots used = 256000
+Step 33: cost = -7.6525 shots used = 264000
+Step 34: cost = -7.572500000000001 shots used = 272000
+Step 35: cost = -7.390000000000001 shots used = 280000
+Step 36: cost = -7.76375 shots used = 288000
+Step 37: cost = -7.49 shots used = 296000
+Step 38: cost = -7.61625 shots used = 304000
+Step 39: cost = -7.695 shots used = 312000
+Step 40: cost = -7.702499999999999 shots used = 320000
+Step 41: cost = -7.59625 shots used = 328000
+Step 42: cost = -7.733750000000001 shots used = 336000
+Step 43: cost = -7.6875 shots used = 344000
+Step 44: cost = -7.75875 shots used = 352000
+Step 45: cost = -7.796250000000001 shots used = 360000
+Step 46: cost = -7.7387500000000005 shots used = 368000
+Step 47: cost = -7.92375 shots used = 376000
+Step 48: cost = -7.6225 shots used = 384000
+Step 49: cost = -7.8425 shots used = 392000
+Step 50: cost = -7.74 shots used = 400000
+Step 51: cost = -7.661250000000001 shots used = 408000
+Step 52: cost = -7.786250000000001 shots used = 416000
+Step 53: cost = -7.78875 shots used = 424000
+Step 54: cost = -7.62375 shots used = 432000
+Step 55: cost = -7.9375 shots used = 440000
+Step 56: cost = -7.71625 shots used = 448000
+Step 57: cost = -7.72375 shots used = 456000
+Step 58: cost = -7.741250000000001 shots used = 464000
+Step 59: cost = -7.811249999999999 shots used = 472000
+Step 60: cost = -7.89 shots used = 480000
+Step 61: cost = -7.74 shots used = 488000
+Step 62: cost = -7.751250000000001 shots used = 496000
+Step 63: cost = -7.71875 shots used = 504000
+Step 64: cost = -7.695 shots used = 512000
+Step 65: cost = -7.7325 shots used = 520000
+Step 66: cost = -7.819999999999999 shots used = 528000
+Step 67: cost = -7.981249999999999 shots used = 536000
+Step 68: cost = -7.8 shots used = 544000
+Step 69: cost = -7.89 shots used = 552000
+Step 70: cost = -7.7125 shots used = 560000
+Step 71: cost = -7.993750000000001 shots used = 568000
+Step 72: cost = -7.772499999999999 shots used = 576000
+Step 73: cost = -8.01125 shots used = 584000
+Step 74: cost = -8.116249999999999 shots used = 592000
+Step 75: cost = -7.9662500000000005 shots used = 600000
+Step 76: cost = -7.7125 shots used = 608000
+Step 77: cost = -7.8925 shots used = 616000
+Step 78: cost = -7.967499999999999 shots used = 624000
+Step 79: cost = -7.91375 shots used = 632000
+Step 80: cost = -7.797499999999999 shots used = 640000
+Step 81: cost = -7.9975000000000005 shots used = 648000
+Step 82: cost = -7.99 shots used = 656000
+Step 83: cost = -7.7124999999999995 shots used = 664000
+Step 84: cost = -7.76875 shots used = 672000
+Step 85: cost = -7.62 shots used = 680000
+Step 86: cost = -7.822500000000001 shots used = 688000
+Step 87: cost = -7.74625 shots used = 696000
+Step 88: cost = -7.9137499999999985 shots used = 704000
+Step 89: cost = -7.86125 shots used = 712000
+Step 90: cost = -7.975 shots used = 720000
+Step 91: cost = -7.89375 shots used = 728000
+Step 92: cost = -8.1075 shots used = 736000
+Step 93: cost = -7.775 shots used = 744000
+Step 94: cost = -7.8999999999999995 shots used = 752000
+Step 95: cost = -7.85625 shots used = 760000
+Step 96: cost = -7.925000000000001 shots used = 768000
+Step 97: cost = -8.0 shots used = 776000
+Step 98: cost = -7.825000000000001 shots used = 784000
+Step 99: cost = -7.999999999999999 shots used = 792000
+Step 0: cost = -5.976611864639143, shots_used = 240
+Step 1: cost = -3.9696542358660727, shots_used = 288
+Step 2: cost = -4.960189727105254, shots_used = 360
+Step 3: cost = -4.580003760087767, shots_used = 456
+Step 4: cost = -2.230216749128693, shots_used = 552
+Step 5: cost = -3.6390262209635624, shots_used = 696
+Step 6: cost = -6.407579837465835, shots_used = 1050
+Step 7: cost = -7.4366536874312565, shots_used = 1578
+Step 8: cost = -7.259604321778904, shots_used = 2250
+Step 9: cost = -7.062132684694287, shots_used = 2970
+Step 10: cost = -7.5539381823528915, shots_used = 3738
+Step 11: cost = -7.530120251217975, shots_used = 4866
+Step 12: cost = -7.620064018172076, shots_used = 6474
+Step 13: cost = -7.749105026853709, shots_used = 8288
+Step 14: cost = -7.7584669100105454, shots_used = 10388
+Step 15: cost = -7.547668090788587, shots_used = 12404
+Step 16: cost = -7.802606000681813, shots_used = 14660
+Step 17: cost = -7.819375105495885, shots_used = 17180
+Step 18: cost = -7.813893056373781, shots_used = 19700
+Step 19: cost = -7.818976697763795, shots_used = 22796
+Step 20: cost = -7.847655565015213, shots_used = 26372
+Step 21: cost = -7.854512274045721, shots_used = 30810
+Step 22: cost = -7.855665819254089, shots_used = 35538
+Step 23: cost = -7.843276666680198, shots_used = 40770
+Step 24: cost = -7.82813895796069, shots_used = 45762
+Step 25: cost = -7.796501914990248, shots_used = 51162
+Step 26: cost = -7.871130124788932, shots_used = 56466
+Step 27: cost = -7.866190872563943, shots_used = 62010
+Step 28: cost = -7.780118268373553, shots_used = 68250
+Step 29: cost = -7.843565291223448, shots_used = 74946
+Step 30: cost = -7.840084824878835, shots_used = 81762
+Step 31: cost = -7.863430860462219, shots_used = 88962
+Step 32: cost = -7.863400771365601, shots_used = 96786
+Step 33: cost = -7.828392469226825, shots_used = 104730
+Step 34: cost = -7.845758777555817, shots_used = 114532
+Step 35: cost = -7.862280441095794, shots_used = 122908
+Step 36: cost = -7.866212335569502, shots_used = 131836
+Step 37: cost = -7.859430128177042, shots_used = 140500
+Step 38: cost = -7.856087432905534, shots_used = 150076
+Step 39: cost = -7.850323433779115, shots_used = 159676
+Step 40: cost = -7.834403598788763, shots_used = 170116
+Step 41: cost = -7.849769789802028, shots_used = 181300
+Step 42: cost = -7.86693841353118, shots_used = 192700
+Step 43: cost = -7.865653895759861, shots_used = 204460
+Step 44: cost = -7.853522061269157, shots_used = 217900
+Step 45: cost = -7.885272132729725, shots_used = 231748
+Step 46: cost = -7.88224395467864, shots_used = 245644
+Step 47: cost = -7.884376349618622, shots_used = 259852
+Step 48: cost = -7.8808911781003825, shots_used = 275164
+Step 49: cost = -7.881035167671664, shots_used = 292444
+Step 50: cost = -7.881931152903569, shots_used = 310300
+Step 51: cost = -7.873486288144938, shots_used = 329452
+Step 52: cost = -7.842973314288795, shots_used = 348532
+Step 53: cost = -7.87101794797729, shots_used = 368644
+Step 54: cost = -7.880857865087542, shots_used = 388828
+Step 55: cost = -7.884163217633474, shots_used = 409132
+Step 56: cost = -7.866452206380498, shots_used = 429076
+Step 57: cost = -7.876255345278057, shots_used = 451468
+Step 58: cost = -7.87369984074766, shots_used = 475348
+Step 59: cost = -7.890243502630163, shots_used = 501460
+2400
+Step 0: cost = -2.03376839972733 shots_used = 2400
+Step 1: cost = -3.0397515887713897 shots_used = 4800
+Step 2: cost = -3.8459175082365666 shots_used = 7200
+Step 3: cost = -4.505506895275778 shots_used = 9600
+Step 4: cost = -5.0488106623708084 shots_used = 12000
+Step 5: cost = -5.482162129547712 shots_used = 14400
+Step 6: cost = -5.83880726147689 shots_used = 16800
+Step 7: cost = -6.143933494222608 shots_used = 19200
+Step 8: cost = -6.412317130720796 shots_used = 21600
+Step 9: cost = -6.6534666682698 shots_used = 24000
+Step 10: cost = -6.86746547637287 shots_used = 26400
+Step 11: cost = -7.057043661341395 shots_used = 28800
+Step 12: cost = -7.219548494479429 shots_used = 31200
+Step 13: cost = -7.3445177518694456 shots_used = 33600
+Step 14: cost = -7.435753942420535 shots_used = 36000
+Step 15: cost = -7.497138548636965 shots_used = 38400
+Step 16: cost = -7.529946318655265 shots_used = 40800
+Step 17: cost = -7.537070813893377 shots_used = 43200
+Step 18: cost = -7.525225697166624 shots_used = 45600
+Step 19: cost = -7.5048251159723405 shots_used = 48000
+Step 20: cost = -7.481487171246212 shots_used = 50400
+Step 21: cost = -7.461106527571478 shots_used = 52800
+Step 22: cost = -7.4490325775024075 shots_used = 55200
+Step 23: cost = -7.444817343084735 shots_used = 57600
+Step 24: cost = -7.4494913586937574 shots_used = 60000
+Step 25: cost = -7.462969617594349 shots_used = 62400
+Step 26: cost = -7.484518392550573 shots_used = 64800
+Step 27: cost = -7.509533957688121 shots_used = 67200
+Step 28: cost = -7.535240804873656 shots_used = 69600
+Step 29: cost = -7.560642729685874 shots_used = 72000
+Step 30: cost = -7.586205677180162 shots_used = 74400
+Step 31: cost = -7.61260475402048 shots_used = 76800
+Step 32: cost = -7.637117815005769 shots_used = 79200
+Step 33: cost = -7.661716123608457 shots_used = 81600
+Step 34: cost = -7.6852319189727165 shots_used = 84000
+Step 35: cost = -7.708583289744081 shots_used = 86400
+Step 36: cost = -7.729551671925802 shots_used = 88800
+Step 37: cost = -7.7462558125604595 shots_used = 91200
+Step 38: cost = -7.758965992155235 shots_used = 93600
+Step 39: cost = -7.764889692835303 shots_used = 96000
+Step 40: cost = -7.770298814247658 shots_used = 98400
+Step 41: cost = -7.771938304013664 shots_used = 100800
+Step 42: cost = -7.771490419427766 shots_used = 103200
+Step 43: cost = -7.771665932203987 shots_used = 105600
+Step 44: cost = -7.771775966399097 shots_used = 108000
+Step 45: cost = -7.772019786144459 shots_used = 110400
+Step 46: cost = -7.774409408800273 shots_used = 112800
+Step 47: cost = -7.777544198411677 shots_used = 115200
+Step 48: cost = -7.78057842461007 shots_used = 117600
+Step 49: cost = -7.7865146226898805 shots_used = 120000
+Step 50: cost = -7.793839215454196 shots_used = 122400
+Step 51: cost = -7.802144039740554 shots_used = 124800
+Step 52: cost = -7.809859012081808 shots_used = 127200
+Step 53: cost = -7.818330164675909 shots_used = 129600
+Step 54: cost = -7.826930993976666 shots_used = 132000
+Step 55: cost = -7.834969848723968 shots_used = 134400
+Step 56: cost = -7.842454395123664 shots_used = 136800
+Step 57: cost = -7.849335152675151 shots_used = 139200
+Step 58: cost = -7.853951071633944 shots_used = 141600
+Step 59: cost = -7.858296868696565 shots_used = 144000
+Step 60: cost = -7.862867672169834 shots_used = 146400
+Step 61: cost = -7.865540080202736 shots_used = 148800
+Step 62: cost = -7.867577632485199 shots_used = 151200
+Step 63: cost = -7.869035010771334 shots_used = 153600
+Step 64: cost = -7.870496374034538 shots_used = 156000
+Step 65: cost = -7.871678720443278 shots_used = 158400
+Step 66: cost = -7.872542373444428 shots_used = 160800
+Step 67: cost = -7.873739299675017 shots_used = 163200
+Step 68: cost = -7.874314293738313 shots_used = 165600
+Step 69: cost = -7.875793149514538 shots_used = 168000
+Step 70: cost = -7.877051911492931 shots_used = 170400
+Step 71: cost = -7.878207264678217 shots_used = 172800
+Step 72: cost = -7.879198045006914 shots_used = 175200
+Step 73: cost = -7.880726987471535 shots_used = 177600
+Step 74: cost = -7.882055795432435 shots_used = 180000
+Step 75: cost = -7.88215282515028 shots_used = 182400
+Step 76: cost = -7.881947191378357 shots_used = 184800
+Step 77: cost = -7.881566349945106 shots_used = 187200
+Step 78: cost = -7.881659168988012 shots_used = 189600
+Step 79: cost = -7.881276797156975 shots_used = 192000
+Step 80: cost = -7.879976174007023 shots_used = 194400
+Step 81: cost = -7.878714918643873 shots_used = 196800
+Step 82: cost = -7.877964404670651 shots_used = 199200
+Step 83: cost = -7.8771022016203665 shots_used = 201600
+Step 84: cost = -7.875562772172711 shots_used = 204000
+Step 85: cost = -7.875602350174969 shots_used = 206400
+Step 86: cost = -7.877141380119034 shots_used = 208800
+Step 87: cost = -7.87925788505365 shots_used = 211200
+Step 88: cost = -7.881144761009377 shots_used = 213600
+Step 89: cost = -7.882250363744701 shots_used = 216000
+Step 90: cost = -7.881748113564451 shots_used = 218400
+Step 91: cost = -7.883533319932514 shots_used = 220800
+Step 92: cost = -7.884779159318079 shots_used = 223200
+Step 93: cost = -7.8868911005436555 shots_used = 225600
+Step 94: cost = -7.888524224480213 shots_used = 228000
+Step 95: cost = -7.888123287772768 shots_used = 230400
+Step 96: cost = -7.8867800801467896 shots_used = 232800
+Step 97: cost = -7.8853107450636415 shots_used = 235200
+Step 98: cost = -7.883507674089132 shots_used = 237600
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 13. tutorial_general_parshift.html <a name="demo12"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_general_parshift.html):
+
+```
+For 2 qubits the spectrum is [-2.0, -1.0, 0.0, 1.0, 2.0].
+For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0].
+For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0].
+Second-order finite difference:    [ 0.26814   1.696854 -2.055918 -7.236953]
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_general_parshift.html):
+
+```
+For 2 qubits the spectrum is [-2.0, -1.0, 0, 1.0, 2.0].
+For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0].
+For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0, 5.0].
+Second-order finite difference:    [ 0.26814   1.696853 -2.055918 -7.236953]
 ```
 
 ---
@@ -14553,11 +14079,41 @@ Counter({1: 37, 0: 3})
 
 ---
 
-## 16. tutorial_falqon.html <a name="demo15"></a>
+## 16. tutorial_noisy_circuits.html <a name="demo15"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_falqon.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html):
+
+```
+Step: 5    Cost: 0.07733960999999957
+Step: 10    Cost: 0.0773396099969988
+Step: 15    Cost: 0.07733959171203489
+Step: 20    Cost: 0.07722827121891838
+Step: 25    Cost: 0.0017923029380396919
+Step: 30    Cost: 3.0199179590479204e-07
+Step: 34    Cost: 5.228404765345524e-10
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_noisy_circuits.html):
+
+```
+Step: 5    Cost: 0.07733960999999988
+Step: 10    Cost: 0.07733960999863909
+Step: 15    Cost: 0.07733960170319246
+Step: 20    Cost: 0.07728907281668594
+Step: 25    Cost: 0.006192562764640602
+Step: 30    Cost: 6.427645677603198e-07
+Step: 34    Cost: 1.1072988376257744e-09
+```
+
+---
+
+## 17. tutorial_pasqal.html <a name="demo16"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_pasqal.html):
 
 <details> 
  <summary>
@@ -14565,51 +14121,32 @@ Counter({1: 37, 0: 3})
  </summary>
  <pre>
  <code>
-Step 1, Cost = -2.4265436197783425
-Step 2, Cost = -5.45183841811118
-Step 3, Cost = -5.058939064534102
-Step 4, Cost = 0.666377989107735
-Step 5, Cost = -3.961765919151042
-Step 6, Cost = -6.012336027057502
-Step 7, Cost = -6.383828240291059
-Step 8, Cost = -6.568581722318154
-Step 9, Cost = -6.652767426710378
-Step 10, Cost = -6.718062615729133
-Step 11, Cost = -6.7639477436093
-Step 12, Cost = -6.8048574666097235
-Step 13, Cost = -6.8394030587361705
-Step 14, Cost = -6.8714592635528415
-Step 15, Cost = -6.8997469754809675
-Step 16, Cost = -6.925884328592705
-Step 17, Cost = -6.9492295078855975
-Step 18, Cost = -6.97059412505724
-Step 19, Cost = -6.989907329921377
-Step 20, Cost = -7.007623105822664
-Step 21, Cost = -7.0239860498803415
-Step 22, Cost = -7.039304856521962
-Step 23, Cost = -7.053894937286077
-Step 24, Cost = -7.067988454154516
-Step 25, Cost = -7.081842534715257
-Step 26, Cost = -7.095617260802714
-Step 27, Cost = -7.109472588274413
-Step 28, Cost = -7.123480825409048
-Step 29, Cost = -7.137684426026884
-Step 30, Cost = -7.152041022693121
-Step 31, Cost = -7.166453310287251
-Step 32, Cost = -7.1807483416093705
-Step 33, Cost = -7.194694917926645
-Step 34, Cost = -7.208028603663313
-Step 35, Cost = -7.22045639587035
-Step 36, Cost = -7.231727330032172
-Step 37, Cost = -7.241565955502995
-Step 38, Cost = -7.249767410209228
-Step 39, Cost = -7.255782895664823
-Step 40, Cost = -7.258987907014075
+Step 0: cost=0.0001672286566463592
+Step 5: cost=0.9979047620889769
+Step 10: cost=0.6109142342375409
+Step 15: cost=0.9989467692733883
+Step 20: cost=0.006048046345186867
+Step 25: cost=0.8941419709966564
+Step 30: cost=0.6746950251504293
+Step 35: cost=7.001036075480078e-07
+Step 40: cost=0.6766725857506097
+Step 45: cost=0.3557129296721806
+Step 50: cost=0.02749132423642614
+Step 55: cost=0.09109423901502911
+Step 60: cost=0.3024013456684429
+Step 65: cost=0.01987428630678778
+Step 70: cost=0.007314119488719198
+Step 75: cost=0.0005591169242113734
+Step 80: cost=0.00048827164327969966
+Step 85: cost=6.396804707814799e-07
+Step 90: cost=5.587668130241363e-05
+Step 95: cost=7.117522822325351e-07
+Final cost value: 1.230815538836673e-05
  </code>
  </pre>
  </details>
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_falqon.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_pasqal.html):
 
 <details> 
  <summary>
@@ -14617,75 +14154,472 @@ Step 40, Cost = -7.258987907014075
  </summary>
  <pre>
  <code>
-Step 1, Cost = -2.4265436197783448
-Step 2, Cost = -5.451838418111176
-Step 3, Cost = -5.05893906453409
-Step 4, Cost = 0.6663779891077449
-Step 5, Cost = -3.9617659191509746
-Step 6, Cost = -6.012336027057521
-Step 7, Cost = -6.383828240291071
-Step 8, Cost = -6.5685817223181155
-Step 9, Cost = -6.652767426710387
-Step 10, Cost = -6.718062615729132
-Step 11, Cost = -6.763947743609312
-Step 12, Cost = -6.80485746660975
-Step 13, Cost = -6.8394030587362
-Step 14, Cost = -6.871459263552881
-Step 15, Cost = -6.899746975480981
-Step 16, Cost = -6.925884328592719
-Step 17, Cost = -6.949229507885613
-Step 18, Cost = -6.970594125057218
-Step 19, Cost = -6.989907329921348
-Step 20, Cost = -7.007623105822645
-Step 21, Cost = -7.023986049880396
-Step 22, Cost = -7.03930485652197
-Step 23, Cost = -7.053894937286083
-Step 24, Cost = -7.067988454154528
-Step 25, Cost = -7.081842534715245
-Step 26, Cost = -7.095617260802699
-Step 27, Cost = -7.109472588274404
-Step 28, Cost = -7.123480825409055
-Step 29, Cost = -7.137684426026871
-Step 30, Cost = -7.152041022693112
-Step 31, Cost = -7.166453310287315
-Step 32, Cost = -7.1807483416093865
-Step 33, Cost = -7.194694917926691
-Step 34, Cost = -7.208028603663316
-Step 35, Cost = -7.22045639587038
-Step 36, Cost = -7.231727330032204
-Step 37, Cost = -7.241565955502979
-Step 38, Cost = -7.249767410209168
-Step 39, Cost = -7.255782895664824
-Step 40, Cost = -7.258987907014076
+Step 0: cost=0.00016714805870154947
+Step 5: cost=0.996033675363325
+Step 10: cost=0.6155194682134244
+Step 15: cost=0.999094333759448
+Step 20: cost=0.005043049850429249
+Step 25: cost=0.8981007649191639
+Step 30: cost=0.6573246599021019
+Step 35: cost=8.465054293083085e-07
+Step 40: cost=0.6788142780522586
+Step 45: cost=0.3556685123234262
+Step 50: cost=0.026910206671360015
+Step 55: cost=0.08898491577262835
+Step 60: cost=0.31026489878494545
+Step 65: cost=0.02024610375919167
+Step 70: cost=0.007934105929226831
+Step 75: cost=0.0005895204131158849
+Step 80: cost=0.0005427646474345238
+Step 85: cost=8.379720526363599e-07
+Step 90: cost=5.347187868043335e-05
+Step 95: cost=8.521633398927975e-07
+Final cost value: 1.044140829353779e-05
  </code>
  </pre>
  </details>
 
 ---
 
-## 17. tutorial_vqe_parallel.html <a name="demo16"></a>
+## 18. tutorial_quanvolution.html <a name="demo17"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_quanvolution.html):
 
-```
-Speed up: 2.95
-Evaluation time: 335.20 s
-Evaluation time: 113.68 s
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+ 1056768/11490434 [=>............................] - ETA: 0s
+ 8273920/11490434 [====================>.........] - ETA: 0s
+11493376/11490434 [==============================] - 0s 0us/step
+Quantum pre-processing of train images:
+1/50
+2/50
+3/50
+4/50
+5/50
+6/50
+7/50
+8/50
+9/50
+10/50
+11/50
+12/50
+13/50
+14/50
+15/50
+16/50
+17/50
+18/50
+19/50
+20/50
+21/50
+22/50
+23/50
+24/50
+25/50
+26/50
+27/50
+28/50
+29/50
+30/50
+31/50
+32/50
+33/50
+34/50
+35/50
+36/50
+37/50
+38/50
+39/50
+40/50
+41/50
+42/50
+43/50
+44/50
+45/50
+46/50
+47/50
+48/50
+49/50
+50/50
+Quantum pre-processing of test images:
+1/30
+2/30
+3/30
+4/30
+5/30
+6/30
+7/30
+8/30
+9/30
+10/30
+11/30
+12/30
+13/30
+14/30
+15/30
+16/30
+17/30
+18/30
+19/30
+20/30
+21/30
+22/30
+23/30
+24/30
+25/30
+26/30
+27/30
+28/30
+29/30
+30/30
+Epoch 1/30
+13/13 - 0s - loss: 3.0160 - accuracy: 0.1000 - val_loss: 2.0646 - val_accuracy: 0.2000
+Epoch 2/30
+13/13 - 0s - loss: 2.2510 - accuracy: 0.1800 - val_loss: 1.9801 - val_accuracy: 0.3333
+Epoch 3/30
+13/13 - 0s - loss: 1.7851 - accuracy: 0.4000 - val_loss: 1.8177 - val_accuracy: 0.2667
+Epoch 4/30
+13/13 - 0s - loss: 1.3652 - accuracy: 0.5400 - val_loss: 1.6107 - val_accuracy: 0.4667
+Epoch 5/30
+13/13 - 0s - loss: 1.1317 - accuracy: 0.7800 - val_loss: 1.4723 - val_accuracy: 0.6000
+Epoch 6/30
+13/13 - 0s - loss: 0.9360 - accuracy: 0.8600 - val_loss: 1.4686 - val_accuracy: 0.5333
+Epoch 7/30
+13/13 - 0s - loss: 0.7383 - accuracy: 0.9400 - val_loss: 1.3536 - val_accuracy: 0.5667
+Epoch 8/30
+13/13 - 0s - loss: 0.5846 - accuracy: 0.9800 - val_loss: 1.2785 - val_accuracy: 0.6667
+Epoch 9/30
+13/13 - 0s - loss: 0.4987 - accuracy: 0.9800 - val_loss: 1.2253 - val_accuracy: 0.6333
+Epoch 10/30
+13/13 - 0s - loss: 0.3921 - accuracy: 1.0000 - val_loss: 1.2655 - val_accuracy: 0.6333
+Epoch 11/30
+13/13 - 0s - loss: 0.3617 - accuracy: 1.0000 - val_loss: 1.1555 - val_accuracy: 0.7000
+Epoch 12/30
+13/13 - 0s - loss: 0.3078 - accuracy: 1.0000 - val_loss: 1.2107 - val_accuracy: 0.6667
+Epoch 13/30
+13/13 - 0s - loss: 0.2618 - accuracy: 1.0000 - val_loss: 1.1166 - val_accuracy: 0.7333
+Epoch 14/30
+13/13 - 0s - loss: 0.2463 - accuracy: 1.0000 - val_loss: 1.0624 - val_accuracy: 0.7000
+Epoch 15/30
+13/13 - 0s - loss: 0.2033 - accuracy: 1.0000 - val_loss: 1.0904 - val_accuracy: 0.7333
+Epoch 16/30
+13/13 - 0s - loss: 0.1799 - accuracy: 1.0000 - val_loss: 1.0865 - val_accuracy: 0.7333
+Epoch 17/30
+13/13 - 0s - loss: 0.1682 - accuracy: 1.0000 - val_loss: 1.0385 - val_accuracy: 0.7333
+Epoch 18/30
+13/13 - 0s - loss: 0.1484 - accuracy: 1.0000 - val_loss: 1.0676 - val_accuracy: 0.7000
+Epoch 19/30
+13/13 - 0s - loss: 0.1349 - accuracy: 1.0000 - val_loss: 1.0447 - val_accuracy: 0.7000
+Epoch 20/30
+13/13 - 0s - loss: 0.1255 - accuracy: 1.0000 - val_loss: 0.9935 - val_accuracy: 0.7333
+Epoch 21/30
+13/13 - 0s - loss: 0.1135 - accuracy: 1.0000 - val_loss: 1.0451 - val_accuracy: 0.7333
+Epoch 22/30
+13/13 - 0s - loss: 0.1041 - accuracy: 1.0000 - val_loss: 1.0142 - val_accuracy: 0.7333
+Epoch 23/30
+13/13 - 0s - loss: 0.0983 - accuracy: 1.0000 - val_loss: 0.9893 - val_accuracy: 0.7333
+Epoch 24/30
+13/13 - 0s - loss: 0.0913 - accuracy: 1.0000 - val_loss: 0.9807 - val_accuracy: 0.7000
+Epoch 25/30
+13/13 - 0s - loss: 0.0868 - accuracy: 1.0000 - val_loss: 0.9715 - val_accuracy: 0.7333
+Epoch 26/30
+13/13 - 0s - loss: 0.0788 - accuracy: 1.0000 - val_loss: 0.9850 - val_accuracy: 0.7333
+Epoch 27/30
+13/13 - 0s - loss: 0.0749 - accuracy: 1.0000 - val_loss: 0.9750 - val_accuracy: 0.7333
+Epoch 28/30
+13/13 - 0s - loss: 0.0730 - accuracy: 1.0000 - val_loss: 0.9570 - val_accuracy: 0.7667
+Epoch 29/30
+13/13 - 0s - loss: 0.0681 - accuracy: 1.0000 - val_loss: 0.9895 - val_accuracy: 0.7333
+Epoch 30/30
+13/13 - 0s - loss: 0.0635 - accuracy: 1.0000 - val_loss: 0.9560 - val_accuracy: 0.7333
+Epoch 1/30
+13/13 - 0s - loss: 2.3619 - accuracy: 0.1400 - val_loss: 2.0567 - val_accuracy: 0.3667
+Epoch 2/30
+13/13 - 0s - loss: 1.9696 - accuracy: 0.4200 - val_loss: 1.9381 - val_accuracy: 0.4667
+Epoch 3/30
+13/13 - 0s - loss: 1.6671 - accuracy: 0.6400 - val_loss: 1.8300 - val_accuracy: 0.4333
+Epoch 4/30
+13/13 - 0s - loss: 1.4340 - accuracy: 0.7400 - val_loss: 1.7113 - val_accuracy: 0.4333
+Epoch 5/30
+13/13 - 0s - loss: 1.2342 - accuracy: 0.7600 - val_loss: 1.6044 - val_accuracy: 0.5000
+Epoch 6/30
+13/13 - 0s - loss: 1.0721 - accuracy: 0.8600 - val_loss: 1.5232 - val_accuracy: 0.5333
+Epoch 7/30
+13/13 - 0s - loss: 0.9348 - accuracy: 0.9000 - val_loss: 1.4596 - val_accuracy: 0.5667
+Epoch 8/30
+13/13 - 0s - loss: 0.8178 - accuracy: 0.9200 - val_loss: 1.3921 - val_accuracy: 0.6000
+Epoch 9/30
+13/13 - 0s - loss: 0.7223 - accuracy: 0.9400 - val_loss: 1.3404 - val_accuracy: 0.6333
+Epoch 10/30
+13/13 - 0s - loss: 0.6404 - accuracy: 0.9600 - val_loss: 1.3065 - val_accuracy: 0.6667
+Epoch 11/30
+13/13 - 0s - loss: 0.5772 - accuracy: 1.0000 - val_loss: 1.2644 - val_accuracy: 0.6333
+Epoch 12/30
+13/13 - 0s - loss: 0.5199 - accuracy: 1.0000 - val_loss: 1.2558 - val_accuracy: 0.6667
+Epoch 13/30
+13/13 - 0s - loss: 0.4695 - accuracy: 1.0000 - val_loss: 1.2258 - val_accuracy: 0.6667
+Epoch 14/30
+13/13 - 0s - loss: 0.4238 - accuracy: 1.0000 - val_loss: 1.1897 - val_accuracy: 0.6667
+Epoch 15/30
+13/13 - 0s - loss: 0.3848 - accuracy: 1.0000 - val_loss: 1.1651 - val_accuracy: 0.6667
+Epoch 16/30
+13/13 - 0s - loss: 0.3525 - accuracy: 1.0000 - val_loss: 1.1503 - val_accuracy: 0.7333
+Epoch 17/30
+13/13 - 0s - loss: 0.3245 - accuracy: 1.0000 - val_loss: 1.1374 - val_accuracy: 0.7000
+Epoch 18/30
+13/13 - 0s - loss: 0.2992 - accuracy: 1.0000 - val_loss: 1.1174 - val_accuracy: 0.6667
+Epoch 19/30
+13/13 - 0s - loss: 0.2745 - accuracy: 1.0000 - val_loss: 1.1119 - val_accuracy: 0.6667
+Epoch 20/30
+13/13 - 0s - loss: 0.2551 - accuracy: 1.0000 - val_loss: 1.0903 - val_accuracy: 0.7000
+Epoch 21/30
+13/13 - 0s - loss: 0.2370 - accuracy: 1.0000 - val_loss: 1.0877 - val_accuracy: 0.6667
+Epoch 22/30
+13/13 - 0s - loss: 0.2199 - accuracy: 1.0000 - val_loss: 1.0776 - val_accuracy: 0.6667
+Epoch 23/30
+13/13 - 0s - loss: 0.2050 - accuracy: 1.0000 - val_loss: 1.0675 - val_accuracy: 0.7000
+Epoch 24/30
+13/13 - 0s - loss: 0.1919 - accuracy: 1.0000 - val_loss: 1.0592 - val_accuracy: 0.7000
+Epoch 25/30
+13/13 - 0s - loss: 0.1812 - accuracy: 1.0000 - val_loss: 1.0554 - val_accuracy: 0.6667
+Epoch 26/30
+13/13 - 0s - loss: 0.1691 - accuracy: 1.0000 - val_loss: 1.0477 - val_accuracy: 0.7000
+Epoch 27/30
+13/13 - 0s - loss: 0.1599 - accuracy: 1.0000 - val_loss: 1.0377 - val_accuracy: 0.7000
+Epoch 28/30
+13/13 - 0s - loss: 0.1515 - accuracy: 1.0000 - val_loss: 1.0341 - val_accuracy: 0.6667
+Epoch 29/30
+13/13 - 0s - loss: 0.1426 - accuracy: 1.0000 - val_loss: 1.0291 - val_accuracy: 0.7000
+Epoch 30/30
+ </code>
+ </pre>
+ </details>
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_parallel.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quanvolution.html):
 
-```
-Speed up: 2.96
-Evaluation time: 278.62 s
-Evaluation time: 94.13 s
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+ 3915776/11490434 [=========>....................] - ETA: 0s
+11493376/11490434 [==============================] - 0s 0us/step
+Quantum pre-processing of train images:
+1/50
+2/50
+3/50
+4/50
+5/50
+6/50
+7/50
+8/50
+9/50
+10/50
+11/50
+12/50
+13/50
+14/50
+15/50
+16/50
+17/50
+18/50
+19/50
+20/50
+21/50
+22/50
+23/50
+24/50
+25/50
+26/50
+27/50
+28/50
+29/50
+30/50
+31/50
+32/50
+33/50
+34/50
+35/50
+36/50
+37/50
+38/50
+39/50
+40/50
+41/50
+42/50
+43/50
+44/50
+45/50
+46/50
+47/50
+48/50
+49/50
+50/50
+Quantum pre-processing of test images:
+1/30
+2/30
+3/30
+4/30
+5/30
+6/30
+7/30
+8/30
+9/30
+10/30
+11/30
+12/30
+13/30
+14/30
+15/30
+16/30
+17/30
+18/30
+19/30
+20/30
+21/30
+22/30
+23/30
+24/30
+25/30
+26/30
+27/30
+28/30
+29/30
+30/30
+Epoch 1/30
+13/13 - 0s - loss: 3.0160 - accuracy: 0.1000 - val_loss: 2.0646 - val_accuracy: 0.2000
+Epoch 2/30
+13/13 - 0s - loss: 2.2510 - accuracy: 0.1800 - val_loss: 1.9801 - val_accuracy: 0.3333
+Epoch 3/30
+13/13 - 0s - loss: 1.7851 - accuracy: 0.4000 - val_loss: 1.8177 - val_accuracy: 0.2667
+Epoch 4/30
+13/13 - 0s - loss: 1.3652 - accuracy: 0.5400 - val_loss: 1.6107 - val_accuracy: 0.4667
+Epoch 5/30
+13/13 - 0s - loss: 1.1317 - accuracy: 0.7800 - val_loss: 1.4723 - val_accuracy: 0.6000
+Epoch 6/30
+13/13 - 0s - loss: 0.9360 - accuracy: 0.8600 - val_loss: 1.4686 - val_accuracy: 0.5333
+Epoch 7/30
+13/13 - 0s - loss: 0.7383 - accuracy: 0.9400 - val_loss: 1.3536 - val_accuracy: 0.5667
+Epoch 8/30
+13/13 - 0s - loss: 0.5846 - accuracy: 0.9800 - val_loss: 1.2785 - val_accuracy: 0.6667
+Epoch 9/30
+13/13 - 0s - loss: 0.4987 - accuracy: 0.9800 - val_loss: 1.2253 - val_accuracy: 0.6333
+Epoch 10/30
+13/13 - 0s - loss: 0.3921 - accuracy: 1.0000 - val_loss: 1.2655 - val_accuracy: 0.6333
+Epoch 11/30
+13/13 - 0s - loss: 0.3617 - accuracy: 1.0000 - val_loss: 1.1555 - val_accuracy: 0.7000
+Epoch 12/30
+13/13 - 0s - loss: 0.3078 - accuracy: 1.0000 - val_loss: 1.2107 - val_accuracy: 0.6667
+Epoch 13/30
+13/13 - 0s - loss: 0.2618 - accuracy: 1.0000 - val_loss: 1.1166 - val_accuracy: 0.7333
+Epoch 14/30
+13/13 - 0s - loss: 0.2463 - accuracy: 1.0000 - val_loss: 1.0624 - val_accuracy: 0.7000
+Epoch 15/30
+13/13 - 0s - loss: 0.2033 - accuracy: 1.0000 - val_loss: 1.0904 - val_accuracy: 0.7333
+Epoch 16/30
+13/13 - 0s - loss: 0.1799 - accuracy: 1.0000 - val_loss: 1.0865 - val_accuracy: 0.7333
+Epoch 17/30
+13/13 - 0s - loss: 0.1682 - accuracy: 1.0000 - val_loss: 1.0385 - val_accuracy: 0.7333
+Epoch 18/30
+13/13 - 0s - loss: 0.1484 - accuracy: 1.0000 - val_loss: 1.0676 - val_accuracy: 0.7000
+Epoch 19/30
+13/13 - 0s - loss: 0.1349 - accuracy: 1.0000 - val_loss: 1.0447 - val_accuracy: 0.7000
+Epoch 20/30
+13/13 - 0s - loss: 0.1255 - accuracy: 1.0000 - val_loss: 0.9935 - val_accuracy: 0.7333
+Epoch 21/30
+13/13 - 0s - loss: 0.1135 - accuracy: 1.0000 - val_loss: 1.0451 - val_accuracy: 0.7333
+Epoch 22/30
+13/13 - 0s - loss: 0.1041 - accuracy: 1.0000 - val_loss: 1.0142 - val_accuracy: 0.7333
+Epoch 23/30
+13/13 - 0s - loss: 0.0983 - accuracy: 1.0000 - val_loss: 0.9893 - val_accuracy: 0.7333
+Epoch 24/30
+13/13 - 0s - loss: 0.0913 - accuracy: 1.0000 - val_loss: 0.9807 - val_accuracy: 0.7000
+Epoch 25/30
+13/13 - 0s - loss: 0.0868 - accuracy: 1.0000 - val_loss: 0.9715 - val_accuracy: 0.7333
+Epoch 26/30
+13/13 - 0s - loss: 0.0788 - accuracy: 1.0000 - val_loss: 0.9850 - val_accuracy: 0.7333
+Epoch 27/30
+13/13 - 0s - loss: 0.0749 - accuracy: 1.0000 - val_loss: 0.9750 - val_accuracy: 0.7333
+Epoch 28/30
+13/13 - 0s - loss: 0.0730 - accuracy: 1.0000 - val_loss: 0.9570 - val_accuracy: 0.7667
+Epoch 29/30
+13/13 - 0s - loss: 0.0681 - accuracy: 1.0000 - val_loss: 0.9895 - val_accuracy: 0.7333
+Epoch 30/30
+13/13 - 0s - loss: 0.0635 - accuracy: 1.0000 - val_loss: 0.9560 - val_accuracy: 0.7333
+Epoch 1/30
+13/13 - 0s - loss: 2.3619 - accuracy: 0.1400 - val_loss: 2.0567 - val_accuracy: 0.3667
+Epoch 2/30
+13/13 - 0s - loss: 1.9696 - accuracy: 0.4200 - val_loss: 1.9381 - val_accuracy: 0.4667
+Epoch 3/30
+13/13 - 0s - loss: 1.6671 - accuracy: 0.6400 - val_loss: 1.8300 - val_accuracy: 0.4333
+Epoch 4/30
+13/13 - 0s - loss: 1.4340 - accuracy: 0.7400 - val_loss: 1.7113 - val_accuracy: 0.4333
+Epoch 5/30
+13/13 - 0s - loss: 1.2342 - accuracy: 0.7600 - val_loss: 1.6044 - val_accuracy: 0.5000
+Epoch 6/30
+13/13 - 0s - loss: 1.0721 - accuracy: 0.8600 - val_loss: 1.5232 - val_accuracy: 0.5333
+Epoch 7/30
+13/13 - 0s - loss: 0.9348 - accuracy: 0.9000 - val_loss: 1.4596 - val_accuracy: 0.5667
+Epoch 8/30
+13/13 - 0s - loss: 0.8178 - accuracy: 0.9200 - val_loss: 1.3921 - val_accuracy: 0.6000
+Epoch 9/30
+13/13 - 0s - loss: 0.7223 - accuracy: 0.9400 - val_loss: 1.3404 - val_accuracy: 0.6333
+Epoch 10/30
+13/13 - 0s - loss: 0.6404 - accuracy: 0.9600 - val_loss: 1.3065 - val_accuracy: 0.6667
+Epoch 11/30
+13/13 - 0s - loss: 0.5772 - accuracy: 1.0000 - val_loss: 1.2644 - val_accuracy: 0.6333
+Epoch 12/30
+13/13 - 0s - loss: 0.5199 - accuracy: 1.0000 - val_loss: 1.2558 - val_accuracy: 0.6667
+Epoch 13/30
+13/13 - 0s - loss: 0.4695 - accuracy: 1.0000 - val_loss: 1.2258 - val_accuracy: 0.6667
+Epoch 14/30
+13/13 - 0s - loss: 0.4238 - accuracy: 1.0000 - val_loss: 1.1897 - val_accuracy: 0.6667
+Epoch 15/30
+13/13 - 0s - loss: 0.3848 - accuracy: 1.0000 - val_loss: 1.1651 - val_accuracy: 0.6667
+Epoch 16/30
+13/13 - 0s - loss: 0.3525 - accuracy: 1.0000 - val_loss: 1.1503 - val_accuracy: 0.7333
+Epoch 17/30
+13/13 - 0s - loss: 0.3245 - accuracy: 1.0000 - val_loss: 1.1374 - val_accuracy: 0.7000
+Epoch 18/30
+13/13 - 0s - loss: 0.2992 - accuracy: 1.0000 - val_loss: 1.1174 - val_accuracy: 0.6667
+Epoch 19/30
+13/13 - 0s - loss: 0.2745 - accuracy: 1.0000 - val_loss: 1.1119 - val_accuracy: 0.6667
+Epoch 20/30
+13/13 - 0s - loss: 0.2551 - accuracy: 1.0000 - val_loss: 1.0903 - val_accuracy: 0.7000
+Epoch 21/30
+13/13 - 0s - loss: 0.2370 - accuracy: 1.0000 - val_loss: 1.0877 - val_accuracy: 0.6667
+Epoch 22/30
+13/13 - 0s - loss: 0.2199 - accuracy: 1.0000 - val_loss: 1.0776 - val_accuracy: 0.6667
+Epoch 23/30
+13/13 - 0s - loss: 0.2050 - accuracy: 1.0000 - val_loss: 1.0675 - val_accuracy: 0.7000
+Epoch 24/30
+13/13 - 0s - loss: 0.1919 - accuracy: 1.0000 - val_loss: 1.0592 - val_accuracy: 0.7000
+Epoch 25/30
+13/13 - 0s - loss: 0.1812 - accuracy: 1.0000 - val_loss: 1.0554 - val_accuracy: 0.6667
+Epoch 26/30
+13/13 - 0s - loss: 0.1691 - accuracy: 1.0000 - val_loss: 1.0477 - val_accuracy: 0.7000
+Epoch 27/30
+13/13 - 0s - loss: 0.1599 - accuracy: 1.0000 - val_loss: 1.0377 - val_accuracy: 0.7000
+Epoch 28/30
+13/13 - 0s - loss: 0.1515 - accuracy: 1.0000 - val_loss: 1.0341 - val_accuracy: 0.6667
+Epoch 29/30
+13/13 - 0s - loss: 0.1426 - accuracy: 1.0000 - val_loss: 1.0291 - val_accuracy: 0.7000
+Epoch 30/30
+13/13 - 0s - loss: 0.1344 - accuracy: 1.0000 - val_loss: 1.0264 - val_accuracy: 0.7000
+ </code>
+ </pre>
+ </details>
 
 ---
 
-## 18. tutorial_vqe_qng.html <a name="demo17"></a>
+## 19. tutorial_vqe_qng.html <a name="demo18"></a>
 
 ---
 
@@ -14789,190 +14723,26 @@ Final circuit parameters =
 
 ---
 
-## 19. tutorial_adaptive_circuits.html <a name="demo18"></a>
+## 20. tutorial_quantum_natural_gradient.html <a name="demo19"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_adaptive_circuits.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Excitation : [0, 1, 2, 3], Gradient: -0.012782175157672729
-Excitation : [0, 1, 2, 5], Gradient: -1.219727444046192e-19
-Excitation : [0, 1, 2, 7], Gradient: 1.2197274440461927e-19
-Excitation : [0, 1, 2, 9], Gradient: 0.03426451170169312
-Excitation : [0, 1, 3, 4], Gradient: 9.486769009248161e-20
-Excitation : [0, 1, 3, 6], Gradient: 1.8973538018496328e-19
-Excitation : [0, 1, 3, 8], Gradient: -0.034264511701692896
-Excitation : [0, 1, 4, 5], Gradient: -0.02358152902067931
-Excitation : [0, 1, 5, 8], Gradient: 1.7618285302889495e-19
-Excitation : [0, 1, 6, 7], Gradient: -0.023581529020679316
-Excitation : [0, 1, 7, 8], Gradient: -1.2197274440461896e-19
-Excitation : [0, 1, 8, 9], Gradient: -0.12362273485598377
-Excitation : [0, 2], Gradient: -0.005062536239322769
-Excitation : [0, 4], Gradient: 9.846150643917213e-18
-Excitation : [0, 6], Gradient: -6.111754024320012e-20
-Excitation : [0, 8], Gradient: -0.0009448044625747746
-Excitation : [1, 3], Gradient: 0.00492661687699176
-Excitation : [1, 5], Gradient: 4.58393739042404e-19
-Excitation : [1, 7], Gradient: 2.0748028483987315e-18
-Excitation : [1, 9], Gradient: 0.0014535534854003965
-n = 0,  E = -7.86266587 H, t = 2.13 s
-n = 1,  E = -7.87094621 H, t = 2.67 s
-n = 2,  E = -7.87563100 H, t = 2.23 s
-n = 3,  E = -7.87829146 H, t = 2.67 s
-n = 4,  E = -7.87981705 H, t = 2.16 s
-n = 5,  E = -7.88070477 H, t = 2.69 s
-n = 6,  E = -7.88123143 H, t = 2.22 s
-n = 7,  E = -7.88155161 H, t = 2.65 s
-n = 9,  E = -7.88188237 H, t = 2.63 s
-n = 10,  E = -7.88197041 H, t = 2.70 s
-n = 11,  E = -7.88203267 H, t = 2.18 s
-n = 12,  E = -7.88207879 H, t = 2.73 s
-n = 13,  E = -7.88211452 H, t = 2.20 s
-n = 14,  E = -7.88214335 H, t = 2.62 s
-n = 15,  E = -7.88216743 H, t = 2.17 s
-n = 16,  E = -7.88218814 H, t = 2.69 s
-n = 17,  E = -7.88220634 H, t = 2.21 s
-n = 18,  E = -7.88222261 H, t = 2.82 s
-n = 19,  E = -7.88223734 H, t = 2.18 s
-n = 0,  E = -7.86266587 H, t = 0.13 s
-n = 1,  E = -7.87094621 H, t = 0.12 s
-n = 2,  E = -7.87563100 H, t = 0.12 s
-n = 3,  E = -7.87829146 H, t = 0.12 s
-n = 4,  E = -7.87981705 H, t = 0.12 s
-n = 5,  E = -7.88070477 H, t = 0.12 s
-n = 6,  E = -7.88123143 H, t = 0.12 s
-n = 7,  E = -7.88155161 H, t = 0.12 s
-n = 8,  E = -7.88175217 H, t = 0.14 s
-n = 9,  E = -7.88188237 H, t = 0.12 s
-n = 10,  E = -7.88197041 H, t = 0.12 s
-n = 11,  E = -7.88203267 H, t = 0.12 s
-n = 12,  E = -7.88207879 H, t = 0.13 s
-n = 13,  E = -7.88211452 H, t = 0.13 s
-n = 14,  E = -7.88214335 H, t = 0.13 s
-n = 15,  E = -7.88216743 H, t = 0.13 s
-n = 16,  E = -7.88218814 H, t = 0.13 s
-n = 17,  E = -7.88220634 H, t = 0.12 s
-n = 18,  E = -7.88222261 H, t = 0.12 s
-n = 19,  E = -7.88223734 H, t = 0.13 s
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_adaptive_circuits.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Excitation : [0, 1, 2, 3], Gradient: -0.012782175157669547
-Excitation : [0, 1, 2, 5], Gradient: -1.4230153513872238e-19
-Excitation : [0, 1, 2, 7], Gradient: 2.303929616531697e-19
-Excitation : [0, 1, 2, 9], Gradient: 0.034264511701689204
-Excitation : [0, 1, 3, 4], Gradient: 6.098637220230964e-20
-Excitation : [0, 1, 3, 6], Gradient: 4.0657581468206416e-20
-Excitation : [0, 1, 3, 8], Gradient: -0.03426451170168905
-Excitation : [0, 1, 4, 5], Gradient: -0.02358152902067854
-Excitation : [0, 1, 5, 8], Gradient: 1.4230153513872282e-19
-Excitation : [0, 1, 6, 7], Gradient: -0.023581529020678525
-Excitation : [0, 1, 7, 8], Gradient: 1.2197274440461954e-19
-Excitation : [0, 1, 8, 9], Gradient: -0.12362273485598566
-Excitation : [0, 2], Gradient: -0.005062536239326924
-Excitation : [0, 4], Gradient: -1.5093771830667583e-17
-Excitation : [0, 6], Gradient: -3.3988206614764893e-18
-Excitation : [0, 8], Gradient: -0.0009448044625765868
-Excitation : [1, 3], Gradient: 0.004926616876995651
-Excitation : [1, 5], Gradient: -2.900203988058343e-18
-Excitation : [1, 7], Gradient: -5.145790640403441e-19
-Excitation : [1, 9], Gradient: 0.0014535534854024951
-n = 0,  E = -7.86266587 H, t = 2.08 s
-n = 1,  E = -7.87094621 H, t = 2.12 s
-n = 2,  E = -7.87563100 H, t = 1.60 s
-n = 3,  E = -7.87829146 H, t = 2.12 s
-n = 4,  E = -7.87981705 H, t = 1.59 s
-n = 5,  E = -7.88070477 H, t = 2.09 s
-n = 6,  E = -7.88123143 H, t = 2.13 s
-n = 7,  E = -7.88155161 H, t = 1.59 s
-n = 9,  E = -7.88188237 H, t = 1.57 s
-n = 10,  E = -7.88197041 H, t = 2.10 s
-n = 11,  E = -7.88203267 H, t = 1.57 s
-n = 12,  E = -7.88207879 H, t = 2.08 s
-n = 13,  E = -7.88211452 H, t = 1.57 s
-n = 14,  E = -7.88214335 H, t = 2.06 s
-n = 15,  E = -7.88216743 H, t = 2.12 s
-n = 16,  E = -7.88218814 H, t = 1.59 s
-n = 17,  E = -7.88220634 H, t = 2.11 s
-n = 18,  E = -7.88222261 H, t = 1.59 s
-n = 19,  E = -7.88223734 H, t = 2.10 s
-n = 0,  E = -7.86266587 H, t = 0.09 s
-n = 1,  E = -7.87094621 H, t = 0.09 s
-n = 2,  E = -7.87563100 H, t = 0.09 s
-n = 3,  E = -7.87829146 H, t = 0.08 s
-n = 4,  E = -7.87981705 H, t = 0.09 s
-n = 5,  E = -7.88070477 H, t = 0.09 s
-n = 6,  E = -7.88123143 H, t = 0.09 s
-n = 7,  E = -7.88155161 H, t = 0.09 s
-n = 8,  E = -7.88175217 H, t = 0.09 s
-n = 9,  E = -7.88188237 H, t = 0.09 s
-n = 10,  E = -7.88197041 H, t = 0.09 s
-n = 11,  E = -7.88203267 H, t = 0.09 s
-n = 12,  E = -7.88207879 H, t = 0.09 s
-n = 13,  E = -7.88211452 H, t = 0.09 s
-n = 14,  E = -7.88214335 H, t = 0.09 s
-n = 15,  E = -7.88216743 H, t = 0.09 s
-n = 16,  E = -7.88218814 H, t = 0.09 s
-n = 17,  E = -7.88220634 H, t = 0.09 s
-n = 18,  E = -7.88222261 H, t = 0.09 s
-n = 19,  E = -7.88223734 H, t = 0.09 s
- </code>
- </pre>
- </details>
-
----
-
-## 20. tutorial_qnn_module_tf.html <a name="demo19"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_qnn_module_tf.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_quantum_natural_gradient.html):
 
 ```
-30/30 - 11s - loss: 0.3931 - accuracy: 0.7067 - val_loss: 0.2683 - val_accuracy: 0.8600
-30/30 - 10s - loss: 0.2107 - accuracy: 0.8600 - val_loss: 0.1992 - val_accuracy: 0.8200
-30/30 - 11s - loss: 0.1670 - accuracy: 0.8800 - val_loss: 0.1854 - val_accuracy: 0.8600
-30/30 - 11s - loss: 0.1602 - accuracy: 0.8800 - val_loss: 0.1732 - val_accuracy: 0.8600
-30/30 - 11s - loss: 0.1514 - accuracy: 0.8800 - val_loss: 0.1692 - val_accuracy: 0.8600
-30/30 - 11s - loss: 0.1433 - accuracy: 0.8800 - val_loss: 0.1787 - val_accuracy: 0.8200
-30/30 - 21s - loss: 0.4068 - accuracy: 0.6600 - val_loss: 0.3008 - val_accuracy: 0.7400
-30/30 - 21s - loss: 0.2845 - accuracy: 0.7733 - val_loss: 0.2298 - val_accuracy: 0.8200
-30/30 - 21s - loss: 0.2180 - accuracy: 0.8067 - val_loss: 0.1976 - val_accuracy: 0.8200
-30/30 - 21s - loss: 0.1904 - accuracy: 0.8533 - val_loss: 0.1809 - val_accuracy: 0.8200
-30/30 - 21s - loss: 0.1702 - accuracy: 0.8600 - val_loss: 0.1719 - val_accuracy: 0.8600
-30/30 - 21s - loss: 0.1538 - accuracy: 0.8600 - val_loss: 0.1862 - val_accuracy: 0.8400
+[[0.125      0.         0.         0.        ]
+ [0.         0.1875     0.         0.        ]
+ [0.         0.         0.24973433 0.        ]
+ [0.         0.         0.         0.20293623]]
 ```
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qnn_module_tf.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_natural_gradient.html):
 
 ```
-30/30 - 6s - loss: 0.3931 - accuracy: 0.7067 - val_loss: 0.2683 - val_accuracy: 0.8600
-30/30 - 6s - loss: 0.2107 - accuracy: 0.8600 - val_loss: 0.1992 - val_accuracy: 0.8200
-30/30 - 7s - loss: 0.1670 - accuracy: 0.8800 - val_loss: 0.1854 - val_accuracy: 0.8600
-30/30 - 6s - loss: 0.1602 - accuracy: 0.8800 - val_loss: 0.1732 - val_accuracy: 0.8600
-30/30 - 6s - loss: 0.1514 - accuracy: 0.8800 - val_loss: 0.1692 - val_accuracy: 0.8600
-30/30 - 7s - loss: 0.1433 - accuracy: 0.8800 - val_loss: 0.1787 - val_accuracy: 0.8200
-30/30 - 13s - loss: 0.4068 - accuracy: 0.6600 - val_loss: 0.3008 - val_accuracy: 0.7400
-30/30 - 12s - loss: 0.2845 - accuracy: 0.7733 - val_loss: 0.2298 - val_accuracy: 0.8200
-30/30 - 13s - loss: 0.2180 - accuracy: 0.8067 - val_loss: 0.1976 - val_accuracy: 0.8200
-30/30 - 13s - loss: 0.1904 - accuracy: 0.8533 - val_loss: 0.1809 - val_accuracy: 0.8200
-30/30 - 13s - loss: 0.1702 - accuracy: 0.8600 - val_loss: 0.1719 - val_accuracy: 0.8600
-30/30 - 12s - loss: 0.1538 - accuracy: 0.8600 - val_loss: 0.1862 - val_accuracy: 0.8400
+/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
+[[0.125      0.         0.         0.        ]
+ [0.         0.1875     0.         0.        ]
+ [0.         0.         0.24973433 0.        ]
 ```
 
 ---
@@ -15003,33 +14773,263 @@ Iter:    86 | Cost: 0.0964097 | Acc train: 0.9553571 | Acc test: 0.9736842
 
 ---
 
-## 22. tutorial_noisy_circuits.html <a name="demo21"></a>
+## 22. tutorial_quantum_transfer_learning.html <a name="demo21"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning.html):
 
-```
-Step: 5    Cost: 0.07733960999999957
-Step: 10    Cost: 0.0773396099969988
-Step: 15    Cost: 0.07733959171203489
-Step: 20    Cost: 0.07722827121891838
-Step: 25    Cost: 0.0017923029380396919
-Step: 30    Cost: 3.0199179590479204e-07
-Step: 34    Cost: 5.228404765345524e-10
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+  0%|          | 224k/44.7M [00:00<00:20, 2.23MB/s]
+  3%|3         | 1.44M/44.7M [00:00<00:05, 8.36MB/s]
+ 12%|#1        | 5.31M/44.7M [00:00<00:01, 23.0MB/s]
+ 21%|##        | 9.18M/44.7M [00:00<00:01, 29.9MB/s]
+ 34%|###4      | 15.4M/44.7M [00:00<00:00, 42.4MB/s]
+ 43%|####3     | 19.4M/44.7M [00:00<00:00, 40.5MB/s]
+ 53%|#####3    | 23.8M/44.7M [00:00<00:00, 42.1MB/s]
+ 71%|#######1  | 31.8M/44.7M [00:00<00:00, 54.9MB/s]
+ 88%|########8 | 39.5M/44.7M [00:00<00:00, 62.9MB/s]
+100%|##########| 44.7M/44.7M [00:00<00:00, 46.8MB/s]
+Training started:
+Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.4626
+Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.4727
+Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.4232
+Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.4490
+Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.4340
+Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.4508
+Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.4421
+Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.4568
+Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.4577
+Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.4552
+Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.4390
+Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.4403
+Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.4436
+Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.4458
+Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.4426
+Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.4343
+Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.4366
+Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.4471
+Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.4568
+Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.4426
+Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.4262
+Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.4400
+Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.4327
+Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.4135
+Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.4126
+Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.4185
+Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.4177
+Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.4291
+Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.4322
+Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.4175
+Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.4324
+Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.4243
+Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.4374
+Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.4194
+Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.4023
+Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.4265
+Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.4302
+Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.4274
+Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.4239
+Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.4197
+Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.4418
+Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.4135
+Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.4476
+Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.4256
+Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.4456
+Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.4235
+Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.4247
+Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.4205
+Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.4350
+Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.4214
+Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.4111
+Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.4217
+Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.4168
+Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.4459
+Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.4257
+Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.4404
+Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.4234
+Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.4138
+Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.4119
+Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.4144
+Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.4361
+Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
+Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.3435
+Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.3967
+Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.3526
+Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.3537
+Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.3680
+Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.3601
+Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.3758
+Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.3546
+Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.3474
+Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.3489
+Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.3444
+Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.3566
+Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.3396
+Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.3447
+Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.3584
+Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.3468
+Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.3605
+Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.3695
+Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.3431
+Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.3586
+Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.3451
+Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.3520
+Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.3548
+Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.3577
+Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.3562
+Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.3332
+Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.3630
+Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.3619
+Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.3651
+Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.3429
+Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.3518
+Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.3513
+Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.3525
+Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.3361
+Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.3544
+Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.3479
+Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.3338
+Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.3633
+Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0975
+Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
+Training completed in 0m 43s
+Best test loss: 0.6432 | Best test accuracy: 0.6536
+ </code>
+ </pre>
+ </details>
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_noisy_circuits.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_transfer_learning.html):
 
-```
-Step: 5    Cost: 0.07733960999999988
-Step: 10    Cost: 0.07733960999863909
-Step: 15    Cost: 0.07733960170319246
-Step: 20    Cost: 0.07728907281668594
-Step: 25    Cost: 0.006192562764640602
-Step: 30    Cost: 6.427645677603198e-07
-Step: 34    Cost: 1.1072988376257744e-09
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+  6%|6         | 2.88M/44.7M [00:00<00:01, 27.4MB/s]
+ 17%|#7        | 7.60M/44.7M [00:00<00:00, 39.9MB/s]
+ 26%|##5       | 11.5M/44.7M [00:00<00:00, 39.9MB/s]
+ 34%|###4      | 15.3M/44.7M [00:00<00:00, 38.5MB/s]
+ 43%|####2     | 19.0M/44.7M [00:00<00:00, 38.5MB/s]
+ 54%|#####4    | 24.2M/44.7M [00:00<00:00, 43.5MB/s]
+ 65%|######4   | 29.0M/44.7M [00:00<00:00, 45.8MB/s]
+ 75%|#######4  | 33.4M/44.7M [00:00<00:00, 44.9MB/s]
+ 85%|########5 | 38.0M/44.7M [00:00<00:00, 45.7MB/s]
+ 98%|#########7| 43.7M/44.7M [00:01<00:00, 49.9MB/s]
+100%|##########| 44.7M/44.7M [00:01<00:00, 44.7MB/s]
+Training started:
+Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.2939
+Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.2765
+Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.2697
+Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.2709
+Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.2671
+Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.2680
+Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.2706
+Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.2686
+Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.2671
+Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.2661
+Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.2706
+Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.2650
+Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.2656
+Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.2632
+Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.2641
+Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.2648
+Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.2672
+Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.2674
+Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.2642
+Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.2632
+Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.2646
+Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.2638
+Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.2685
+Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.2663
+Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.2691
+Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.2665
+Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.2676
+Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.2677
+Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.2664
+Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.2708
+Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.2677
+Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.2696
+Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.2686
+Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.2717
+Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.2720
+Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.2719
+Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.2688
+Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.2756
+Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.2769
+Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.2700
+Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.2695
+Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.2692
+Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.2708
+Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.2675
+Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.2700
+Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.2636
+Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.2667
+Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.2705
+Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.2715
+Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.2712
+Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.2687
+Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.2778
+Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.2717
+Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.2800
+Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.2848
+Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
+Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.2110
+Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.2021
+Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.2028
+Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.2037
+Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.2079
+Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.2040
+Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.2036
+Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.2049
+Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.2033
+Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.2052
+Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.2032
+Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.2023
+Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.1991
+Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.1969
+Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.2032
+Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.1988
+Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.1993
+Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.1988
+Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.2018
+Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.2031
+Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.2002
+Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.1985
+Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.1997
+Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.1996
+Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.1978
+Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.2033
+Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.2055
+Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.2073
+Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.2008
+Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.2065
+Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.2044
+Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.2000
+Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.2002
+Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.2019
+Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.1992
+Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0699
+Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
+Training completed in 0m 27s
+ </code>
+ </pre>
+ </details>
 
 ---
 
