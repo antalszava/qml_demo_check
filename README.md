@@ -1,5 +1,4 @@
 Some new text in the first line.
-
 A test repository for checking the output of QML repo demonstrations.
 
 Produces a markdown file with the difference between the two versions of the
