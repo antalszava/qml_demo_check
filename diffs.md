@@ -1,35 +1,443 @@
-Last update: 2022-03-07  14:56:35 (All times shown in Eastern time)
+Last update: 2022-05-17  15:34:30 (All times shown in Eastern time)
 # List of differences in demonstration outputs
 
 # Table of contents
 
-1. [tutorial_falqon.html](#demo0)
-2. [tutorial_measurement_optimize.html](#demo1)
-3. [tutorial_quanvolution.html](#demo2)
-4. [tutorial_vqe_qng.html](#demo3)
-5. [tutorial_ensemble_multi_qpu.html](#demo4)
-6. [tutorial_quantum_natural_gradient.html](#demo5)
-7. [tutorial_qnn_module_tf.html](#demo6)
-8. [tutorial_jax_transformations.html](#demo7)
-9. [tutorial_general_parshift.html](#demo8)
-10. [tutorial_backprop.html](#demo9)
-11. [tutorial_noisy_circuits.html](#demo10)
-12. [tutorial_adaptive_circuits.html](#demo11)
-13. [tutorial_QGAN.html](#demo12)
-14. [tutorial_rosalin.html](#demo13)
-15. [tutorial_gbs.html](#demo14)
-16. [tutorial_pasqal.html](#demo15)
-17. [tutorial_quantum_transfer_learning.html](#demo16)
-18. [tutorial_doubly_stochastic.html](#demo17)
-19. [tutorial_vqe_parallel.html](#demo18)
-20. [tutorial_multiclass_classification.html](#demo19)
+1. [tutorial_quantum_transfer_learning.html](#demo0)
+2. [tutorial_vqe_qng.html](#demo1)
+3. [tutorial_multiclass_classification.html](#demo2)
+4. [tutorial_qaoa_intro.html](#demo3)
+5. [tutorial_falqon.html](#demo4)
+6. [tutorial_general_parshift.html](#demo5)
+7. [tutorial_ensemble_multi_qpu.html](#demo6)
+8. [tutorial_noisy_circuits.html](#demo7)
+9. [tutorial_measurement_optimize.html](#demo8)
+10. [tutorial_gbs.html](#demo9)
+11. [tutorial_quanvolution.html](#demo10)
+12. [tutorial_quantum_natural_gradient.html](#demo11)
+13. [tutorial_qnn_module_tf.html](#demo12)
+14. [tutorial_vqe_parallel.html](#demo13)
+15. [tutorial_adaptive_circuits.html](#demo14)
+16. [tutorial_backprop.html](#demo15)
+17. [tutorial_doubly_stochastic.html](#demo16)
+18. [tutorial_jax_transformations.html](#demo17)
+19. [tutorial_pasqal.html](#demo18)
+20. [tutorial_rosalin.html](#demo19)
 21. [tutorial_quantum_chemistry.html](#demo20)
-22. [tutorial_qaoa_intro.html](#demo21)
+22. [tutorial_QGAN.html](#demo21)
 
 
 Number of demos different/all demos: 22/54
 
-## 1. tutorial_falqon.html <a name="demo0"></a>
+## 1. tutorial_quantum_transfer_learning.html <a name="demo0"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+  0%|          | 224k/44.7M [00:00<00:20, 2.23MB/s]
+  3%|3         | 1.44M/44.7M [00:00<00:05, 8.36MB/s]
+ 12%|#1        | 5.31M/44.7M [00:00<00:01, 23.0MB/s]
+ 21%|##        | 9.18M/44.7M [00:00<00:01, 29.9MB/s]
+ 34%|###4      | 15.4M/44.7M [00:00<00:00, 42.4MB/s]
+ 43%|####3     | 19.4M/44.7M [00:00<00:00, 40.5MB/s]
+ 53%|#####3    | 23.8M/44.7M [00:00<00:00, 42.1MB/s]
+ 71%|#######1  | 31.8M/44.7M [00:00<00:00, 54.9MB/s]
+ 88%|########8 | 39.5M/44.7M [00:00<00:00, 62.9MB/s]
+100%|##########| 44.7M/44.7M [00:00<00:00, 46.8MB/s]
+Training started:
+Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.4626
+Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.4727
+Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.4232
+Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.4490
+Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.4340
+Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.4508
+Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.4421
+Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.4568
+Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.4577
+Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.4552
+Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.4390
+Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.4403
+Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.4436
+Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.4458
+Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.4426
+Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.4343
+Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.4366
+Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.4471
+Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.4568
+Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.4426
+Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.4262
+Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.4400
+Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.4327
+Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.4135
+Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.4126
+Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.4185
+Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.4177
+Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.4291
+Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.4322
+Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.4175
+Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.4324
+Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.4243
+Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.4374
+Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.4194
+Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.4023
+Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.4265
+Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.4302
+Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.4274
+Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.4239
+Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.4197
+Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.4418
+Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.4135
+Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.4476
+Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.4256
+Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.4456
+Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.4235
+Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.4247
+Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.4205
+Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.4350
+Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.4214
+Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.4111
+Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.4217
+Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.4168
+Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.4459
+Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.4257
+Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.4404
+Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.4234
+Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.4138
+Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.4119
+Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.4144
+Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.4361
+Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
+Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.3435
+Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.3967
+Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.3526
+Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.3537
+Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.3680
+Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.3601
+Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.3758
+Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.3546
+Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.3474
+Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.3489
+Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.3444
+Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.3566
+Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.3396
+Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.3447
+Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.3584
+Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.3468
+Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.3605
+Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.3695
+Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.3431
+Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.3586
+Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.3451
+Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.3520
+Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.3548
+Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.3577
+Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.3562
+Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.3332
+Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.3630
+Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.3619
+Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.3651
+Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.3429
+Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.3518
+Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.3513
+Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.3525
+Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.3361
+Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.3544
+Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.3479
+Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.3338
+Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.3633
+Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0975
+Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
+Training completed in 0m 43s
+Best test loss: 0.6432 | Best test accuracy: 0.6536
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_transfer_learning.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+  6%|6         | 2.88M/44.7M [00:00<00:01, 27.4MB/s]
+ 17%|#7        | 7.60M/44.7M [00:00<00:00, 39.9MB/s]
+ 26%|##5       | 11.5M/44.7M [00:00<00:00, 39.9MB/s]
+ 34%|###4      | 15.3M/44.7M [00:00<00:00, 38.5MB/s]
+ 43%|####2     | 19.0M/44.7M [00:00<00:00, 38.5MB/s]
+ 54%|#####4    | 24.2M/44.7M [00:00<00:00, 43.5MB/s]
+ 65%|######4   | 29.0M/44.7M [00:00<00:00, 45.8MB/s]
+ 75%|#######4  | 33.4M/44.7M [00:00<00:00, 44.9MB/s]
+ 85%|########5 | 38.0M/44.7M [00:00<00:00, 45.7MB/s]
+ 98%|#########7| 43.7M/44.7M [00:01<00:00, 49.9MB/s]
+100%|##########| 44.7M/44.7M [00:01<00:00, 44.7MB/s]
+Training started:
+Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.2939
+Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.2765
+Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.2697
+Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.2709
+Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.2671
+Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.2680
+Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.2706
+Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.2686
+Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.2671
+Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.2661
+Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.2706
+Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.2650
+Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.2656
+Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.2632
+Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.2641
+Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.2648
+Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.2672
+Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.2674
+Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.2642
+Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.2632
+Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.2646
+Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.2638
+Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.2685
+Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.2663
+Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.2691
+Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.2665
+Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.2676
+Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.2677
+Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.2664
+Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.2708
+Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.2677
+Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.2696
+Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.2686
+Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.2717
+Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.2720
+Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.2719
+Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.2688
+Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.2756
+Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.2769
+Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.2700
+Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.2695
+Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.2692
+Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.2708
+Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.2675
+Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.2700
+Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.2636
+Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.2681
+Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.2667
+Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.2705
+Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.2715
+Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.2712
+Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.2687
+Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.2714
+Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.2778
+Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.2717
+Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.2800
+Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.2848
+Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
+Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.2110
+Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.2021
+Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.2028
+Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.2037
+Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.2079
+Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.2040
+Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.2036
+Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.2049
+Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.2033
+Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.2052
+Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.2032
+Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.2023
+Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.1991
+Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.1969
+Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.2032
+Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.1988
+Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.1993
+Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.1988
+Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.2018
+Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.2031
+Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.1998
+Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.2002
+Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.1985
+Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.1997
+Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.1996
+Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.1978
+Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.2033
+Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.2055
+Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.2073
+Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.2008
+Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.2065
+Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.2044
+Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.2000
+Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.2002
+Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.2019
+Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.1992
+Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0699
+Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
+Training completed in 0m 27s
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 2. tutorial_vqe_qng.html <a name="demo1"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_vqe_qng.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Iteration = 0,  Energy = 0.51052556 Ha,  Convergence parameter = 0.06664604 Ha
+Iteration = 20,  Energy = -0.90729965 Ha,  Convergence parameter = 0.05006082 Ha
+Iteration = 40,  Energy = -1.35504644 Ha,  Convergence parameter = 0.00713113 Ha
+Iteration = 60,  Energy = -1.40833787 Ha,  Convergence parameter = 0.00072399 Ha
+Iteration = 80,  Energy = -1.41364035 Ha,  Convergence parameter = 0.00007078 Ha
+Iteration = 100,  Energy = -1.41415774 Ha,  Convergence parameter = 0.00000689 Ha
+Final value of the energy = -1.41420585 Ha
+Number of iterations =  117
+Number of qubits =  4
+Iteration = 0,  Energy = -0.09424332 Ha
+Iteration = 20,  Energy = -0.55156842 Ha
+Iteration = 40,  Energy = -1.12731586 Ha
+Iteration = 60,  Energy = -1.13583263 Ha
+Iteration = 80,  Energy = -1.13602366 Ha
+Iteration = 100,  Energy = -1.13611095 Ha
+Iteration = 120,  Energy = -1.13615238 Ha
+Final convergence parameter = 0.00000097 Ha
+Number of iterations =  130
+Final value of the ground-state energy = -1.13616398 Ha
+Accuracy with respect to the FCI energy: 0.00002547 Ha (0.01598216 kcal/mol)
+Final circuit parameters =
+ [3.44829694e+00 6.28318531e+00 3.78727399e+00 3.42360201e+00
+ 5.09234512e-08 4.05827240e+00 2.74944154e+00 6.07360302e+00
+ 6.24620659e+00 2.40923412e+00 6.28318531e+00 3.32314479e+00]
+Iteration = 0,  Energy = -0.32164518 Ha
+Iteration = 4,  Energy = -0.46875033 Ha
+Iteration = 8,  Energy = -0.85091055 Ha
+Iteration = 12,  Energy = -1.13575339 Ha
+Iteration = 16,  Energy = -1.13618916 Ha
+Final convergence parameter = 0.00000022 Ha
+Number of iterations =  17
+Final value of the ground-state energy = -1.13618938 Ha
+Accuracy with respect to the FCI energy: 0.00000008 Ha (0.00004854 kcal/mol)
+Final circuit parameters =
+ [3.44829694e+00 6.28318510e+00 3.78727399e+00 3.42360201e+00
+ 4.03252161e-04 4.05827240e+00 2.74944154e+00 6.07375181e+00
+ 6.28402001e+00 2.40923412e+00 6.28318525e+00 3.32314479e+00]
+ </code>
+ </pre>
+ </details>
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_qng.html):
+
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
+Iteration = 0,  Energy = 0.51052556 Ha,  Convergence parameter = 0.06664604 Ha
+Iteration = 20,  Energy = -0.90729965 Ha,  Convergence parameter = 0.05006082 Ha
+Iteration = 40,  Energy = -1.35504644 Ha,  Convergence parameter = 0.00713113 Ha
+Iteration = 60,  Energy = -1.40833787 Ha,  Convergence parameter = 0.00072399 Ha
+Iteration = 80,  Energy = -1.41364035 Ha,  Convergence parameter = 0.00007078 Ha
+Iteration = 100,  Energy = -1.41415774 Ha,  Convergence parameter = 0.00000689 Ha
+Final value of the energy = -1.41420585 Ha
+Number of iterations =  117
+Number of qubits =  4
+Iteration = 0,  Energy = -0.09424332 Ha
+Iteration = 20,  Energy = -0.55156842 Ha
+Iteration = 40,  Energy = -1.12731586 Ha
+Iteration = 60,  Energy = -1.13583263 Ha
+Iteration = 80,  Energy = -1.13602366 Ha
+Iteration = 100,  Energy = -1.13611095 Ha
+Iteration = 120,  Energy = -1.13615238 Ha
+Final convergence parameter = 0.00000097 Ha
+Number of iterations =  130
+Final value of the ground-state energy = -1.13616398 Ha
+Accuracy with respect to the FCI energy: 0.00002547 Ha (0.01598216 kcal/mol)
+Final circuit parameters =
+ [3.44829694e+00 6.28318531e+00 3.78727399e+00 3.42360201e+00
+ 5.09234513e-08 4.05827240e+00 2.74944154e+00 6.07360302e+00
+ 6.24620659e+00 2.40923412e+00 6.28318531e+00 3.32314479e+00]
+/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
+Iteration = 0,  Energy = -0.32164518 Ha
+Iteration = 4,  Energy = -0.46875033 Ha
+Iteration = 8,  Energy = -0.85091055 Ha
+Iteration = 12,  Energy = -1.13575339 Ha
+Iteration = 16,  Energy = -1.13618916 Ha
+Final convergence parameter = 0.00000022 Ha
+Number of iterations =  17
+Final value of the ground-state energy = -1.13618938 Ha
+Accuracy with respect to the FCI energy: 0.00000008 Ha (0.00004854 kcal/mol)
+Final circuit parameters =
+ [3.44829694e+00 6.28318510e+00 3.78727399e+00 3.42360201e+00
+ </code>
+ </pre>
+ </details>
+
+---
+
+## 3. tutorial_multiclass_classification.html <a name="demo2"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_multiclass_classification.html):
+
+```
+Iter:    29 | Cost: 0.0748657 | Acc train: 0.6785714 | Acc test: 0.7105263
+Iter:    93 | Cost: 0.0339653 | Acc train: 0.8750000 | Acc test: 0.8684211
+/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/templates/embeddings/amplitude.py:136: UserWarning: The pad argument will be replaced by the pad_with option in future versions of PennyLane.
+Iter:    82 | Cost: 0.0479530 | Acc train: 0.9375000 | Acc test: 0.9473684
+Iter:    86 | Cost: 0.0964098 | Acc train: 0.9553571 | Acc test: 0.9736842
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_multiclass_classification.html):
+
+```
+Iter:    29 | Cost: 0.0748658 | Acc train: 0.6785714 | Acc test: 0.7105263
+Iter:    93 | Cost: 0.0339652 | Acc train: 0.8750000 | Acc test: 0.8684211
+/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/templates/embeddings/amplitude.py:137: UserWarning: The pad argument will be replaced by the pad_with option in future versions of PennyLane.
+Iter:    82 | Cost: 0.0479531 | Acc train: 0.9375000 | Acc test: 0.9473684
+Iter:    86 | Cost: 0.0964097 | Acc train: 0.9553571 | Acc test: 0.9736842
+```
+
+---
+
+## 4. tutorial_qaoa_intro.html <a name="demo3"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_qaoa_intro.html):
+
+```
+[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.855528453707565]]
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qaoa_intro.html):
+
+```
+[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.8555284537075651]]
+```
+
+---
+
+## 5. tutorial_falqon.html <a name="demo4"></a>
 
 ---
 
@@ -139,7 +547,85 @@ Step 40, Cost = -7.258987907014076
 
 ---
 
-## 2. tutorial_measurement_optimize.html <a name="demo1"></a>
+## 6. tutorial_general_parshift.html <a name="demo5"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_general_parshift.html):
+
+```
+For 2 qubits the spectrum is [-2.0, -1.0, 0.0, 1.0, 2.0].
+For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0].
+For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0].
+Second-order finite difference:    [ 0.26814   1.696854 -2.055918 -7.236953]
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_general_parshift.html):
+
+```
+For 2 qubits the spectrum is [-2.0, -1.0, 0, 1.0, 2.0].
+For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0].
+For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0, 5.0].
+Second-order finite difference:    [ 0.26814   1.696853 -2.055918 -7.236953]
+```
+
+---
+
+## 7. tutorial_ensemble_multi_qpu.html <a name="demo6"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_ensemble_multi_qpu.html):
+
+```
+Choices counts: Counter({0: 112, 1: 38})
+Counter({2: 57, 0: 55})
+Choices: [0 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 0 1 1 0 0 1 0 1 1 0 0 0 1 0 0 1 0 1 0 0 0
+Counter({1: 35, 0: 3})
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_ensemble_multi_qpu.html):
+
+```
+Choices counts: Counter({0: 110, 1: 40})
+Counter({0: 55, 2: 55})
+Choices: [0 0 1 1 0 0 1 1 0 0 1 0 0 0 0 0 0 1 1 0 0 1 0 1 1 0 0 0 1 0 0 1 0 1 0 0 0
+Counter({1: 37, 0: 3})
+```
+
+---
+
+## 8. tutorial_noisy_circuits.html <a name="demo7"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html):
+
+```
+Step: 5    Cost: 0.07733960999999957
+Step: 10    Cost: 0.0773396099969988
+Step: 15    Cost: 0.07733959171203489
+Step: 20    Cost: 0.07722827121891838
+Step: 25    Cost: 0.0017923029380396919
+Step: 30    Cost: 3.0199179590479204e-07
+Step: 34    Cost: 5.228404765345524e-10
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_noisy_circuits.html):
+
+```
+Step: 5    Cost: 0.07733960999999988
+Step: 10    Cost: 0.07733960999863909
+Step: 15    Cost: 0.07733960170319246
+Step: 20    Cost: 0.07728907281668594
+Step: 25    Cost: 0.006192562764640602
+Step: 30    Cost: 6.427645677603198e-07
+Step: 34    Cost: 1.1072988376257744e-09
+```
+
+---
+
+## 9. tutorial_measurement_optimize.html <a name="demo8"></a>
 
 ---
 
@@ -4303,7 +4789,59 @@ Group 1 expectation values: [0.93755207 0.94996042 0.96302938 0.96118149]
 
 ---
 
-## 3. tutorial_quanvolution.html <a name="demo2"></a>
+## 10. tutorial_gbs.html <a name="demo9"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_gbs.html):
+
+```
+/home/runner/work/qml/qml/demonstrations/tutorial_gbs.py:165: UserWarning: 'Interferometer' is deprecated and will be renamed 'InterferometerUnitary'
+(10, 10, 10, 10)
+|0000>: 0.17637844761413501
+|1100>: 0.034732936494202844
+|0101>: 0.011870900427255577
+|1111>: 0.005957399165336121
+|2000>: 0.029573843083205452
+[[ 0.19343159-0.54582922j  0.43418269-0.09169615j]
+ [ 0.43418269-0.09169615j -0.27554025-0.46222197j]]
+0.1763784476141347
+0.17637844761413501
+0.03473293649420271
+0.034732936494202844
+0.011870900427255547
+0.011870900427255577
+0.005957399165336084
+0.005957399165336121
+0.02957384308320539
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_gbs.html):
+
+```
+(10, 10, 10, 10)
+|0000>: 0.17637844761413501
+|1100>: 0.034732936494202844
+|0101>: 0.011870900427255577
+|1111>: 0.005957399165336121
+|2000>: 0.029573843083205452
+[[ 0.19343159-0.54582922j  0.43418269-0.09169615j]
+ [ 0.43418269-0.09169615j -0.27554025-0.46222197j]]
+0.1763784476141347
+0.17637844761413501
+0.03473293649420271
+0.034732936494202844
+0.011870900427255547
+0.011870900427255577
+0.005957399165336084
+0.005957399165336121
+0.02957384308320539
+0.029573843083205452
+```
+
+---
+
+## 11. tutorial_quanvolution.html <a name="demo10"></a>
 
 ---
 
@@ -4741,135 +5279,7 @@ Epoch 30/30
 
 ---
 
-## 4. tutorial_vqe_qng.html <a name="demo3"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_vqe_qng.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Iteration = 0,  Energy = 0.51052556 Ha,  Convergence parameter = 0.06664604 Ha
-Iteration = 20,  Energy = -0.90729965 Ha,  Convergence parameter = 0.05006082 Ha
-Iteration = 40,  Energy = -1.35504644 Ha,  Convergence parameter = 0.00713113 Ha
-Iteration = 60,  Energy = -1.40833787 Ha,  Convergence parameter = 0.00072399 Ha
-Iteration = 80,  Energy = -1.41364035 Ha,  Convergence parameter = 0.00007078 Ha
-Iteration = 100,  Energy = -1.41415774 Ha,  Convergence parameter = 0.00000689 Ha
-Final value of the energy = -1.41420585 Ha
-Number of iterations =  117
-Number of qubits =  4
-Iteration = 0,  Energy = -0.09424332 Ha
-Iteration = 20,  Energy = -0.55156842 Ha
-Iteration = 40,  Energy = -1.12731586 Ha
-Iteration = 60,  Energy = -1.13583263 Ha
-Iteration = 80,  Energy = -1.13602366 Ha
-Iteration = 100,  Energy = -1.13611095 Ha
-Iteration = 120,  Energy = -1.13615238 Ha
-Final convergence parameter = 0.00000097 Ha
-Number of iterations =  130
-Final value of the ground-state energy = -1.13616398 Ha
-Accuracy with respect to the FCI energy: 0.00002547 Ha (0.01598216 kcal/mol)
-Final circuit parameters =
- [3.44829694e+00 6.28318531e+00 3.78727399e+00 3.42360201e+00
- 5.09234512e-08 4.05827240e+00 2.74944154e+00 6.07360302e+00
- 6.24620659e+00 2.40923412e+00 6.28318531e+00 3.32314479e+00]
-Iteration = 0,  Energy = -0.32164518 Ha
-Iteration = 4,  Energy = -0.46875033 Ha
-Iteration = 8,  Energy = -0.85091055 Ha
-Iteration = 12,  Energy = -1.13575339 Ha
-Iteration = 16,  Energy = -1.13618916 Ha
-Final convergence parameter = 0.00000022 Ha
-Number of iterations =  17
-Final value of the ground-state energy = -1.13618938 Ha
-Accuracy with respect to the FCI energy: 0.00000008 Ha (0.00004854 kcal/mol)
-Final circuit parameters =
- [3.44829694e+00 6.28318510e+00 3.78727399e+00 3.42360201e+00
- 4.03252161e-04 4.05827240e+00 2.74944154e+00 6.07375181e+00
- 6.28402001e+00 2.40923412e+00 6.28318525e+00 3.32314479e+00]
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_qng.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
-Iteration = 0,  Energy = 0.51052556 Ha,  Convergence parameter = 0.06664604 Ha
-Iteration = 20,  Energy = -0.90729965 Ha,  Convergence parameter = 0.05006082 Ha
-Iteration = 40,  Energy = -1.35504644 Ha,  Convergence parameter = 0.00713113 Ha
-Iteration = 60,  Energy = -1.40833787 Ha,  Convergence parameter = 0.00072399 Ha
-Iteration = 80,  Energy = -1.41364035 Ha,  Convergence parameter = 0.00007078 Ha
-Iteration = 100,  Energy = -1.41415774 Ha,  Convergence parameter = 0.00000689 Ha
-Final value of the energy = -1.41420585 Ha
-Number of iterations =  117
-Number of qubits =  4
-Iteration = 0,  Energy = -0.09424332 Ha
-Iteration = 20,  Energy = -0.55156842 Ha
-Iteration = 40,  Energy = -1.12731586 Ha
-Iteration = 60,  Energy = -1.13583263 Ha
-Iteration = 80,  Energy = -1.13602366 Ha
-Iteration = 100,  Energy = -1.13611095 Ha
-Iteration = 120,  Energy = -1.13615238 Ha
-Final convergence parameter = 0.00000097 Ha
-Number of iterations =  130
-Final value of the ground-state energy = -1.13616398 Ha
-Accuracy with respect to the FCI energy: 0.00002547 Ha (0.01598216 kcal/mol)
-Final circuit parameters =
- [3.44829694e+00 6.28318531e+00 3.78727399e+00 3.42360201e+00
- 5.09234513e-08 4.05827240e+00 2.74944154e+00 6.07360302e+00
- 6.24620659e+00 2.40923412e+00 6.28318531e+00 3.32314479e+00]
-/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/transforms/metric_tensor.py:192: UserWarning: The keyword argument diag_approx is deprecated. Please use approx='diag' instead.
-Iteration = 0,  Energy = -0.32164518 Ha
-Iteration = 4,  Energy = -0.46875033 Ha
-Iteration = 8,  Energy = -0.85091055 Ha
-Iteration = 12,  Energy = -1.13575339 Ha
-Iteration = 16,  Energy = -1.13618916 Ha
-Final convergence parameter = 0.00000022 Ha
-Number of iterations =  17
-Final value of the ground-state energy = -1.13618938 Ha
-Accuracy with respect to the FCI energy: 0.00000008 Ha (0.00004854 kcal/mol)
-Final circuit parameters =
- [3.44829694e+00 6.28318510e+00 3.78727399e+00 3.42360201e+00
- </code>
- </pre>
- </details>
-
----
-
-## 5. tutorial_ensemble_multi_qpu.html <a name="demo4"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_ensemble_multi_qpu.html):
-
-```
-Choices counts: Counter({0: 112, 1: 38})
-Counter({2: 57, 0: 55})
-Choices: [0 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 0 1 1 0 0 1 0 1 1 0 0 0 1 0 0 1 0 1 0 0 0
-Counter({1: 35, 0: 3})
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_ensemble_multi_qpu.html):
-
-```
-Choices counts: Counter({0: 110, 1: 40})
-Counter({0: 55, 2: 55})
-Choices: [0 0 1 1 0 0 1 1 0 0 1 0 0 0 0 0 0 1 1 0 0 1 0 1 1 0 0 0 1 0 0 1 0 1 0 0 0
-Counter({1: 37, 0: 3})
-```
-
----
-
-## 6. tutorial_quantum_natural_gradient.html <a name="demo5"></a>
+## 12. tutorial_quantum_natural_gradient.html <a name="demo11"></a>
 
 ---
 
@@ -4893,7 +5303,7 @@ Counter({1: 37, 0: 3})
 
 ---
 
-## 7. tutorial_qnn_module_tf.html <a name="demo6"></a>
+## 13. tutorial_qnn_module_tf.html <a name="demo12"></a>
 
 ---
 
@@ -4933,113 +5343,29 @@ Counter({1: 37, 0: 3})
 
 ---
 
-## 8. tutorial_jax_transformations.html <a name="demo7"></a>
+## 14. tutorial_vqe_parallel.html <a name="demo13"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_jax_transformations.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html):
 
 ```
-No jit time: 0.0125 seconds
-First run time: 0.0617 seconds
+Speed up: 2.95
+Evaluation time: 335.20 s
+Evaluation time: 113.68 s
 ```
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_jax_transformations.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_parallel.html):
 
 ```
-No jit time: 0.0096 seconds
-First run time: 0.0528 seconds
-```
-
----
-
-## 9. tutorial_general_parshift.html <a name="demo8"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_general_parshift.html):
-
-```
-For 2 qubits the spectrum is [-2.0, -1.0, 0.0, 1.0, 2.0].
-For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0].
-For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0].
-Second-order finite difference:    [ 0.26814   1.696854 -2.055918 -7.236953]
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_general_parshift.html):
-
-```
-For 2 qubits the spectrum is [-2.0, -1.0, 0, 1.0, 2.0].
-For 4 qubits the spectrum is [-4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0].
-For 5 qubits the spectrum is [-5.0, -4.0, -3.0, -2.0, -1.0, 0, 1.0, 2.0, 3.0, 4.0, 5.0].
-Second-order finite difference:    [ 0.26814   1.696853 -2.055918 -7.236953]
+Speed up: 2.96
+Evaluation time: 278.62 s
+Evaluation time: 94.13 s
 ```
 
 ---
 
-## 10. tutorial_backprop.html <a name="demo9"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_backprop.html):
-
-```
-180
-0.8947771876917632
-Forward pass (best of 3): 0.008421205499962526 sec per loop
-Gradient computation (best of 3): 3.249689813399982 sec per loop
-3.031633979986509
-0.9358535378025419
-Forward pass (best of 3): 0.06279191759995228 sec per loop
-Backward pass (best of 3): 0.12324959990000935 sec per loop
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_backprop.html):
-
-```
-/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:173: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-180
-0.8947771876917632
-Forward pass (best of 3): 0.0059497190000001865 sec per loop
-Gradient computation (best of 3): 2.2336992747000295 sec per loop
-2.141898840000067
-/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-0.9358535378025419
-```
-
----
-
-## 11. tutorial_noisy_circuits.html <a name="demo10"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_noisy_circuits.html):
-
-```
-Step: 5    Cost: 0.07733960999999957
-Step: 10    Cost: 0.0773396099969988
-Step: 15    Cost: 0.07733959171203489
-Step: 20    Cost: 0.07722827121891838
-Step: 25    Cost: 0.0017923029380396919
-Step: 30    Cost: 3.0199179590479204e-07
-Step: 34    Cost: 5.228404765345524e-10
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_noisy_circuits.html):
-
-```
-Step: 5    Cost: 0.07733960999999988
-Step: 10    Cost: 0.07733960999863909
-Step: 15    Cost: 0.07733960170319246
-Step: 20    Cost: 0.07728907281668594
-Step: 25    Cost: 0.006192562764640602
-Step: 30    Cost: 6.427645677603198e-07
-Step: 34    Cost: 1.1072988376257744e-09
-```
-
----
-
-## 12. tutorial_adaptive_circuits.html <a name="demo11"></a>
+## 15. tutorial_adaptive_circuits.html <a name="demo14"></a>
 
 ---
 
@@ -5187,11 +5513,89 @@ n = 19,  E = -7.88223734 H, t = 0.09 s
 
 ---
 
-## 13. tutorial_QGAN.html <a name="demo12"></a>
+## 16. tutorial_backprop.html <a name="demo15"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_QGAN.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_backprop.html):
+
+```
+180
+0.8947771876917632
+Forward pass (best of 3): 0.008421205499962526 sec per loop
+Gradient computation (best of 3): 3.249689813399982 sec per loop
+3.031633979986509
+0.9358535378025419
+Forward pass (best of 3): 0.06279191759995228 sec per loop
+Backward pass (best of 3): 0.12324959990000935 sec per loop
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_backprop.html):
+
+```
+/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:173: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+180
+0.8947771876917632
+Forward pass (best of 3): 0.0059497190000001865 sec per loop
+Gradient computation (best of 3): 2.2336992747000295 sec per loop
+2.141898840000067
+/home/runner/work/qml/qml/demonstrations/tutorial_backprop.py:270: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+0.9358535378025419
+```
+
+---
+
+## 17. tutorial_doubly_stochastic.html <a name="demo16"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_doubly_stochastic.html):
+
+```
+Vanilla gradient descent min energy =  -4.605247234069292
+Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
+Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
+Doubly stochastic gradient descent min energy =  -4.4990195930951575
+Adaptive QSGD min energy =  -4.592548741613157
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_doubly_stochastic.html):
+
+```
+/home/runner/work/qml/qml/demonstrations/tutorial_doubly_stochastic.py:158: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
+Vanilla gradient descent min energy =  -4.605247234069292
+Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
+Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
+Doubly stochastic gradient descent min energy =  -4.4990195930951575
+```
+
+---
+
+## 18. tutorial_jax_transformations.html <a name="demo17"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_jax_transformations.html):
+
+```
+No jit time: 0.0125 seconds
+First run time: 0.0617 seconds
+```
+
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_jax_transformations.html):
+
+```
+No jit time: 0.0096 seconds
+First run time: 0.0528 seconds
+```
+
+---
+
+## 19. tutorial_pasqal.html <a name="demo18"></a>
+
+---
+
+[Master](https://pennylane.ai/qml/demos/tutorial_pasqal.html):
 
 <details> 
  <summary>
@@ -5199,37 +5603,32 @@ n = 19,  E = -7.88223734 H, t = 0.09 s
  </summary>
  <pre>
  <code>
-Step 0: cost = -0.05727687478065491
-Step 5: cost = -0.26348111033439636
-Step 10: cost = -0.4273917004466057
-Step 15: cost = -0.47261590510606766
-Step 20: cost = -0.48406896367669106
-Step 25: cost = -0.48946382384747267
-Step 30: cost = -0.49281889386475086
-Step 35: cost = -0.4949494309257716
-Step 40: cost = -0.49627021909691393
-Step 45: cost = -0.49707187968306243
-Prob(real classified as real):  0.9985871425596997
-Prob(fake classified as real):  0.5011128038167953
-Step 0: cost = -0.5833386033773422
-Step 5: cost = -0.8915732949972153
-Step 10: cost = -0.9784244522452354
-Step 15: cost = -0.9946483590174466
-Step 20: cost = -0.9984995491686277
-Step 25: cost = -0.9995636216044659
-Step 30: cost = -0.9998718172573717
-Step 35: cost = -0.9999619696027366
-Step 40: cost = -0.9999888275397097
-Step 45: cost = -0.999996672290763
-Prob(fake classified as real):  0.99999862746688
-Discriminator cost:  0.0014114849071802382
-Real Bloch vector: [-0.2169418   0.45048445 -0.86602525]
-Generator Bloch vector: [-0.2840465   0.41893208 -0.86244407]
+Step 0: cost=0.0001672286566463592
+Step 5: cost=0.9979047620889769
+Step 10: cost=0.6109142342375409
+Step 15: cost=0.9989467692733883
+Step 20: cost=0.006048046345186867
+Step 25: cost=0.8941419709966564
+Step 30: cost=0.6746950251504293
+Step 35: cost=7.001036075480078e-07
+Step 40: cost=0.6766725857506097
+Step 45: cost=0.3557129296721806
+Step 50: cost=0.02749132423642614
+Step 55: cost=0.09109423901502911
+Step 60: cost=0.3024013456684429
+Step 65: cost=0.01987428630678778
+Step 70: cost=0.007314119488719198
+Step 75: cost=0.0005591169242113734
+Step 80: cost=0.00048827164327969966
+Step 85: cost=6.396804707814799e-07
+Step 90: cost=5.587668130241363e-05
+Step 95: cost=7.117522822325351e-07
+Final cost value: 1.230815538836673e-05
  </code>
  </pre>
  </details>
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_QGAN.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_pasqal.html):
 
 <details> 
  <summary>
@@ -5237,39 +5636,34 @@ Generator Bloch vector: [-0.2840465   0.41893208 -0.86244407]
  </summary>
  <pre>
  <code>
-Step 0: cost = -0.05727699398994446
-Step 5: cost = -0.26348118484020233
-Step 10: cost = -0.4273917078971863
-Step 15: cost = -0.47261589020490646
-Step 20: cost = -0.48406901210546494
-Step 25: cost = -0.4894639030098915
-Step 30: cost = -0.49281900376081467
-Step 35: cost = -0.4949493855237961
-Step 40: cost = -0.49627020210027695
-Step 45: cost = -0.49707192927598953
-Prob(real classified as real):  0.9985870718955994
-Prob(fake classified as real):  0.5011127963662148
-Step 0: cost = -0.583338625729084
-Step 5: cost = -0.8915732204914093
-Step 10: cost = -0.9784243106842041
-Step 15: cost = -0.9946482479572296
-Step 20: cost = -0.9984994232654572
-Step 25: cost = -0.9995635747909546
-Step 30: cost = -0.9998717308044434
-Step 35: cost = -0.9999619424343109
-Step 40: cost = -0.9999886155128479
-Step 45: cost = -0.9999965727329254
-Prob(fake classified as real):  0.9999985992908478
-Discriminator cost:  0.001411527395248413
-Real Bloch vector: [-0.21694186  0.45048442 -0.86602521]
-Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
+Step 0: cost=0.00016714805870154947
+Step 5: cost=0.996033675363325
+Step 10: cost=0.6155194682134244
+Step 15: cost=0.999094333759448
+Step 20: cost=0.005043049850429249
+Step 25: cost=0.8981007649191639
+Step 30: cost=0.6573246599021019
+Step 35: cost=8.465054293083085e-07
+Step 40: cost=0.6788142780522586
+Step 45: cost=0.3556685123234262
+Step 50: cost=0.026910206671360015
+Step 55: cost=0.08898491577262835
+Step 60: cost=0.31026489878494545
+Step 65: cost=0.02024610375919167
+Step 70: cost=0.007934105929226831
+Step 75: cost=0.0005895204131158849
+Step 80: cost=0.0005427646474345238
+Step 85: cost=8.379720526363599e-07
+Step 90: cost=5.347187868043335e-05
+Step 95: cost=8.521633398927975e-07
+Final cost value: 1.044140829353779e-05
  </code>
  </pre>
  </details>
 
 ---
 
-## 14. tutorial_rosalin.html <a name="demo13"></a>
+## 20. tutorial_rosalin.html <a name="demo19"></a>
 
 ---
 
@@ -6020,464 +6414,6 @@ Step 98: cost = -7.883507674089132 shots_used = 237600
  </code>
  </pre>
  </details>
-
----
-
-## 15. tutorial_gbs.html <a name="demo14"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_gbs.html):
-
-```
-/home/runner/work/qml/qml/demonstrations/tutorial_gbs.py:165: UserWarning: 'Interferometer' is deprecated and will be renamed 'InterferometerUnitary'
-(10, 10, 10, 10)
-|0000>: 0.17637844761413501
-|1100>: 0.034732936494202844
-|0101>: 0.011870900427255577
-|1111>: 0.005957399165336121
-|2000>: 0.029573843083205452
-[[ 0.19343159-0.54582922j  0.43418269-0.09169615j]
- [ 0.43418269-0.09169615j -0.27554025-0.46222197j]]
-0.1763784476141347
-0.17637844761413501
-0.03473293649420271
-0.034732936494202844
-0.011870900427255547
-0.011870900427255577
-0.005957399165336084
-0.005957399165336121
-0.02957384308320539
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_gbs.html):
-
-```
-(10, 10, 10, 10)
-|0000>: 0.17637844761413501
-|1100>: 0.034732936494202844
-|0101>: 0.011870900427255577
-|1111>: 0.005957399165336121
-|2000>: 0.029573843083205452
-[[ 0.19343159-0.54582922j  0.43418269-0.09169615j]
- [ 0.43418269-0.09169615j -0.27554025-0.46222197j]]
-0.1763784476141347
-0.17637844761413501
-0.03473293649420271
-0.034732936494202844
-0.011870900427255547
-0.011870900427255577
-0.005957399165336084
-0.005957399165336121
-0.02957384308320539
-0.029573843083205452
-```
-
----
-
-## 16. tutorial_pasqal.html <a name="demo15"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_pasqal.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost=0.0001672286566463592
-Step 5: cost=0.9979047620889769
-Step 10: cost=0.6109142342375409
-Step 15: cost=0.9989467692733883
-Step 20: cost=0.006048046345186867
-Step 25: cost=0.8941419709966564
-Step 30: cost=0.6746950251504293
-Step 35: cost=7.001036075480078e-07
-Step 40: cost=0.6766725857506097
-Step 45: cost=0.3557129296721806
-Step 50: cost=0.02749132423642614
-Step 55: cost=0.09109423901502911
-Step 60: cost=0.3024013456684429
-Step 65: cost=0.01987428630678778
-Step 70: cost=0.007314119488719198
-Step 75: cost=0.0005591169242113734
-Step 80: cost=0.00048827164327969966
-Step 85: cost=6.396804707814799e-07
-Step 90: cost=5.587668130241363e-05
-Step 95: cost=7.117522822325351e-07
-Final cost value: 1.230815538836673e-05
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_pasqal.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-Step 0: cost=0.00016714805870154947
-Step 5: cost=0.996033675363325
-Step 10: cost=0.6155194682134244
-Step 15: cost=0.999094333759448
-Step 20: cost=0.005043049850429249
-Step 25: cost=0.8981007649191639
-Step 30: cost=0.6573246599021019
-Step 35: cost=8.465054293083085e-07
-Step 40: cost=0.6788142780522586
-Step 45: cost=0.3556685123234262
-Step 50: cost=0.026910206671360015
-Step 55: cost=0.08898491577262835
-Step 60: cost=0.31026489878494545
-Step 65: cost=0.02024610375919167
-Step 70: cost=0.007934105929226831
-Step 75: cost=0.0005895204131158849
-Step 80: cost=0.0005427646474345238
-Step 85: cost=8.379720526363599e-07
-Step 90: cost=5.347187868043335e-05
-Step 95: cost=8.521633398927975e-07
-Final cost value: 1.044140829353779e-05
- </code>
- </pre>
- </details>
-
----
-
-## 17. tutorial_quantum_transfer_learning.html <a name="demo16"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-  0%|          | 224k/44.7M [00:00<00:20, 2.23MB/s]
-  3%|3         | 1.44M/44.7M [00:00<00:05, 8.36MB/s]
- 12%|#1        | 5.31M/44.7M [00:00<00:01, 23.0MB/s]
- 21%|##        | 9.18M/44.7M [00:00<00:01, 29.9MB/s]
- 34%|###4      | 15.4M/44.7M [00:00<00:00, 42.4MB/s]
- 43%|####3     | 19.4M/44.7M [00:00<00:00, 40.5MB/s]
- 53%|#####3    | 23.8M/44.7M [00:00<00:00, 42.1MB/s]
- 71%|#######1  | 31.8M/44.7M [00:00<00:00, 54.9MB/s]
- 88%|########8 | 39.5M/44.7M [00:00<00:00, 62.9MB/s]
-100%|##########| 44.7M/44.7M [00:00<00:00, 46.8MB/s]
-Training started:
-Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.4626
-Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.4727
-Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.4232
-Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.4490
-Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.4340
-Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.4508
-Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.4421
-Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.4568
-Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.4577
-Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.4552
-Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.4390
-Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.4403
-Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.4436
-Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.4458
-Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.4426
-Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.4343
-Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.4366
-Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.4471
-Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.4568
-Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.4426
-Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.4262
-Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.4400
-Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.4327
-Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.4135
-Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.4126
-Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.4185
-Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.4177
-Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.4291
-Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.4322
-Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.4175
-Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.4324
-Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.4243
-Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.4374
-Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.4194
-Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.4023
-Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.4265
-Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.4302
-Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.4274
-Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.4239
-Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.4197
-Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.4418
-Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.4135
-Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.4476
-Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.4256
-Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.4456
-Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.4235
-Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.4247
-Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.4205
-Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.4350
-Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.4214
-Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.4111
-Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.4217
-Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.4168
-Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.4459
-Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.4257
-Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.4404
-Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.4234
-Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.4138
-Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.4119
-Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.4144
-Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.4361
-Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
-Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.3435
-Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.3967
-Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.3526
-Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.3537
-Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.3680
-Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.3601
-Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.3758
-Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.3546
-Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.3474
-Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.3489
-Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.3444
-Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.3566
-Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.3396
-Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.3447
-Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.3584
-Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.3468
-Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.3605
-Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.3695
-Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.3431
-Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.3586
-Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.3451
-Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.3520
-Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.3548
-Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.3577
-Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.3562
-Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.3332
-Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.3630
-Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.3619
-Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.3651
-Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.3429
-Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.3518
-Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.3513
-Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.3525
-Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.3361
-Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.3544
-Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.3479
-Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.3338
-Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.3633
-Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0975
-Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
-Training completed in 0m 43s
-Best test loss: 0.6432 | Best test accuracy: 0.6536
- </code>
- </pre>
- </details>
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_quantum_transfer_learning.html):
-
-<details> 
- <summary>
- More 
- </summary>
- <pre>
- <code>
-  6%|6         | 2.88M/44.7M [00:00<00:01, 27.4MB/s]
- 17%|#7        | 7.60M/44.7M [00:00<00:00, 39.9MB/s]
- 26%|##5       | 11.5M/44.7M [00:00<00:00, 39.9MB/s]
- 34%|###4      | 15.3M/44.7M [00:00<00:00, 38.5MB/s]
- 43%|####2     | 19.0M/44.7M [00:00<00:00, 38.5MB/s]
- 54%|#####4    | 24.2M/44.7M [00:00<00:00, 43.5MB/s]
- 65%|######4   | 29.0M/44.7M [00:00<00:00, 45.8MB/s]
- 75%|#######4  | 33.4M/44.7M [00:00<00:00, 44.9MB/s]
- 85%|########5 | 38.0M/44.7M [00:00<00:00, 45.7MB/s]
- 98%|#########7| 43.7M/44.7M [00:01<00:00, 49.9MB/s]
-100%|##########| 44.7M/44.7M [00:01<00:00, 44.7MB/s]
-Training started:
-Phase: train Epoch: 1/1 Iter: 1/62 Batch time: 0.2939
-Phase: train Epoch: 1/1 Iter: 2/62 Batch time: 0.2765
-Phase: train Epoch: 1/1 Iter: 3/62 Batch time: 0.2697
-Phase: train Epoch: 1/1 Iter: 4/62 Batch time: 0.2709
-Phase: train Epoch: 1/1 Iter: 5/62 Batch time: 0.2671
-Phase: train Epoch: 1/1 Iter: 6/62 Batch time: 0.2680
-Phase: train Epoch: 1/1 Iter: 7/62 Batch time: 0.2706
-Phase: train Epoch: 1/1 Iter: 8/62 Batch time: 0.2686
-Phase: train Epoch: 1/1 Iter: 9/62 Batch time: 0.2671
-Phase: train Epoch: 1/1 Iter: 10/62 Batch time: 0.2661
-Phase: train Epoch: 1/1 Iter: 11/62 Batch time: 0.2706
-Phase: train Epoch: 1/1 Iter: 12/62 Batch time: 0.2650
-Phase: train Epoch: 1/1 Iter: 13/62 Batch time: 0.2656
-Phase: train Epoch: 1/1 Iter: 14/62 Batch time: 0.2632
-Phase: train Epoch: 1/1 Iter: 15/62 Batch time: 0.2641
-Phase: train Epoch: 1/1 Iter: 16/62 Batch time: 0.2648
-Phase: train Epoch: 1/1 Iter: 17/62 Batch time: 0.2672
-Phase: train Epoch: 1/1 Iter: 18/62 Batch time: 0.2674
-Phase: train Epoch: 1/1 Iter: 19/62 Batch time: 0.2642
-Phase: train Epoch: 1/1 Iter: 20/62 Batch time: 0.2632
-Phase: train Epoch: 1/1 Iter: 21/62 Batch time: 0.2646
-Phase: train Epoch: 1/1 Iter: 22/62 Batch time: 0.2638
-Phase: train Epoch: 1/1 Iter: 23/62 Batch time: 0.2685
-Phase: train Epoch: 1/1 Iter: 24/62 Batch time: 0.2663
-Phase: train Epoch: 1/1 Iter: 25/62 Batch time: 0.2691
-Phase: train Epoch: 1/1 Iter: 26/62 Batch time: 0.2665
-Phase: train Epoch: 1/1 Iter: 27/62 Batch time: 0.2676
-Phase: train Epoch: 1/1 Iter: 28/62 Batch time: 0.2677
-Phase: train Epoch: 1/1 Iter: 29/62 Batch time: 0.2664
-Phase: train Epoch: 1/1 Iter: 30/62 Batch time: 0.2708
-Phase: train Epoch: 1/1 Iter: 31/62 Batch time: 0.2677
-Phase: train Epoch: 1/1 Iter: 32/62 Batch time: 0.2696
-Phase: train Epoch: 1/1 Iter: 33/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 34/62 Batch time: 0.2686
-Phase: train Epoch: 1/1 Iter: 35/62 Batch time: 0.2717
-Phase: train Epoch: 1/1 Iter: 36/62 Batch time: 0.2720
-Phase: train Epoch: 1/1 Iter: 37/62 Batch time: 0.2719
-Phase: train Epoch: 1/1 Iter: 38/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 39/62 Batch time: 0.2688
-Phase: train Epoch: 1/1 Iter: 40/62 Batch time: 0.2756
-Phase: train Epoch: 1/1 Iter: 41/62 Batch time: 0.2769
-Phase: train Epoch: 1/1 Iter: 42/62 Batch time: 0.2700
-Phase: train Epoch: 1/1 Iter: 43/62 Batch time: 0.2695
-Phase: train Epoch: 1/1 Iter: 44/62 Batch time: 0.2692
-Phase: train Epoch: 1/1 Iter: 45/62 Batch time: 0.2708
-Phase: train Epoch: 1/1 Iter: 46/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 47/62 Batch time: 0.2675
-Phase: train Epoch: 1/1 Iter: 48/62 Batch time: 0.2700
-Phase: train Epoch: 1/1 Iter: 49/62 Batch time: 0.2636
-Phase: train Epoch: 1/1 Iter: 50/62 Batch time: 0.2681
-Phase: train Epoch: 1/1 Iter: 51/62 Batch time: 0.2667
-Phase: train Epoch: 1/1 Iter: 52/62 Batch time: 0.2705
-Phase: train Epoch: 1/1 Iter: 53/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 54/62 Batch time: 0.2715
-Phase: train Epoch: 1/1 Iter: 55/62 Batch time: 0.2712
-Phase: train Epoch: 1/1 Iter: 56/62 Batch time: 0.2687
-Phase: train Epoch: 1/1 Iter: 57/62 Batch time: 0.2714
-Phase: train Epoch: 1/1 Iter: 58/62 Batch time: 0.2778
-Phase: train Epoch: 1/1 Iter: 59/62 Batch time: 0.2717
-Phase: train Epoch: 1/1 Iter: 60/62 Batch time: 0.2800
-Phase: train Epoch: 1/1 Iter: 61/62 Batch time: 0.2848
-Phase: train Epoch: 1/1 Loss: 0.6993 Acc: 0.5246
-Phase: validation Epoch: 1/1 Iter: 1/39 Batch time: 0.2110
-Phase: validation Epoch: 1/1 Iter: 2/39 Batch time: 0.2021
-Phase: validation Epoch: 1/1 Iter: 3/39 Batch time: 0.2028
-Phase: validation Epoch: 1/1 Iter: 4/39 Batch time: 0.2037
-Phase: validation Epoch: 1/1 Iter: 5/39 Batch time: 0.2079
-Phase: validation Epoch: 1/1 Iter: 6/39 Batch time: 0.2040
-Phase: validation Epoch: 1/1 Iter: 7/39 Batch time: 0.2036
-Phase: validation Epoch: 1/1 Iter: 8/39 Batch time: 0.2049
-Phase: validation Epoch: 1/1 Iter: 9/39 Batch time: 0.2033
-Phase: validation Epoch: 1/1 Iter: 10/39 Batch time: 0.2052
-Phase: validation Epoch: 1/1 Iter: 11/39 Batch time: 0.2032
-Phase: validation Epoch: 1/1 Iter: 12/39 Batch time: 0.2023
-Phase: validation Epoch: 1/1 Iter: 13/39 Batch time: 0.1991
-Phase: validation Epoch: 1/1 Iter: 14/39 Batch time: 0.1969
-Phase: validation Epoch: 1/1 Iter: 15/39 Batch time: 0.2032
-Phase: validation Epoch: 1/1 Iter: 16/39 Batch time: 0.1988
-Phase: validation Epoch: 1/1 Iter: 17/39 Batch time: 0.1993
-Phase: validation Epoch: 1/1 Iter: 18/39 Batch time: 0.1988
-Phase: validation Epoch: 1/1 Iter: 19/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 20/39 Batch time: 0.2018
-Phase: validation Epoch: 1/1 Iter: 21/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 22/39 Batch time: 0.2031
-Phase: validation Epoch: 1/1 Iter: 23/39 Batch time: 0.1998
-Phase: validation Epoch: 1/1 Iter: 24/39 Batch time: 0.2002
-Phase: validation Epoch: 1/1 Iter: 25/39 Batch time: 0.1985
-Phase: validation Epoch: 1/1 Iter: 26/39 Batch time: 0.1997
-Phase: validation Epoch: 1/1 Iter: 27/39 Batch time: 0.1996
-Phase: validation Epoch: 1/1 Iter: 28/39 Batch time: 0.1978
-Phase: validation Epoch: 1/1 Iter: 29/39 Batch time: 0.2033
-Phase: validation Epoch: 1/1 Iter: 30/39 Batch time: 0.2055
-Phase: validation Epoch: 1/1 Iter: 31/39 Batch time: 0.2073
-Phase: validation Epoch: 1/1 Iter: 32/39 Batch time: 0.2008
-Phase: validation Epoch: 1/1 Iter: 33/39 Batch time: 0.2065
-Phase: validation Epoch: 1/1 Iter: 34/39 Batch time: 0.2044
-Phase: validation Epoch: 1/1 Iter: 35/39 Batch time: 0.2000
-Phase: validation Epoch: 1/1 Iter: 36/39 Batch time: 0.2002
-Phase: validation Epoch: 1/1 Iter: 37/39 Batch time: 0.2019
-Phase: validation Epoch: 1/1 Iter: 38/39 Batch time: 0.1992
-Phase: validation Epoch: 1/1 Iter: 39/39 Batch time: 0.0699
-Phase: validation   Epoch: 1/1 Loss: 0.6432 Acc: 0.6536
-Training completed in 0m 27s
- </code>
- </pre>
- </details>
-
----
-
-## 18. tutorial_doubly_stochastic.html <a name="demo17"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_doubly_stochastic.html):
-
-```
-Vanilla gradient descent min energy =  -4.605247234069292
-Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
-Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
-Doubly stochastic gradient descent min energy =  -4.4990195930951575
-Adaptive QSGD min energy =  -4.592548741613157
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_doubly_stochastic.html):
-
-```
-/home/runner/work/qml/qml/demonstrations/tutorial_doubly_stochastic.py:158: UserWarning: The init module will be deprecated soon, since templates can now provide a method that returns the shape of parameter tensors.
-Vanilla gradient descent min energy =  -4.605247234069292
-Stochastic gradient descent (shots=100) min energy =  -4.60065517691614
-Stochastic gradient descent (shots=1) min energy =  -4.457668962761634
-Doubly stochastic gradient descent min energy =  -4.4990195930951575
-```
-
----
-
-## 19. tutorial_vqe_parallel.html <a name="demo18"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_vqe_parallel.html):
-
-```
-Speed up: 2.95
-Evaluation time: 335.20 s
-Evaluation time: 113.68 s
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_vqe_parallel.html):
-
-```
-Speed up: 2.96
-Evaluation time: 278.62 s
-Evaluation time: 94.13 s
-```
-
----
-
-## 20. tutorial_multiclass_classification.html <a name="demo19"></a>
-
----
-
-[Master](https://pennylane.ai/qml/demos/tutorial_multiclass_classification.html):
-
-```
-Iter:    29 | Cost: 0.0748657 | Acc train: 0.6785714 | Acc test: 0.7105263
-Iter:    93 | Cost: 0.0339653 | Acc train: 0.8750000 | Acc test: 0.8684211
-/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/templates/embeddings/amplitude.py:136: UserWarning: The pad argument will be replaced by the pad_with option in future versions of PennyLane.
-Iter:    82 | Cost: 0.0479530 | Acc train: 0.9375000 | Acc test: 0.9473684
-Iter:    86 | Cost: 0.0964098 | Acc train: 0.9553571 | Acc test: 0.9736842
-```
-
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_multiclass_classification.html):
-
-```
-Iter:    29 | Cost: 0.0748658 | Acc train: 0.6785714 | Acc test: 0.7105263
-Iter:    93 | Cost: 0.0339652 | Acc train: 0.8750000 | Acc test: 0.8684211
-/opt/hostedtoolcache/Python/3.7.12/x64/lib/python3.7/site-packages/pennylane/templates/embeddings/amplitude.py:137: UserWarning: The pad argument will be replaced by the pad_with option in future versions of PennyLane.
-Iter:    82 | Cost: 0.0479531 | Acc train: 0.9375000 | Acc test: 0.9473684
-Iter:    86 | Cost: 0.0964097 | Acc train: 0.9553571 | Acc test: 0.9736842
-```
 
 ---
 
@@ -15015,21 +14951,85 @@ Iter:    86 | Cost: 0.0964097 | Acc train: 0.9553571 | Acc test: 0.9736842
 
 ---
 
-## 22. tutorial_qaoa_intro.html <a name="demo21"></a>
+## 22. tutorial_QGAN.html <a name="demo21"></a>
 
 ---
 
-[Master](https://pennylane.ai/qml/demos/tutorial_qaoa_intro.html):
+[Master](https://pennylane.ai/qml/demos/tutorial_QGAN.html):
 
-```
-[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.855528453707565]]
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 0: cost = -0.05727687478065491
+Step 5: cost = -0.26348111033439636
+Step 10: cost = -0.4273917004466057
+Step 15: cost = -0.47261590510606766
+Step 20: cost = -0.48406896367669106
+Step 25: cost = -0.48946382384747267
+Step 30: cost = -0.49281889386475086
+Step 35: cost = -0.4949494309257716
+Step 40: cost = -0.49627021909691393
+Step 45: cost = -0.49707187968306243
+Prob(real classified as real):  0.9985871425596997
+Prob(fake classified as real):  0.5011128038167953
+Step 0: cost = -0.5833386033773422
+Step 5: cost = -0.8915732949972153
+Step 10: cost = -0.9784244522452354
+Step 15: cost = -0.9946483590174466
+Step 20: cost = -0.9984995491686277
+Step 25: cost = -0.9995636216044659
+Step 30: cost = -0.9998718172573717
+Step 35: cost = -0.9999619696027366
+Step 40: cost = -0.9999888275397097
+Step 45: cost = -0.999996672290763
+Prob(fake classified as real):  0.99999862746688
+Discriminator cost:  0.0014114849071802382
+Real Bloch vector: [-0.2169418   0.45048445 -0.86602525]
+Generator Bloch vector: [-0.2840465   0.41893208 -0.86244407]
+ </code>
+ </pre>
+ </details>
 
-[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_qaoa_intro.html):
+[Dev](http://pennylane.ai-dev.s3-website-us-east-1.amazonaws.com/qml/demos/tutorial_QGAN.html):
 
-```
-[[0.5980635175924566, 0.9419848542526791], [0.5279728111755442, 0.8555284537075651]]
-```
+<details> 
+ <summary>
+ More 
+ </summary>
+ <pre>
+ <code>
+Step 0: cost = -0.05727699398994446
+Step 5: cost = -0.26348118484020233
+Step 10: cost = -0.4273917078971863
+Step 15: cost = -0.47261589020490646
+Step 20: cost = -0.48406901210546494
+Step 25: cost = -0.4894639030098915
+Step 30: cost = -0.49281900376081467
+Step 35: cost = -0.4949493855237961
+Step 40: cost = -0.49627020210027695
+Step 45: cost = -0.49707192927598953
+Prob(real classified as real):  0.9985870718955994
+Prob(fake classified as real):  0.5011127963662148
+Step 0: cost = -0.583338625729084
+Step 5: cost = -0.8915732204914093
+Step 10: cost = -0.9784243106842041
+Step 15: cost = -0.9946482479572296
+Step 20: cost = -0.9984994232654572
+Step 25: cost = -0.9995635747909546
+Step 30: cost = -0.9998717308044434
+Step 35: cost = -0.9999619424343109
+Step 40: cost = -0.9999886155128479
+Step 45: cost = -0.9999965727329254
+Prob(fake classified as real):  0.9999985992908478
+Discriminator cost:  0.001411527395248413
+Real Bloch vector: [-0.21694186  0.45048442 -0.86602521]
+Generator Bloch vector: [-0.28404653  0.41893214 -0.86244416]
+ </code>
+ </pre>
+ </details>
 
 ---
 
